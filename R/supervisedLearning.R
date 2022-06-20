@@ -1,0 +1,25 @@
+#' Logistic Regression
+#'
+#' @details
+#' 로지스틱 회귀 알고리즘 함수. 예측 변수들이 정규분포를 따르지 않아도 사용할 수 있습니다.
+#' 그러나 이 알고리즘은 결과 변수가 선형적으로 구분되며, 예측 변수들의 값이 결과 변수와 선형 관계를
+#' 가진다고 가정합니다. 만약 데이터가 이 가정을 충족하지 않는 경우 성능이 저하될 수 있습니다.
+#'
+#' @param data  분석에 사용할 변수들이 포함된 데이터
+#' @param target  data의 변수 중 예측 변수로 사용할 데이터
+#' @param predict.type  predict.type
+#'
+#' @import mlr
+#'
+#' @export
+
+
+LogisticRegression <- function(data, target, predict.type = "prob"){
+  task <- mlr::makeClassifTask(data = data, target = target)
+  learner <- mlr::makeLearner("classif.logreg", predict.type = predict.type)
+  logRegModel <- mlr::train(learner, task)
+
+  return(list(logRegModel = logRegModel, task = task))
+}
+
+
