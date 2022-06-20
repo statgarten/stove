@@ -21,3 +21,6 @@ usethis::use_vignette("aa")
 
 # 패키지에 데이터가 추가될 경우, 아래 함수로 해당 object를 /data 폴더에 저장
 usethis::use_data()
+
+# 환경변수 저장 파일 관리
+usethis::edit_r_environ()
