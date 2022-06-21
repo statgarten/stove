@@ -27,6 +27,8 @@ levels(Diabetes$diabetes)
 Diabetes$diabetes <- relevel(Diabetes$diabetes, ref = "pos")
 levels(Diabetes$diabetes)
 
+#### 여기까지 door 에서 처리됐다고 가정 ####
+
 ## Train-Test Split
 set.seed(123)
 
@@ -44,21 +46,27 @@ nrow(diabetes_train)
 nrow(diabetes_test)
 
 
-## Cross validation (추가예정정)
+#### Cross validation (추가예정) ####
 
+#### fitting model ####
 
-## fitting logistic regression
-# fitted_logistic_model<- logistic_reg() %>%
-#   set_engine("glm") %>%
-#   set_mode("classification") %>%
-#   fit(diabetes~., data = diabetes_train)
+## fitting logistic
 
+############## 이 부분을 ##############
+fitted_logistic_model<- parsnip::logistic_reg() %>%
+  parsnip::set_engine("glm") %>%
+  parsnip::set_mode("classification") %>%
+  parsnip::fit(diabetes~., data = diabetes_train)
+#######################################
+
+############## 이렇게 동작하도록 만들어주시면 됩니다 ##############
 f <- "diabetes~."
-fitted_logistic_model <- goophi::LogisticRegression(data = diabetes_train, formula = f)
+fitted_logistic_model <- goophi::logisticRegression(data = diabetes_train, formula = f)
+###################################################################
 
-## result
+#### result ####
 
-tidy(fitted_logistic_model)
+recipes::tidy(fitted_logistic_model)
 
 tidy(fitted_logistic_model, exponentiate = TRUE)
 

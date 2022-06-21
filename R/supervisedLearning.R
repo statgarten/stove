@@ -13,12 +13,12 @@
 #'
 #' @export
 
-
-LogisticRegression <- function(data = data, formula = formula, engine = "glm", mode = "classification"){
+logisticRegression <- function(data = data, formula = formula, engine = "glm", mode = "classification"){
   result <- parsnip::logistic_reg() %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
-    parsnip::fit(formula = eval(parse(text=formula)), data = data)
+    parsnip::fit(formula = eval(parse(text = formula)), data = data)
 
   return(result)
 }
+
