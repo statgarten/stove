@@ -6,20 +6,19 @@
 #' 가진다고 가정합니다. 만약 데이터가 이 가정을 충족하지 않는 경우 성능이 저하될 수 있습니다.
 #'
 #' @param data  분석에 사용할 변수들이 포함된 데이터
-#' @param target  data의 변수 중 예측 변수로 사용할 데이터
-#' @param predict.type  predict.type
+#' @param engine  engine
+#' @param mode  mode
 #'
-#' @import mlr
+#' @import parsnip
 #'
 #' @export
 
 
-LogisticRegression <- function(data, target, predict.type = "prob"){
-  task <- mlr::makeClassifTask(data = data, target = target)
-  learner <- mlr::makeLearner("classif.logreg", predict.type = predict.type)
-  logRegModel <- mlr::train(learner, task)
+LogisticRegression <- function(data = data, formula = formula, engine = "glm", mode = "classification"){
+  result <- parsnip::logistic_reg() %>%
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::fit(formula = eval(parse(text=formula)), data = data)
 
-  return(list(logRegModel = logRegModel, task = task))
+  return(result)
 }
-
-

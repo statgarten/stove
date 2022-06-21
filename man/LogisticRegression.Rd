@@ -4,10 +4,19 @@
 \alias{LogisticRegression}
 \title{Logistic Regression}
 \usage{
-LogisticRegression(data, target, predict.type = "prob")
+LogisticRegression(
+  data = data,
+  formula = formula,
+  engine = "glm",
+  mode = "classification"
+)
 }
 \arguments{
-\item{data}{data}
+\item{data}{분석에 사용할 변수들이 포함된 데이터}
+
+\item{engine}{engine}
+
+\item{mode}{mode}
 }
 \description{
 Logistic Regression

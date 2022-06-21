@@ -1,53 +1,138 @@
-#install.packages("mlr")
-#install.packages("tidyverse")
-# library(dplyr)
-# library(mlr)
-# library(tidyverse)
-# library(phiml)
+## https://github.com/rahul-raoniar/Rahul_Raoniar_Blogs/tree/main/Modeling%20Logistic%20Regression%20using%20Tidymodels%20Library%20in%20R
 
-# data 불러오기
-#install.packages("titanic")
-data(titanic_train, package = "titanic")
-titanicTib <- tibble::as_tibble(titanic_train)
+library(mlbench)
+library(tidymodels)
+library(tibble)
 
-# 클리닝
-fctrs <- c("Survived", "Sex", "Pclass")
-titanicClean <- titanicTib %>%
-  mutate_at(.vars = fctrs, .funs = factor) %>%
-  mutate(FamSize = SibSp + Parch) %>%
-  select(Survived, Pclass, Sex, Age, Fare, FamSize)
+#### import data ####
 
-# na -> 평균값 imputation
-imp <- mlr::impute(titanicClean, cols = list(Age = imputeMean()))
-sum(is.na(imp$data$Age))
+## data frame to tibble
+data(PimaIndiansDiabetes2)
+PimaIndiansDiabetes2 <- tibble::as_tibble(PimaIndiansDiabetes2)
 
-# 모델 훈련 (https://mlr.mlr-org.com/articles/tutorial/integrated_learners.html)
-# titanicTask <- mlr::makeClassifTask(data = imp$data, target = "Survived")
-# logReg <- mlr::makeLearner("classif.logreg", predict.type = "prob")
-# logRegModel <- mlr::train(logReg, titanicTask)
+## view the structures of data
+glimpse(PimaIndiansDiabetes2)
+str(PimaIndiansDiabetes2)
 
+#### data preprocessing ####
 
-logRegModel <- phiml::LogisticRegression(data = imp$data, target = "Survived")$logRegModel
-titanicTask <- phiml::LogisticRegression(data = imp$data, target = "Survived")$task
+## removing NA values
+Diabetes <- na.omit(PimaIndiansDiabetes2)
+glimpse(Diabetes)
 
-# logReg가 imputation을 포함하도록 세팅
-logRegWrapper <- mlr::makeImputeWrapper("classif.logreg",
-                                   cols = list(Age = imputeMean()))
+## check the levels of outcome
+levels(Diabetes$diabetes)
 
-# 10 fold CV를 이용해 학습
-kFold <- mlr::makeResampleDesc(method = "RepCV", folds = 10, reps = 50,
-                          stratify = TRUE)
+## setting reference level
+Diabetes$diabetes <- relevel(Diabetes$diabetes, ref = "pos")
+levels(Diabetes$diabetes)
 
-logRegwithImpute <- mlr::resample(logRegWrapper, titanicTask,
-                             resampling = kFold,
-                             measures = list(acc, fpr, fnr))
-logRegwithImpute
+## Train-Test Split
+set.seed(123)
 
-# coef
-logRegModelData <- getLearnerModel(logRegModel)
-stats::coef(logRegModelData)
+diabetes_split <- initial_split(Diabetes,
+                                prop = 0.75,
+                                strata = diabetes)
 
-# odds ratio
-exp(cbind(Odds_Ratio = coef(logRegModelData), confint(logRegModelData)))
+diabetes_train <- diabetes_split %>%
+  training()
+
+diabetes_test <- diabetes_split %>%
+  testing()
+
+nrow(diabetes_train)
+nrow(diabetes_test)
 
 
+## Cross validation (추가예정정)
+
+
+## fitting logistic regression
+# fitted_logistic_model<- logistic_reg() %>%
+#   set_engine("glm") %>%
+#   set_mode("classification") %>%
+#   fit(diabetes~., data = diabetes_train)
+
+f <- "diabetes~."
+fitted_logistic_model <- goophi::LogisticRegression(data = diabetes_train, formula = f)
+
+## result
+
+tidy(fitted_logistic_model)
+
+tidy(fitted_logistic_model, exponentiate = TRUE)
+
+tidy(fitted_logistic_model, exponentiate = TRUE) %>%
+  filter(p.value < 0.05)
+
+## class prediction
+pred_class <- predict(fitted_logistic_model,
+                      new_data = diabetes_test,
+                      type = "class")
+
+pred_class[1:5,]
+
+## Prediction Probabilities
+pred_proba <- predict(fitted_logistic_model,
+                      new_data = diabetes_test,
+                      type = "prob")
+
+## both
+diabetes_results <- diabetes_test %>%
+  select(diabetes) %>%
+  bind_cols(pred_class, pred_proba)
+
+diabetes_results[1:5, ]
+
+
+## confusion matrix
+conf_mat(diabetes_results, truth = diabetes,
+         estimate = .pred_class)
+
+
+## accuracy
+accuracy(diabetes_results, truth = diabetes,
+         estimate = .pred_class)
+
+## sensitivity (Sensitivity = TP / FN+TP) == Recall
+sens(diabetes_results, truth = diabetes,
+     estimate = .pred_class)
+
+recall(diabetes_results, truth = diabetes,
+       estimate = .pred_class)
+
+## specificity (Specificity = TN/FP+TN.)
+spec(diabetes_results, truth = diabetes,
+     estimate = .pred_class)
+
+## precision (Precision = TP/TP+FP)
+precision(diabetes_results, truth = diabetes,
+          estimate = .pred_class)
+
+## F1 score
+f_meas(diabetes_results, truth = diabetes,
+       estimate = .pred_class)
+
+## kappa
+kap(diabetes_results, truth = diabetes,
+    estimate = .pred_class)
+
+## Matthews Correlation Coefficient (MCC)
+mcc(diabetes_results, truth = diabetes,
+    estimate = .pred_class)
+
+## combined reuslt
+custom_metrics <- metric_set(accuracy, sens, spec, precision, recall, f_meas, kap, mcc)
+custom_metrics(diabetes_results,
+               truth = diabetes,
+               estimate = .pred_class)
+
+## AUROC
+roc_auc(diabetes_results,
+        truth = diabetes,
+        .pred_pos)
+
+## ROC curve
+diabetes_results %>%
+  roc_curve(truth = diabetes, .pred_pos) %>%
+  autoplot()
