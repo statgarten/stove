@@ -1,5 +1,7 @@
 ## https://github.com/rahul-raoniar/Rahul_Raoniar_Blogs/tree/main/Modeling%20Logistic%20Regression%20using%20Tidymodels%20Library%20in%20R
 
+## ML workflow에 따라 함수를 만들고 테스트하기 위한 위한 참고용 스크립트입니다.
+
 library(mlbench)
 library(tidymodels)
 library(tibble)
@@ -52,17 +54,13 @@ nrow(diabetes_test)
 
 ## fitting logistic
 
-############## 이 부분을 ##############
 fitted_logistic_model<- parsnip::logistic_reg() %>%
   parsnip::set_engine("glm") %>%
   parsnip::set_mode("classification") %>%
   parsnip::fit(diabetes~., data = diabetes_train)
-#######################################
 
-############## 이렇게 동작하도록 만들어주시면 됩니다 ##############
 f <- "diabetes~."
 fitted_logistic_model <- goophi::logisticRegression(data = diabetes_train, formula = f)
-###################################################################
 
 #### result ####
 
