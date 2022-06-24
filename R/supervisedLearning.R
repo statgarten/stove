@@ -13,7 +13,11 @@
 #'
 #' @export
 
-logisticRegression <- function(data = data, formula = formula, engine = "glm", mode = "classification"){
+logisticRegression_phi <- function(data = data,
+                               formula = formula,
+                               engine = "glm",
+                               mode = "classification"){
+
   result <- parsnip::logistic_reg() %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
@@ -22,3 +26,131 @@ logisticRegression <- function(data = data, formula = formula, engine = "glm", m
   return(result)
 }
 
+#' Random Forest
+#'
+#' @details
+#' 랜덤 포레스트 알고리즘 함수. 여러개의 Decision Tree를 형성.
+#' 새로운 데이터 포인트를 각 트리에 동시에 통과 시켜 각 트리가 분류한 결과에서 투표를 실시하여
+#' 가장 많이 득표한 결과를 최종 분류 결과로 선택
+#'
+#' @param formula formula
+#' @param trees trees
+#' @param min_n min_n
+#' @param mtry mtry
+#' @param engine  engine
+#' @param mode  mode
+#'
+#' @import parsnip
+#'
+#' @export
+
+randomForest_phi <- function(formula = formula,
+                         trees = tune(),
+                         min_n = tune(),
+                         mtry = tune(),
+                         engine = "randomForest",
+                         mode = "classification"){
+
+  result <- parsnip::rand_forest(trees = tune(), min_n = tune(), mtry = tune()) %>%
+    parsnip::set_engine(engine = engine, importance = "impurity") %>%
+    parsnip::set_mode(mode = mode)
+
+  return(result)
+}
+
+#' K-Nearest Neighbors
+#'
+#' @details
+#' KNN 알고리즘 함수.
+#' 데이터로부터 거리가 가까운 K개의 다른 데이터의 레이블을 참조하여 분류하는 알고리즘
+#'
+#'
+#' @param data  분석에 사용할 변수들이 포함된 데이터
+#' @param formula formula
+#' @param k k
+#' @param engine  engine
+#' @param mode  mode
+#'
+#' @import parsnip
+#'
+#' @export
+
+knn_phi <- function(data = data,
+                formula = formula,
+                k = k,
+                engine = "kknn",
+                mode = "classification"){
+
+  result <- parsnip::nearest_neighbor(neighbors = k) %>%
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::fit(formula = eval(parse(text = formula)), data = data)
+
+  return(result)
+}
+
+
+#' neural network
+#'
+#' @details
+#' neural network 알고리즘 함수.
+#' neural network 모델은 생물학적인 뉴런을 수학적으로 모델링한 것.
+#' 여러개의 뉴런으로부터 입력값을 받아서 세포체에 저장하다가 자신의 용량을 넘어서면 외부로 출력값을 내보내는 것처럼,
+#' 인공신경망 뉴런은 여러 입력값을 받아서 일정 수준이 넘어서면 활성화되어 출력값을 내보낸다.
+#'
+#' @param data  분석에 사용할 변수들이 포함된 데이터
+#' @param formula formula
+#' @param epochs epochs
+#' @param penalty penalty
+#' @param engine  engine
+#' @param mode  mode
+#'
+#' @import parsnip
+#'
+#' @export
+
+mlp_phi <- function(data = data,
+                formula = formula,
+                epochs = 100,
+                penalty = 0.1,
+                engine = "nnet",
+                mode = "classification"){
+
+  result <- parsnip::mlp(epochs = epochs, penalty = penalty) %>%
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::fit(formula = eval(parse(text = formula)), data = data)
+
+  return(result)
+}
+
+#' Decision Tree
+#'
+#' @details
+#' 의사결정나무 알고리즘 함수. 의사 결정 규칙 (Decision rule)을 나무 형태로 분류해 나가는 분석 기법을 말합니다.
+#'
+#' @param data 분석에 사용할 변수들이 포함된 데이터
+#' @param formula formula
+#' @param tree_depth tree_depth
+#' @param min_n min_n
+#' @param engine engine
+#' @param mode mode
+#'
+#' @import parsnip
+#'
+#' @export
+
+decisionTree_phi <- function(data = data,
+                         formula = formula,
+                         tree_depth = NULL,
+                         min_n = NULL,
+                         engine = "rpart",
+                         mode = "classification"){
+
+  result <- parsnip::decision_tree(tree_depth = tree_depth, min_n = min_n) %>%
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::fit(formula = eval(parse(text = formula)), data = data)
+
+  return(result)
+}

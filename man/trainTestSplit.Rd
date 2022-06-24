@@ -4,7 +4,7 @@
 \alias{trainTestSplit}
 \title{Train-Test Split}
 \usage{
-trainTestSplit(data = data, target = "")
+trainTestSplit(data = data, target = NULL)
 }
 \arguments{
 \item{data}{data}

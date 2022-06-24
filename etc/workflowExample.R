@@ -1,144 +1,128 @@
-## https://github.com/rahul-raoniar/Rahul_Raoniar_Blogs/tree/main/Modeling%20Logistic%20Regression%20using%20Tidymodels%20Library%20in%20R
+#### Workflow example ####
 
-## ML workflow에 따라 함수를 만들고 테스트하기 위한 위한 참고용 스크립트입니다.
+## data import
 
-library(mlbench)
 library(tidymodels)
-library(tibble)
+library(dplyr)
+library(recipes)
+library(parsnip)
+library(tune)
+library(rsample)
+library(vip)
 
-#### import data ####
+set.seed(1234)
 
-## data frame to tibble
-data(PimaIndiansDiabetes2)
-PimaIndiansDiabetes2 <- tibble::as_tibble(PimaIndiansDiabetes2)
+## data import
+data(titanic_train, package = "titanic")
 
-## view the structures of data
-glimpse(PimaIndiansDiabetes2)
-str(PimaIndiansDiabetes2)
+cleaned_data <- tibble::as_tibble(titanic_train) %>%
+  select(-c(PassengerId, Name, Cabin, Ticket)) %>%
+  mutate(across(where(is.character), factor)) %>%
+  mutate(Survived = as.factor(Survived ))
 
-#### data preprocessing ####
+## one-hot encoding
+rec <- recipe(Survived ~ ., data = cleaned_data) %>%
+  step_dummy(all_predictors(), -all_numeric())
 
-## removing NA values
-Diabetes <- na.omit(PimaIndiansDiabetes2)
-glimpse(Diabetes)
+rec_prep <- prep(rec)
 
-## check the levels of outcome
-levels(Diabetes$diabetes)
+cleaned_data <- bake(rec_prep, new_data = cleaned_data)
 
-## setting reference level
-Diabetes$diabetes <- relevel(Diabetes$diabetes, ref = "pos")
-levels(Diabetes$diabetes)
+## 여기까지 완료된 데이터가 전달된다고 가정 (one-hot encoding까지 되는지 확인 필요) ##
+## ##으로 구분된 파트를 묶어 함수화할 예정 ##
 
-#### 여기까지 door 에서 처리됐다고 가정 ####
+# train-test split (trainTestSplit(data, target))
+targetVar <- "Survived"
 
-## Train-Test Split
-set.seed(123)
+data_train <- goophi::trainTestSplit(data = cleaned_data, target = targetVar)[[1]]
+data_test <- goophi::trainTestSplit(data = cleaned_data, target = targetVar)[[2]]
+data_split<-goophi::trainTestSplit(data = cleaned_data, target = targetVar)[[3]]
 
-diabetes_split <- initial_split(Diabetes,
-                                prop = 0.75,
-                                strata = diabetes)
+## make recipe for CV
+pca_thres <- "0.7"
+f <- "Survived~."
 
-diabetes_train <- diabetes_split %>%
-  training()
+rec <- recipe(eval(parse(text = f)), data = data_train) %>%
+  step_impute_knn(all_predictors()) %>% ## imputation
+  step_center(all_predictors())  %>%
+  step_scale(all_predictors()) %>% ## standardization or scaling
+  step_pca(all_predictors(), threshold = eval(parse(text = pca_thres))) ## PCA for numeric var only or all predictors
 
-diabetes_test <- diabetes_split %>%
-  testing()
+## modeling
+engine = "ranger"
+mode = "classification"
 
-nrow(diabetes_train)
-nrow(diabetes_test)
+# model <- parsnip::rand_forest(
+#   mtry = tune(), # tune number of sampled predictors at each split
+#   trees = tune(), # tune number of trees
+#   min_n = tune()) %>% # tune minimum number of data points in a node
+#   set_engine(engine = engine, importance = "impurity") %>% #engine-specific arguments
+#   set_mode(mode = mode)
 
+model <- randomForest_phi(formula = f,
+                          trees = tune(), ## tune 넘길 때 null로 전달되는 문제
+                          min_n = tune(),
+                          mtry = tune(),
+                          engine = engine,
+                          mode = mode)
 
-#### Cross validation (추가예정) ####
+model
 
-#### fitting model ####
+## set workflow
+tune_wf <- workflow() %>%
+  add_recipe(rec) %>%
+  add_model(model)
 
-## fitting logistic
+## v-fold cv
+folds <- vfold_cv(data_train, v = 2)
 
-fitted_logistic_model<- parsnip::logistic_reg() %>%
-  parsnip::set_engine("glm") %>%
-  parsnip::set_mode("classification") %>%
-  parsnip::fit(diabetes~., data = diabetes_train)
+## parameter_grid / need to set default range
+parameter_grid <- grid_regular(
+  min_n(range = c(10, 40)),
+  mtry(range = c(1, 5)),
+  trees(range = c(500, 2000)),
+  levels = 5)
 
-f <- "diabetes~."
-fitted_logistic_model <- goophi::logisticRegression(data = diabetes_train, formula = f)
-
-#### result ####
-
-recipes::tidy(fitted_logistic_model)
-
-tidy(fitted_logistic_model, exponentiate = TRUE)
-
-tidy(fitted_logistic_model, exponentiate = TRUE) %>%
-  filter(p.value < 0.05)
-
-## class prediction
-pred_class <- predict(fitted_logistic_model,
-                      new_data = diabetes_test,
-                      type = "class")
-
-pred_class[1:5,]
-
-## Prediction Probabilities
-pred_proba <- predict(fitted_logistic_model,
-                      new_data = diabetes_test,
-                      type = "prob")
-
-## both
-diabetes_results <- diabetes_test %>%
-  select(diabetes) %>%
-  bind_cols(pred_class, pred_proba)
-
-diabetes_results[1:5, ]
+## grid search CV
+regular_res <- tune_grid(tune_wf, resamples = folds, grid = parameter_grid) # warnings
 
 
-## confusion matrix
-conf_mat(diabetes_results, truth = diabetes,
-         estimate = .pred_class)
+## results of grid search CV
+regular_res %>% collect_metrics()
+autoplot(regular_res)
 
+## finalize model
+show_best_params <- show_best(regular_res, n = 1, metric = "roc_auc") # regular_res$.metrics
+Best_params <- select_best(regular_res, metric = "roc_auc")
+final_spec <- finalize_model(model, Best_params)
 
-## accuracy
-accuracy(diabetes_results, truth = diabetes,
-         estimate = .pred_class)
+final_model <- final_spec %>% fit(eval(parse(text = f)), data_train)
 
-## sensitivity (Sensitivity = TP / FN+TP) == Recall
-sens(diabetes_results, truth = diabetes,
-     estimate = .pred_class)
+# last_fitted_model
+last_fitted_model <-
+  tune_wf %>%
+  update_model(final_spec) %>%
+  last_fit(data_split)
 
-recall(diabetes_results, truth = diabetes,
-       estimate = .pred_class)
+# performance of final model
+last_fitted_model %>% collect_metrics()
 
-## specificity (Specificity = TN/FP+TN.)
-spec(diabetes_results, truth = diabetes,
-     estimate = .pred_class)
+# importance
+last_fitted_model %>%
+  extract_fit_parsnip() %>%
+  vip(num_features = 5)
 
-## precision (Precision = TP/TP+FP)
-precision(diabetes_results, truth = diabetes,
-          estimate = .pred_class)
-
-## F1 score
-f_meas(diabetes_results, truth = diabetes,
-       estimate = .pred_class)
-
-## kappa
-kap(diabetes_results, truth = diabetes,
-    estimate = .pred_class)
-
-## Matthews Correlation Coefficient (MCC)
-mcc(diabetes_results, truth = diabetes,
-    estimate = .pred_class)
-
-## combined reuslt
-custom_metrics <- metric_set(accuracy, sens, spec, precision, recall, f_meas, kap, mcc)
-custom_metrics(diabetes_results,
-               truth = diabetes,
-               estimate = .pred_class)
-
-## AUROC
-roc_auc(diabetes_results,
-        truth = diabetes,
-        .pred_pos)
-
-## ROC curve
-diabetes_results %>%
-  roc_curve(truth = diabetes, .pred_pos) %>%
+# ROC Curve
+last_fitted_model %>%
+  collect_predictions() %>%
+  #mutate(Survived = as.numeric(Survived)) %>%
+  #mutate(.pred_class = as.numeric(.pred_class)) %>%
+  roc_curve(Survived, .pred_class) %>%
   autoplot()
+
+# confusion matrix
+last_fitted_model %>%
+  collect_predictions() %>%
+  conf_mat(Survived, .pred_class)
+
+
