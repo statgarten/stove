@@ -5,8 +5,6 @@
 \title{Decision Tree}
 \usage{
 decisionTree_phi(
-  data = data,
-  formula = formula,
   tree_depth = NULL,
   min_n = NULL,
   engine = "rpart",
@@ -14,10 +12,6 @@ decisionTree_phi(
 )
 }
 \arguments{
-\item{data}{분석에 사용할 변수들이 포함된 데이터}
-
-\item{formula}{formula}
-
 \item{tree_depth}{tree_depth}
 
 \item{min_n}{min_n}
@@ -25,6 +19,10 @@ decisionTree_phi(
 \item{engine}{engine}
 
 \item{mode}{mode}
+
+\item{data}{분석에 사용할 변수들이 포함된 데이터}
+
+\item{formula}{formula}
 }
 \description{
 Decision Tree

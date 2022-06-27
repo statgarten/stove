@@ -13,15 +13,15 @@
 #'
 #' @export
 
-logisticRegression_phi <- function(data = data,
-                               formula = formula,
-                               engine = "glm",
-                               mode = "classification"){
+logisticRegression_phi <- function(penalty = NULL,
+                                   mixture = NULL,
+                                   engine = "glm",
+                                   mode = "classification"){
 
-  result <- parsnip::logistic_reg() %>%
+  result <- parsnip::logistic_reg(penalty = penalty,
+                                  mixture = mixture) %>%
     parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode) %>%
-    parsnip::fit(formula = eval(parse(text = formula)), data = data)
+    parsnip::set_mode(mode = mode)
 
   return(result)
 }
@@ -72,19 +72,18 @@ randomForest_phi <- function(formula = formula,
 #' @param mode  mode
 #'
 #' @import parsnip
+#' @import kknn
 #'
 #' @export
 
-knn_phi <- function(data = data,
-                formula = formula,
-                k = k,
-                engine = "kknn",
-                mode = "classification"){
+knn_phi <- function(formula = formula,
+                    k = tune(),
+                    engine = "kknn",
+                    mode = "classification"){
 
   result <- parsnip::nearest_neighbor(neighbors = k) %>%
     parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode) %>%
-    parsnip::fit(formula = eval(parse(text = formula)), data = data)
+    parsnip::set_mode(mode = mode)
 
   return(result)
 }
@@ -109,17 +108,14 @@ knn_phi <- function(data = data,
 #'
 #' @export
 
-mlp_phi <- function(data = data,
-                formula = formula,
-                epochs = 100,
-                penalty = 0.1,
-                engine = "nnet",
-                mode = "classification"){
+mlp_phi <- function(epochs = "100",
+                    penalty = "0.1",
+                    engine = "nnet",
+                    mode = "classification"){
 
-  result <- parsnip::mlp(epochs = epochs, penalty = penalty) %>%
+  result <- parsnip::mlp(epochs = eval(parse(text = epochs)), penalty = eval(parse(text = penalty))) %>%
     parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode) %>%
-    parsnip::fit(formula = eval(parse(text = formula)), data = data)
+    parsnip::set_mode(mode = mode)
 
   return(result)
 }
@@ -140,17 +136,14 @@ mlp_phi <- function(data = data,
 #'
 #' @export
 
-decisionTree_phi <- function(data = data,
-                         formula = formula,
-                         tree_depth = NULL,
-                         min_n = NULL,
-                         engine = "rpart",
-                         mode = "classification"){
+decisionTree_phi <- function(tree_depth = NULL,
+                             min_n = NULL,
+                             engine = "rpart",
+                             mode = "classification"){
 
   result <- parsnip::decision_tree(tree_depth = tree_depth, min_n = min_n) %>%
     parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode) %>%
-    parsnip::fit(formula = eval(parse(text = formula)), data = data)
+    parsnip::set_mode(mode = mode)
 
   return(result)
 }

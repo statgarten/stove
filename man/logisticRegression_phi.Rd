@@ -5,18 +5,18 @@
 \title{Logistic Regression}
 \usage{
 logisticRegression_phi(
-  data = data,
-  formula = formula,
+  penalty = NULL,
+  mixture = NULL,
   engine = "glm",
   mode = "classification"
 )
 }
 \arguments{
-\item{data}{분석에 사용할 변수들이 포함된 데이터}
-
 \item{engine}{engine}
 
 \item{mode}{mode}
+
+\item{data}{분석에 사용할 변수들이 포함된 데이터}
 }
 \description{
 Logistic Regression

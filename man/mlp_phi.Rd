@@ -5,19 +5,13 @@
 \title{neural network}
 \usage{
 mlp_phi(
-  data = data,
-  formula = formula,
-  epochs = 100,
-  penalty = 0.1,
+  epochs = "100",
+  penalty = "0.1",
   engine = "nnet",
   mode = "classification"
 )
 }
 \arguments{
-\item{data}{분석에 사용할 변수들이 포함된 데이터}
-
-\item{formula}{formula}
-
 \item{epochs}{epochs}
 
 \item{penalty}{penalty}
@@ -25,6 +19,10 @@ mlp_phi(
 \item{engine}{engine}
 
 \item{mode}{mode}
+
+\item{data}{분석에 사용할 변수들이 포함된 데이터}
+
+\item{formula}{formula}
 }
 \description{
 neural network
