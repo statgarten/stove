@@ -21,9 +21,9 @@ set.seed(1234)
 data(titanic_train, package = "titanic")
 
 cleaned_data <- tibble::as_tibble(titanic_train) %>%
-  select(-c(PassengerId, Name, Cabin, Ticket)) %>%
-  mutate(across(where(is.character), factor)) %>%
-  mutate(Survived = as.factor(Survived ))
+  dplyr::select(-c(PassengerId, Name, Cabin, Ticket)) %>%
+  dplyr::mutate(across(where(is.character), factor)) %>%
+  dplyr::mutate(Survived = as.factor(Survived ))
 
 ## one-hot encoding
 rec <- recipe(Survived ~ ., data = cleaned_data) %>%

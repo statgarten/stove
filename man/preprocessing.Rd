@@ -16,7 +16,7 @@ preprocessing(
 )
 }
 \arguments{
-\item{data}{data}
+\item{data}{dataW}
 
 \item{formula}{formula}
 
@@ -24,13 +24,13 @@ preprocessing(
 
 \item{normalizationType}{normalizationType}
 
+\item{pcaThres}{pcaThres}
+
 \item{imputation}{imputation}
 
 \item{normalization}{normalization}
 
 \item{pca}{pca}
-
-\item{pca_thres}{pca_thres}
 }
 \description{
 Preprocessing

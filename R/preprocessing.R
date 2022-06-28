@@ -24,11 +24,11 @@ trainTestSplit <- function(data = data, target = NULL){
 #' @details
 #' Preprocessing
 #'
-#' @param data  data
+#' @param data  dataW
 #' @param formula  formula
 #' @param imputationType imputationType
 #' @param normalizationType normalizationType
-#' @param pca_thres pca_thres
+#' @param pcaThres pcaThres
 #' @param imputation imputation
 #' @param normalization normalization
 #' @param pca pca
@@ -91,7 +91,9 @@ preprocessing <- function(data,
 
   # PCA
   if (pca == TRUE) {
-    result <- result %>% step_pca(all_numeric(), threshold = eval(parse(text = pcaThres))) ## todo: make users to perform PCA for numeric var only or numeric except for binary
+    result <- result %>%
+      recipes::step_pca(all_numeric(),
+                        threshold = eval(parse(text = pcaThres))) ## todo: make users to perform PCA for numeric var only or numeric except for binary
   } else {
     # pass
   }
