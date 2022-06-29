@@ -195,10 +195,11 @@ naiveBayes_phi <- function(engine = "klaR",
 #' @param mode mode
 #'
 #' @import parsnip
+#' @import xgboost
 #'
 #' @export
 
-lightGbm_phi <- function(engine = "lightgbm",
+lightGbm_phi <- function(engine = "xgboost",
                          mode = "classification"){
 
   result <- parsnip::boost_tree(
