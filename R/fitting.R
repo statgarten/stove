@@ -17,7 +17,7 @@
 
 gridSerachCV <- function(rec,
                          model,
-                         v = 5, # 5-fold CV as default
+                         v = "5", # 5-fold CV as default
                          data,
                          parameterGrid
 ){
@@ -26,7 +26,7 @@ gridSerachCV <- function(rec,
     workflows::add_model(model)
 
   result <- tune::tune_grid(tunedWorkflow,
-                            resamples = rsample::vfold_cv(data, v = v),
+                            resamples = rsample::vfold_cv(data, v = as.numeric(v)),
                             grid = parameterGrid) # warnings
 
   return(list(tunedWorkflow, result))

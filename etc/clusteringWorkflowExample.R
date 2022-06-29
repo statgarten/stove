@@ -21,8 +21,6 @@ library(goophi)
 library(cluster)    # clustering algorithms
 library(factoextra) # clustering algorithms & visualization
 
-set.seed(1234)
-
 url = 'http://www.biz.uiowa.edu/faculty/jledolter/DataMining/protein.csv'
 mydata <- readr::read_csv(url)
 data_cleaned <- mydata %>% dplyr::select(RedMeat, WhiteMeat, Eggs, Milk) ## unsupervised -> target 변수는 제외

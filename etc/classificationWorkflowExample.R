@@ -26,12 +26,12 @@ cleaned_data <- tibble::as_tibble(titanic_train) %>%
   dplyr::mutate(Survived = as.factor(Survived ))
 
 ## one-hot encoding
-rec <- recipe(Survived ~ ., data = cleaned_data) %>%
+rec <- recipes::recipe(Survived ~ ., data = cleaned_data) %>%
   step_dummy(all_predictors(), -all_numeric())
 
-rec_prep <- prep(rec)
+rec_prep <- recipes::prep(rec)
 
-cleaned_data <- bake(rec_prep, new_data = cleaned_data)
+cleaned_data <- recipes::bake(rec_prep, new_data = cleaned_data)
 
 ## 여기까지 완료된 데이터가 전달된다고 가정 (one-hot encoding까지 되는지 확인 필요) ##
 
@@ -74,10 +74,7 @@ engine = "ranger"
 mode = "classification"
 
 # 사용자정의 ML 모델을 생성합니다
-model <- goophi::randomForest_phi(trees = tune(),
-                                  min_n = tune(),
-                                  mtry = tune(),
-                                  engine = engine,
+model <- goophi::randomForest_phi(engine = engine,
                                   mode = mode)
 
 model
@@ -90,8 +87,8 @@ parameterGrid <- dials::grid_regular(
   mtry(range = c(1, 5)),
   trees(range = c(500, 2000)),
   levels = 5)
-# trining data를 몇 개로 나눌지 입력받습니다.
-v <- 2
+# training data를 몇 개로 나눌지 입력받습니다.
+v <- "2"
 
 # parameter grid를 적용한 cross validation을 수행합니다
 grid_search_result <- goophi::gridSerachCV(rec = rec,
