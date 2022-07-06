@@ -50,7 +50,7 @@ gridSerachCV <- function(rec,
 #'
 #' @export
 
-fitBestModel <- function(gridSearchResult, metric, model, formula, trainingData, splitedData){
+fitBestModel <- function(gridSearchResult, metric, model, formula, trainingData, splitedData, algo){
   bestParams <- tune::select_best(gridSearchResult[[2]], metric) ## metric 목록 print 되도록
   finalSpec <- tune::finalize_model(model, bestParams)
 
@@ -60,6 +60,9 @@ fitBestModel <- function(gridSearchResult, metric, model, formula, trainingData,
     gridSearchResult[[1]] %>%
     workflows::update_model(finalSpec) %>%
     tune::last_fit(splitedData)
+
+  finalFittedModel$.predictions[[1]] <- finalFittedModel$.predictions[[1]] %>%
+    mutate(model = algo)
 
   return(list(finalModel, finalFittedModel))
 }

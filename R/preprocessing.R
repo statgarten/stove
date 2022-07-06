@@ -5,13 +5,14 @@
 #'
 #' @param data  data
 #' @param strata  strata
+#' @param prop  prop
 #'
 #' @import rsample
 #'
 #' @export
 
-trainTestSplit <- function(data = data, target = NULL){
-  data_split <- rsample::initial_split(data, strata = target)
+trainTestSplit <- function(data = data, target = NULL, prop){
+  data_split <- rsample::initial_split(data, strata = target, prop = as.numeric(prop))
   train <- rsample::training(data_split)
   test  <- rsample::testing(data_split)
 

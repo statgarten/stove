@@ -4,10 +4,12 @@
 \alias{trainTestSplit}
 \title{Train-Test Split}
 \usage{
-trainTestSplit(data = data, target = NULL)
+trainTestSplit(data = data, target = NULL, prop)
 }
 \arguments{
 \item{data}{data}
+
+\item{prop}{prop}
 
 \item{strata}{strata}
 }

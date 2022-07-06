@@ -1,0 +1,270 @@
+---
+title: "Classification Modeling Workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{classificationWorkflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## R environment
+
+```{r setup}
+library(tidymodels)
+library(vip)
+library(RColorBrewer)
+library(cowplot)
+library(data.table)
+library(DT)
+library(goophi)
+```
+
+#### 유저로부터 받는 입력 및 goophi의 함수들은 camel case,예시로 사용한 변수 및 snake case로 작성된 dependencies의 함수명은 snake case로 표기합니다.다만 algorithm명은 다른 패키지와 겹치는 경우가 많아 '함수명_phi' 로 임시 명명하였습니다.
+
+## 0. Import sample data
+
+#### 샘플데이터를 불러와 전처리 합니다. (여기까지의 작업은 앞서 이미 진행되었다고 가정)
+
+```{r}
+data(titanic_train, package = "titanic")
+
+cleaned_data <- tibble::as_tibble(titanic_train) %>%
+  dplyr::select(-c(PassengerId, Name, Cabin, Ticket)) %>%
+  dplyr::mutate(across(where(is.character), factor)) %>%
+  dplyr::mutate(Survived = as.factor(Survived ))
+
+rec <- recipes::recipe(Survived ~ ., data = cleaned_data) %>%
+  recipes::step_dummy(all_predictors(), -all_numeric())
+
+rec_prep <- recipes::prep(rec)
+
+cleaned_data <- recipes::bake(rec_prep, new_data = cleaned_data)
+knitr::kable(head(cleaned_data, 10))
+```
+## 1. Train-test split Tab
+
+#### train set, test set을 분리합니다. 
+
+|       User Input|                                    description|
+|----------------:|----------------------------------------------:|
+|        targetVar|                       목적 변수(target, label)|
+|    trainSetRatio| 전체 데이터 중 train set의 비율 (range: 0 - 1)|
+
+
+### User input
+```{r}
+targetVar <- "Survived"
+trainSetRatio <- "0.7"
+```
+
+### Train-test split 작업이 완료된 Object를 저장하고, Train set을 보여줍니다.
+```{r}
+split_tmp <- goophi::trainTestSplit(data = cleaned_data, target = targetVar, prop = trainSetRatio)
+data_train <- split_tmp[[1]] # train data
+data_test <- split_tmp[[2]] # test data
+data_split <- split_tmp[[3]] # whole data with split information
+
+DT::datatable(data_train, options = list(scrollX = TRUE))
+```
+
+## 2. Preprocessing Tab
+
+#### Train set에 대한 전처리 방식을 설정합니다. 예측 변수(features, attributes)는 0번째 단계에서 유저가 원하는 column을 선택했다고 가정하고, 전체를 사용합니다. PCA는 아직 구현되지 않았습니다.
+
+|       User Input|                                    description|
+|----------------:|----------------------------------------------:|
+|       imputation|                 imputation 적용 여부 (Boolean)|
+|    normalization|              normalization 적용 여부 (Boolean)|
+|              pca|                        pca 적용 여부 (Boolean)|
+|         pcaThres| 주요 성분 선택 기준이 되는 전체 고유값에 대한 threshold|
+|   imputationType|                                imputation 방식|
+|normalizationType|                             normalization 방식|
+
+### User input
+```{r}
+formula <- paste0(targetVar, " ~ .") # user 입력 x (1에서 user가 targetVar를 입력했을 때 함께 생성) 
+
+imputation <- TRUE
+normalization <- TRUE
+pca <- FALSE
+pcaThres <- "0.7"
+imputationType = "mean" # 정리필요
+normalizationType = "range" # 정리필요
+```
+
+### train set에 적용할 전처리 정보를 담은 recipe를 생성합니다
+```{r}
+rec <- goophi::preprocessing(data = data_train,
+                             formula = formula,
+                             imputationType = imputationType,
+                             normalizationType = normalizationType,
+                             pcaThres = pcaThres,
+                             imputation = imputation,
+                             normalization = normalization,
+                             pca = pca)
+```
+
+## 3. Modeling with CV Tab
+
+#### grid search, cross validation을 통해 유저가 선택한 모델을 fitting합니다.
+
+|       User Input|                                    description|
+|----------------:|----------------------------------------------:|
+|             algo|                                   ML 모델 선택|
+|           engine|                                    engine 선택|
+|             mode|                                      mode 선택|
+|           metric|          Best performance에 대한 평가지표 선택|
+|                v| Cross validation시 train set을 몇 번 분할할 것인지 입력|
+
+
+```{r}
+# 모델 object를 저장할 빈 리스트를 생성합니다.
+models_list <- list()
+```
+
+### User input
+```{r}
+# 모델링 과정에서 사용할 engine, mode를 입력받습니다. 
+mode <- "classification"
+algo <- "Random Forest" # 해당 mode에 해당하는 algorithms 보여주기
+engine <- "ranger" # 해당 algo에 해당하는 engine 보여주기
+
+# algo, engine에 맞는 hyperparameter를 입력받습니다 (모델마다 상이함, 정리필요). 
+minNRangeMin <- "10"
+minNRangeMax <- "40"
+mtryRangeMin <- "1"
+mtryRangeMax <- "5"
+treesRangeMin <- "500"
+treesRangeMax <- "2000"
+levels <- "2"
+
+# training data를 몇 개로 나눌지 입력받습니다.
+v <- "2"
+
+# 어떤 지표로 best performance를 평가할건지 입력받습니다(정리필요).
+metric <- "roc_auc"
+```
+
+### grid search + cross validation + modeling
+```{r}
+# 사용자정의 ML 모델을 생성합니다
+if (algo == "Random Forest") {
+  
+  model <- goophi::randomForest_phi(engine = engine,
+                                    mode = mode)
+
+  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
+  mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
+  treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
+  
+  parameterGrid <- dials::grid_regular(
+    min_n(range = minNRange),
+    mtry(range = mtryRange),
+    trees(range = treesRange),
+    levels = as.numeric(levels))
+  
+  
+  # parameter grid를 적용한 cross validation을 수행합니다
+  grid_search_result <- goophi::gridSerachCV(rec = rec,
+                             model = model,
+                             v = v,
+                             data = data_train,
+                             parameterGrid = parameterGrid
+  )
+  
+  # 가장 성능이 좋은 모델을 저장합니다
+  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
+                                    metric = metric,
+                                    model = model,
+                                    formula = formula,
+                                    trainingData = data_train,
+                                    splitedData = data_split,
+                                    algo = paste0(algo,"_",engine))
+  
+  models_list <- append(models_list, list(finalized[[2]]))
+}
+```
+
+### 두 번째 모델을 저장합니다. (Shiny app에서는 + 버튼으로 모델 추가할 수 있도록?)
+
+### User input
+```{r}
+algo <- "KNN"
+engine <- "kknn"
+mode <- "classification"
+
+neighborsRangeMin <- "2"
+neighborsRangeMax <- "6"
+levels <- "1"
+
+v <- "2"
+
+metricIndex <- "roc_auc"
+```
+
+### grid search + cross validation + modeling
+```{r}
+if (algo == "KNN") {
+  model <- goophi::knn_phi(engine = engine,
+                         mode = mode)
+
+  neighborsRange <- c(as.numeric(neighborsRangeMin), as.numeric(neighborsRangeMax))
+  
+  parameterGrid <- dials::grid_regular(
+    neighbors(range = neighborsRange),
+    levels = as.numeric(levels))
+  
+  grid_search_result <- goophi::gridSerachCV(rec = rec,
+                             model = model,
+                             v = v,
+                             data = data_train,
+                             parameterGrid = parameterGrid
+  )
+  
+  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
+                                    metric = metricIndex,
+                                    model = model,
+                                    formula = formula,
+                                    trainingData = data_train,
+                                    splitedData = data_split,
+                                    algo = paste0(algo,"_",engine))
+
+  models_list <- append(models_list, list(finalized[[2]]))
+}
+
+```
+
+## 4. Report Tab
+
+### 1) ROC Curve
+```{r, fig.width = 7, fig.height = 7}
+roc_curve <- goophi::rocCurve(models_list = models_list, 
+                 targetVar = targetVar)
+roc_curve
+```
+
+### 2) Confusion Matrix
+
+### User input
+```{r}
+i = "1" # 원하는 모델의 번호 입력받기
+```
+
+```{r, fig.width = 7, fig.height = 6}
+cm <- goophi::confusionMatrix(i, models_list, targetVar)
+cm
+```
+
+### 3) Evaluation metrics
+```{r}
+evalMet <- goophi::evalMetrics(models_list, targetVar)
+knitr::kable(evalMet)
+```
+

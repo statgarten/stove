@@ -10,7 +10,8 @@ fitBestModel(
   model,
   formula,
   trainingData,
-  splitedData
+  splitedData,
+  algo
 )
 }
 \arguments{

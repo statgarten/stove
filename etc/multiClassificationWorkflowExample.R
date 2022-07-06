@@ -1,8 +1,8 @@
 ## Workflow example (Classification) ##
 
-## 유저로부터 받는 입력 및 goophi의 함수들은 camel case,
-## 예시로 사용한 변수 및 snake case로 작성된 dependencies의 함수명은 snake case로 표기합니다.
-## 다만 algorithm명은 다른 패키지와 겹치는 경우가 많아 함수명_phi 로 임시 명명하였습니다.
+## 유저로부터 받는 입력은 camel case,
+##예시로 사용한 변수 및 snake case로 작성된 dependencies의 함수명은 snake case로 표기합니다.
+
 
 ## data import
 
@@ -17,44 +17,31 @@ library(goophi)
 
 set.seed(1234)
 
-## binary
-data(titanic_train, package = "titanic")
-
-cleaned_data <- tibble::as_tibble(titanic_train) %>%
-  dplyr::select(-c(PassengerId, Name, Cabin, Ticket)) %>%
-  dplyr::mutate(across(where(is.character), factor)) %>%
-  dplyr::mutate(Survived = as.factor(Survived ))
-
-rec <- recipes::recipe(Survived ~ ., data = cleaned_data) %>%
-  step_dummy(all_predictors(), -all_numeric())
-
-rec_prep <- recipes::prep(rec)
-
-cleaned_data <- recipes::bake(rec_prep, new_data = cleaned_data)
-
+## Multivariate
+cleaned_data <- read.csv("./data/Frogs_MFCCs.csv", stringsAsFactors = TRUE) %>%
+  select(-c(Family, Genus, RecordID))
 
 ## 여기까지 완료된 데이터가 전달된다고 가정 (one-hot encoding까지 되는지 확인 필요) ##
-
 
 #### (1) Train-test split ####
 
 # target 변수를 사용자로부터 입력 받습니다
-targetVar <- "Survived"
+targetVar <- "Species"
 trainSetRatio <- "0.7"
 
 # 아래 3 가지 data를 생성합니다.
 split_tmp <- goophi::trainTestSplit(data = cleaned_data, target = targetVar, prop = trainSetRatio)
 data_train <- split_tmp[[1]] # train data
 data_test <- split_tmp[[2]] # test data
-data_split <-split_tmp[[3]] # whole data with split information
+data_split <- split_tmp[[3]] # whole data with split information
 
 #### (2) Make recipe for CV ####
 
 # 아래 변수들을 사용자로부터 입력 받습니다
 imputation <- TRUE
-normalization <- TRUE
+normalization <- FALSE
 pca <- FALSE ## need to fix warning
-formula <- "Survived ~ ."
+formula <- "Species ~ ."
 pcaThres <- "0.7"
 
 # train data에 대한 전처리 정보가 담긴 recipe를 생성합니다.
@@ -84,24 +71,11 @@ model
 #### (4) Grid serach CV ####
 
 # 모델에 사용되는 parameter들을 사용해 parameterGrid를 입력받습니다 (사용자로부터 parameter grid를 받는 방법 고민)
-minNRangeMin <- "10"
-minNRangeMax <- "40"
-mtryRangeMin <- "1"
-mtryRangeMax <- "5"
-treesRangeMin <- "500"
-treesRangeMax <- "2000"
-levels <- "2"
-
-minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
-treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
-
 parameterGrid <- dials::grid_regular(
-  min_n(range = minNRange),
-  mtry(range = mtryRange),
-  trees(range = treesRange),
-  levels = as.numeric(levels))
-
+  min_n(range = c(10, 40)),
+  mtry(range = c(1, 5)),
+  trees(range = c(500, 2000)),
+  levels = 5)
 # training data를 몇 개로 나눌지 입력받습니다.
 v <- "2"
 
@@ -133,10 +107,11 @@ last_fitted_model
 
 
 #### results ####
-# cv결과는 저장하지 않고, final_model, last_fitted_model만 모델별로 저장하도록 함.
-# 모델 각각의 roc curve는 겹쳐서 한 plot으로 그리기
-# CM은 3*3 으로..?
-# evaluation index는 merge
+# last_fitted_model만 저장함.
+# 최대 8개까지
+# roc curve는 겹쳐서
+# CM은 3*3 으로
+#evaluation index는 옆으로 붙이기
 
 # performance of final model
 last_fitted_model %>% collect_metrics()
@@ -147,13 +122,13 @@ options(yardstick.event_first = FALSE) # 오름차순으로 factor의 level 설�
 last_fitted_model %>%
   tune::collect_predictions() %>%
   dplyr::mutate(.pred_class = as.numeric(.pred_class)) %>%
-  yardstick::roc_curve(Survived, .pred_class) %>%
+  yardstick::roc_curve(Species, .pred_class) %>%
   parsnip::autoplot()
 
 # confusion matrix
 last_fitted_model %>%
   tune::collect_predictions() %>%
-  yardstick::conf_mat(Survived, .pred_class) %>%
+  yardstick::conf_mat(Species, .pred_class) %>%
   autoplot(type = "heatmap")
 
 # evaluation index
@@ -170,7 +145,7 @@ custom_metrics <- yardstick::metric_set(yardstick::accuracy,
 
 a <- custom_metrics(last_fitted_model %>%
                  tune::collect_predictions(),
-               truth = Survived,
+               truth = Species,
                estimate = .pred_class)
 
 
