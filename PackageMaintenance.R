@@ -13,8 +13,11 @@ if (! ("knitr" %in% rownames(installed.packages()))) { install.packages("knitr")
 base::require("knitr")
 
 
-# 함수 추가 시 roxygen 주석을 포함시켜 작성하고, 아래 코드로 주석을 .Rd 파일로 전환 및 NAMESPACE에 추가
-devtools::document()
+
+# DESCRIPTION 파일에 패키지 추가
+usethis::use_package("glue", type = "Imports")
+usethis::use_package("readr", type = "Suggests")
+usethis::use_dev_package("treesnip", remote = "https://github.com/curso-r/treesnip.git") # remotes
 
 # /vignettes 폴더에 패키지 설명서 추가
 usethis::use_vignette()
@@ -27,3 +30,6 @@ usethis::edit_r_environ()
 
 # R 파일 테스트
 usethis::use_test()
+
+# 함수 추가 시 roxygen 주석을 포함시켜 작성하고, 아래 코드로 주석을 .Rd 파일로 전환 및 NAMESPACE에 추가
+devtools::document()

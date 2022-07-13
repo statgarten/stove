@@ -8,19 +8,24 @@
 #' @param v v-fold CV
 #' @param data data
 #' @param parameter_grid parameter_grid
+#' @param seed seed
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
 #' @import workflows
 #' @import rsample
 #' @import tune
 #'
 #' @export
 
-gridSerachCV <- function(rec,
+gridSearchCV <- function(rec,
                          model,
                          v = "5", # 5-fold CV as default
                          data,
-                         parameterGrid
-){
+                         parameterGrid,
+                         seed = 4814){
+  set.seed(seed = seed)
   tunedWorkflow <- workflows::workflow() %>%
     workflows::add_recipe(rec) %>%
     workflows::add_model(model)
@@ -29,7 +34,7 @@ gridSerachCV <- function(rec,
                             resamples = rsample::vfold_cv(data, v = as.numeric(v)),
                             grid = parameterGrid) # warnings
 
-  return(list(tunedWorkflow, result))
+  return(list(tunedWorkflow = tunedWorkflow, result = result))
 }
 
 
@@ -44,13 +49,24 @@ gridSerachCV <- function(rec,
 #' @param formula formula
 #' @param trainingData trainingData
 #' @param splitedData splitedData
+#' @param algo algo
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
 #' @import tune
 #' @import workflows
+#' @importFrom dplyr mutate
 #'
 #' @export
 
-fitBestModel <- function(gridSearchResult, metric, model, formula, trainingData, splitedData, algo){
+fitBestModel <- function(gridSearchResult,
+                         metric,
+                         model,
+                         formula,
+                         trainingData,
+                         splitedData,
+                         algo){
   bestParams <- tune::select_best(gridSearchResult[[2]], metric) ## metric 목록 print 되도록
   finalSpec <- tune::finalize_model(model, bestParams)
 
@@ -62,7 +78,7 @@ fitBestModel <- function(gridSearchResult, metric, model, formula, trainingData,
     tune::last_fit(splitedData)
 
   finalFittedModel$.predictions[[1]] <- finalFittedModel$.predictions[[1]] %>%
-    mutate(model = algo)
+    dplyr::mutate(model = algo)
 
-  return(list(finalModel, finalFittedModel))
+  return(list(finalModel = finalModel, finalFittedModel = finalFittedModel))
 }

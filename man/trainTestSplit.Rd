@@ -4,14 +4,16 @@
 \alias{trainTestSplit}
 \title{Train-Test Split}
 \usage{
-trainTestSplit(data = data, target = NULL, prop)
+trainTestSplit(data = data, target = NULL, prop, seed = 4814)
 }
 \arguments{
 \item{data}{data}
 
+\item{target}{target}
+
 \item{prop}{prop}
 
-\item{strata}{strata}
+\item{seed}{seed}
 }
 \description{
 Train-Test Split

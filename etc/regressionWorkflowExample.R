@@ -75,7 +75,7 @@ parameterGrid <- dials::grid_regular(
 v <- 2
 
 # parameter grid를 적용한 cross validation을 수행합니다
-grid_search_result <- goophi::gridSerachCV(rec = rec,
+grid_search_result <- goophi::gridSearchCV(rec = rec,
                                            model = model,
                                            v = v,
                                            data = data_train,

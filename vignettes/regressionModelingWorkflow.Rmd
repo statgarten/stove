@@ -1,8 +1,8 @@
 ---
-title: "Classification Modeling Workflow"
+title: "Regression Modeling Workflow"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{classificationWorkflow}
+  %\VignetteIndexEntry{regressionModelingWorkflow}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 ## R environment
 
 ```{r setup}
+require(readr)
 require(dplyr)
 library(tidymodels)
 library(vip)
@@ -35,22 +36,20 @@ library(goophi)
 #### 샘플데이터를 불러와 전처리 합니다. (여기까지의 작업은 앞서 이미 진행되었다고 가정)
 
 ```{r}
-data(titanic_train, package = "titanic")
+cleaned_data <- readr::read_csv(
+    "../data/housePrice.csv") %>%
+  dplyr::select(c("SalePrice", "MSSubClass", "LotArea", "OverallQual", "OverallCond", "Street", "Utilities"))
+  
 
-cleaned_data <- tibble::as_tibble(titanic_train) %>%
-  dplyr::select(-c(PassengerId, Name, Cabin, Ticket)) %>%
-  dplyr::mutate(across(where(is.character), factor)) %>%
-  dplyr::mutate(Survived = as.factor(Survived ))
-
-rec <- recipes::recipe(Survived ~ ., data = cleaned_data) %>%
-  recipes::step_dummy(all_predictors(), -all_numeric())
+rec <- recipes::recipe(SalePrice ~ ., data = cleaned_data) %>%
+  recipes::step_naomit(all_nominal_predictors()) %>%
+  recipes::step_dummy(all_nominal_predictors())
 
 rec_prep <- recipes::prep(rec)
 
 cleaned_data <- recipes::bake(rec_prep, new_data = cleaned_data)
 knitr::kable(head(cleaned_data, 10))
 ```
-
 ## 1. Train-test split Tab
 
 #### train set, test set을 분리합니다.
@@ -63,20 +62,17 @@ knitr::kable(head(cleaned_data, 10))
 ### User input
 
 ```{r}
-targetVar <- "Survived"
+targetVar <- "SalePrice"
 trainSetRatio <- "0.7"
 ```
 
 ### Train-test split 작업이 완료된 Object를 저장하고, Train set을 보여줍니다.
 
 ```{r}
-split_tmp <- goophi::trainTestSplit(data = cleaned_data, 
-                                    target = targetVar, 
-                                    prop = trainSetRatio,
-                                    seed = 1234)
-data_train <- split_tmp[[1]] # train data
-data_test <- split_tmp[[2]] # test data
-data_split <- split_tmp[[3]] # whole data with split information
+split_tmp <- goophi::trainTestSplit(data = cleaned_data, target = targetVar, prop = trainSetRatio)
+data_train <- split_tmp$train # train data
+data_test <- split_tmp$test # test data
+data_split <- split_tmp$dataSplit # whole data with split information
 
 DT::datatable(data_train, options = list(scrollX = TRUE))
 ```
@@ -111,14 +107,13 @@ normalizationType = "range" # 정리필요
 
 ```{r}
 rec <- goophi::prepForCV(data = data_train,
-                         formula = formula,
-                         imputationType = imputationType,
-                         normalizationType = normalizationType,
-                         pcaThres = pcaThres,
-                         imputation = imputation,
-                         normalization = normalization,
-                         pca = pca,
-                         seed = 1234)
+                             formula = formula,
+                             imputationType = imputationType,
+                             normalizationType = normalizationType,
+                             pcaThres = pcaThres,
+                             imputation = imputation,
+                             normalization = normalization,
+                             pca = pca)
 ```
 
 ## 3. Modeling with CV Tab
@@ -142,98 +137,146 @@ models_list <- list()
 
 ```{r}
 # 모델링 과정에서 사용할 engine, mode를 입력받습니다. 
-mode <- "classification"
-algo <- "randomForest" # 해당 mode에 해당하는 algorithms 보여주기
-engine <- "partykit" # 해당 algo에 해당하는 engine 보여주기
+mode <- "regression"
+algo <- "LightGBM" # 해당 mode에 해당하는 algorithms 보여주기
+engine <- "lightgbm" # 해당 algo에 해당하는 engine 보여주기
 
 # algo, engine에 맞는 hyperparameter를 입력받습니다 (모델마다 상이함, 정리필요). 
-minNRangeMin <- "10"
-minNRangeMax <- "40"
-mtryRangeMin <- "1"
-mtryRangeMax <- "5"
-treesRangeMin <- "500"
-treesRangeMax <- "2000"
-levels <- "2"
+
+minNRangeMin <- "20"
+minNRangeMax <- "20"
+minNRangeLevels <- "10"
+
+mtryRangeMin <- "3"
+mtryRangeMax <- "3"
+mtryRangeLevels <- "1"
+
+treesRangeMin <- "100"
+treesRangeMax <- "500"
+treesRangeLevels <- "200"
+
+treeDepthRangeMin <- "2"
+treeDepthRangeMax <- "6"
+treeDepthRangeLevels <- "2"
+
+learnRateRangeMin <- "0.1"
+learnRateRangeMax <- "0.1"
+learnRateRangeLevels <- "0.1"
+
+lossReductionRangeMin <- "0"
+lossReductionRangeMax <- "0"
+lossReductionRangeLevels <- "1"
 
 # training data를 몇 개로 나눌지 입력받습니다.
 v <- "2"
 
 # 어떤 지표로 best performance를 평가할건지 입력받습니다(정리필요).
-metric <- "roc_auc"
+metric <- "rmse"
 ```
 
 ### grid search + cross validation + modeling
 
 ```{r}
-
 # 사용자정의 ML 모델을 생성합니다
-if (algo == "randomForest") {
+if (algo == "LightGBM") {
   
-  model <- goophi::randomForest_phi(engine = engine,
+  model <- goophi::lightGbm_phi(engine = engine,
                                     mode = mode)
-
+  
+  ## 이 입력 전부 goophi::lightGbm_phi 안에 넣기
   minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
   mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
   treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
+  treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
+  learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
+  lossReductionRange <- c(as.numeric(lossReductionRangeMin), as.numeric(lossReductionRangeMax))
   
   parameterGrid <- dials::grid_regular(
     min_n(range = minNRange),
     mtry(range = mtryRange),
     trees(range = treesRange),
-    levels = as.numeric(levels))
+    tree_depth(range = treeDepthRange), # num_leaves = 2^(max_depth)
+    learn_rate(range = learnRateRange),
+    loss_reduction(range = lossReductionRange),
+    levels = c(min_n = as.numeric(minNRangeLevels),
+               mtry = as.numeric(mtryRangeLevels),
+               trees = as.numeric(treesRangeLevels),
+               tree_depth = as.numeric(treeDepthRangeLevels),
+               learn_rate = as.numeric(learnRateRangeLevels),
+               loss_reduction = as.numeric(lossReductionRangeLevels)
+    )
+  )
+       ## 여기까지
+  
   
   # parameter grid를 적용한 cross validation을 수행합니다
   grid_search_result <- goophi::gridSearchCV(rec = rec,
                              model = model,
                              v = v,
                              data = data_train,
-                             parameterGrid = parameterGrid,
-                             seed = 1234
+                             parameterGrid = parameterGrid
   )
   
   # 가장 성능이 좋은 모델을 저장합니다
   finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric,
+                                    metric = metric, # "rmse" "rsq"
                                     model = model,
                                     formula = formula,
                                     trainingData = data_train,
                                     splitedData = data_split,
                                     algo = paste0(algo,"_",engine))
   
-  models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
+  
+  models_list <- append(models_list, list(finalized[[2]]))
 }
 ```
 
-#### 두 번째 모델을 저장합니다. (Shiny app에서는 + 버튼으로 모델 추가할 수 있도록?)
+### 두 번째 모델을 추가합니다.
 
 ### User input
 
 ```{r}
-algo <- "KNN"
-engine <- "kknn"
-mode <- "classification"
+mode <- "regression"
+algo <- "MLP"
+engine <- "nnet"
 
-neighborsRangeMin <- "2"
-neighborsRangeMax <- "6"
-levels <- "1"
+hiddenUnitsMin <- "1"
+hiddenUnitsMax <- "5"
+hiddenUnitsLevels <- "2"
+
+penaltyMin <- "0"
+penaltyMax <- "1"
+penaltyLevels <- "0.5"
+
+epochsMin <- "20"
+epochsMax <- "100"
+epochsLevels <- "30"
 
 v <- "2"
 
-metricIndex <- "roc_auc"
+metric <- "rmse"
 ```
 
 ### grid search + cross validation + modeling
 
 ```{r}
-if (algo == "KNN") {
-  model <- goophi::knn_phi(engine = engine,
+if (algo == "MLP") {
+  model <- goophi::mlp_phi(engine = engine,
                          mode = mode)
 
-  neighborsRange <- c(as.numeric(neighborsRangeMin), as.numeric(neighborsRangeMax))
+  hiddenUnitsRange <- c(as.numeric(hiddenUnitsMin), as.numeric(hiddenUnitsMax))
+  penaltyRange <- c(as.numeric(penaltyMin), as.numeric(penaltyMax))
+  epochsRange <- c(as.numeric(epochsMin), as.numeric(epochsMax))
   
   parameterGrid <- dials::grid_regular(
-    neighbors(range = neighborsRange),
-    levels = as.numeric(levels))
+    hidden_units(range = hiddenUnitsRange),
+    penalty(range = penaltyRange),
+    epochs(range = epochsRange),
+    levels = c(hidden_units = as.numeric(hiddenUnitsLevels),
+               penalty = as.numeric(penaltyLevels),
+               epochs = as.numeric(epochsLevels)
+    )
+  )
   
   grid_search_result <- goophi::gridSearchCV(rec = rec,
                              model = model,
@@ -243,46 +286,73 @@ if (algo == "KNN") {
   )
   
   finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metricIndex,
+                                    metric = metric,
                                     model = model,
                                     formula = formula,
                                     trainingData = data_train,
                                     splitedData = data_split,
                                     algo = paste0(algo,"_",engine))
 
-  models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
+  models_list <- append(models_list, list(finalized[[2]]))
 }
 
 ```
 
-## 4. Report Tab
-
-### 1) ROC Curve
-
-```{r, fig.width = 7, fig.height = 7}
-roc_curve <- goophi::rocCurve(modelsList = models_list, 
-                 targetVar = targetVar)
-roc_curve
-```
-
-### 2) Confusion Matrix
+### 세 번째 모델을 추가합니다.
 
 ### User input
 
 ```{r}
-model_name = "randomForest_ranger" # 원하는 모델의 이름 입력받기
+mode <- "regression"
+algo <- "linearRegression"
+engine <- "keras"
+
+penaltyMin <- "0"
+penaltyMax <- "1"
+penaltyLevels <- "0.5"
+mixtureMin <- "0.2"
+mixtureMax <- "0.5"
+mixtureLevles <- "0.3"
+
+v <- "2"
+
+metric <- "rmse"
 ```
 
-```{r, fig.width = 7, fig.height = 6}
-cm <- goophi::confusionMatrix(modelName = model_name,
-                              modelsList = models_list,
-                              targetVar = targetVar)
-cm
-```
-
-### 3) Evaluation metrics
+### grid search + cross validation + modeling
 
 ```{r}
-evalMet <- goophi::evalMetrics(models_list, targetVar)
-knitr::kable(evalMet)
+
+model <- goophi::linearRegression_phi(engine = engine,
+                       mode = mode)
+
+penaltyRange <- c(as.numeric(penaltyMin), as.numeric(penaltyMax))
+mixtureRange <- c(as.numeric(mixtureMin), as.numeric(mixtureMax))
+
+
+parameterGrid <- dials::grid_regular(
+  mixture(range = mixtureRange),
+  penalty(range = penaltyRange),
+  levels = c(mixture = as.numeric(mixtureLevles),
+             penalty = as.numeric(penaltyLevels)
+  )
+)
+
+grid_search_result <- goophi::gridSearchCV(rec = rec,
+                           model = model,
+                           v = v,
+                           data = data_train,
+                           parameterGrid = parameterGrid
+)
+
+finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
+                                  metric = metric,
+                                  model = model,
+                                  formula = formula,
+                                  trainingData = data_train,
+                                  splitedData = data_split,
+                                  algo = paste0(algo,"_",engine))
+
+models_list <- append(models_list, list(finalized[[2]]))
+
 ```

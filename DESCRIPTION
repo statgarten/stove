@@ -12,7 +12,46 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
 Suggests: 
     knitr,
+    readr,
     rmarkdown,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+Imports: 
+    brulee,
+    C50,
+    cowplot,
+    data.table,
+    dials,
+    dplyr,
+    DT,
+    factoextra,
+    ggplot2,
+    glmnet,
+    glue,
+    keras,
+    kknn,
+    klaR,
+    LiblineaR,
+    lightgbm,
+    magrittr,
+    naivebayes,
+    nnet,
+    parsnip,
+    partykit,
+    R6,
+    randomForest,
+    ranger,
+    RColorBrewer,
+    recipes,
+    rpart,
+    rstanarm,
+    stats,
+    treesnip (>= 0.1.0.9001),
+    tune,
+    vip,
+    workflows,
+    xgboost,
+    yardstick
+Remotes: 
+    https://github.com/curso-r/treesnip.git

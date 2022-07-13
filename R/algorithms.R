@@ -9,6 +9,10 @@
 #' @param engine  engine
 #' @param mode  mode
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
 #' @import parsnip
 #'
 #' @export
@@ -19,7 +23,13 @@ logisticRegression_phi <- function(engine = "glm",
   result <- parsnip::logistic_reg(penalty = tune(),
                                   mixture = tune()) %>%
     parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode)
+    parsnip::set_mode(mode = mode) %>%
+    translate()
+
+  parameterGrid <- dials::grid_regular(
+    penalty <- 1
+
+  )
 
   return(result)
 }
@@ -33,6 +43,10 @@ logisticRegression_phi <- function(engine = "glm",
 #' @param engine  engine
 #' @param mode  mode
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
 #' @import parsnip
 #'
 #' @export
@@ -41,9 +55,10 @@ linearRegression_phi <- function(engine = "lm",
                                    mode = "regression"){
 
   result <- parsnip::linear_reg(penalty = tune(),
-                                  mixture = tune()) %>%
+                                mixture = tune()) %>%
     parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode)
+    parsnip::set_mode(mode = mode) %>%
+    translate()
 
   return(result)
 }
@@ -60,6 +75,10 @@ linearRegression_phi <- function(engine = "lm",
 #' @param engine  engine
 #' @param mode  mode
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
 #' @import parsnip
 #'
 #' @export
@@ -68,8 +87,9 @@ randomForest_phi <- function(engine = "randomForest",
                              mode = "classification"){
 
   result <- parsnip::rand_forest(trees = tune(), min_n = tune(), mtry = tune()) %>%
-    parsnip::set_engine(engine = engine, importance = "impurity") %>%
-    parsnip::set_mode(mode = mode)
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    translate()
 
   return(result)
 }
@@ -86,6 +106,10 @@ randomForest_phi <- function(engine = "randomForest",
 #' @param engine  engine
 #' @param mode  mode
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
 #' @import parsnip
 #' @import kknn
 #'
@@ -96,7 +120,8 @@ knn_phi <- function(engine = "kknn",
 
   result <- parsnip::nearest_neighbor(neighbors = tune()) %>%
     parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode)
+    parsnip::set_mode(mode = mode) %>%
+    translate()
 
   return(result)
 }
@@ -114,21 +139,27 @@ knn_phi <- function(engine = "kknn",
 #' @param engine  engine
 #' @param mode  mode
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
 #' @import parsnip
 #'
 #' @export
 
-mlp_phi <- function(engine = "nnet",
+mlp_phi <- function(engine = "nnet", # nnet h2o
                     mode = "classification"){
 
   result <- parsnip::mlp(hidden_units = tune(),
                          penalty = tune(),
-                         dropout = tune(),
                          epochs = tune(),
-                         activation = tune(),
-                         learn_rate = tune()) %>%
+                         # dropout = tune(),
+                         # activation = tune(),
+                         # learn_rate = tune()
+                         ) %>%
     parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode)
+    parsnip::set_mode(mode = mode) %>%
+    translate()
 
   return(result)
 }
@@ -143,6 +174,10 @@ mlp_phi <- function(engine = "nnet",
 #' @param engine engine
 #' @param mode mode
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
 #' @import parsnip
 #'
 #' @export
@@ -154,7 +189,8 @@ decisionTree_phi <- function(engine = "rpart",
                                    tree_depth = tune(),
                                    min_n = tune()) %>%
     parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode)
+    parsnip::set_mode(mode = mode) %>%
+    translate()
 
   return(result)
 }
@@ -169,6 +205,10 @@ decisionTree_phi <- function(engine = "rpart",
 #' @param engine engine
 #' @param mode mode
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
 #' @import parsnip
 #'
 #' @export
@@ -179,7 +219,8 @@ naiveBayes_phi <- function(engine = "klaR",
   result <- parsnip::naive_Bayes(smoothness = tune(),
                                  Laplace = tune()) %>%
     parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode)
+    parsnip::set_mode(mode = mode) %>%
+    translate()
 
   return(result)
 }
@@ -194,6 +235,10 @@ naiveBayes_phi <- function(engine = "klaR",
 #' @param engine engine
 #' @param mode mode
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
 #' @import parsnip
 #' @import xgboost
 #'
@@ -212,7 +257,8 @@ xgboost_phi <- function(engine = "xgboost",
     sample_size = tune()
   ) %>%
     parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode)
+    parsnip::set_mode(mode = mode) %>%
+    translate()
 
   return(result)
 }
@@ -227,6 +273,10 @@ xgboost_phi <- function(engine = "xgboost",
 #' @param engine engine
 #' @param mode mode
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
 #' @import parsnip
 #' @import treesnip
 #'
@@ -244,7 +294,8 @@ lightGbm_phi <- function(engine = "lightgbm",
     learn_rate = tune()
     ) %>%
     parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode)
+    parsnip::set_mode(mode = mode) %>%
+    translate()
 
   return(result)
 }
@@ -263,6 +314,10 @@ lightGbm_phi <- function(engine = "lightgbm",
 #' @param selectOptimal selectOptimal
 #' @param seed_num seed_num
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
 #' @import stats
 #' @import factoextra
 #'

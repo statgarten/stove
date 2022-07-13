@@ -4,28 +4,33 @@
 #' Train-Test Split
 #'
 #' @param data  data
-#' @param strata  strata
+#' @param target  target
 #' @param prop  prop
+#' @param seed  seed
 #'
 #' @import rsample
 #'
 #' @export
 
-trainTestSplit <- function(data = data, target = NULL, prop){
-  data_split <- rsample::initial_split(data, strata = target, prop = as.numeric(prop))
-  train <- rsample::training(data_split)
-  test  <- rsample::testing(data_split)
+trainTestSplit <- function(data = data,
+                           target = NULL,
+                           prop,
+                           seed = 4814){
+  set.seed(seed = seed)
+  dataSplit <- rsample::initial_split(data, strata = target, prop = as.numeric(prop))
+  train <- rsample::training(dataSplit)
+  test  <- rsample::testing(dataSplit)
 
-  return(list(train, test, data_split))
+  return(list(train = train, test = test, dataSplit = dataSplit))
 }
 
 
-#' Preprocessing
+#' Preprocessing for cross validation
 #'
 #' @details
-#' Preprocessing
+#' Preprocessing for cross validation
 #'
-#' @param data  dataW
+#' @param data  data
 #' @param formula  formula
 #' @param imputationType imputationType
 #' @param normalizationType normalizationType
@@ -33,24 +38,28 @@ trainTestSplit <- function(data = data, target = NULL, prop){
 #' @param imputation imputation
 #' @param normalization normalization
 #' @param pca pca
+#' @param seed seed
 #'
-#' @import recipes
+#' @importFrom recipes recipe
+#' @importFrom recipes step_impute_bag step_impute_knn step_impute_linear step_impute_lower step_impute_mean step_impute_median step_impute_mode step_impute_roll
+#' @importFrom recipes step_center step_normalize step_range step_scale
+#' @importFrom recipes step_pca
 #'
 #' @export
 
 ## todo: make user to choose predictors
 
-preprocessing <- function(data,
+prepForCV <- function(data,
                      formula,
                      imputationType = "mean",
                      normalizationType = "range", # min-max normalization as default
                      pcaThres = "0.7", # string parameter for Shiny
                      imputation = TRUE,
                      normalization = TRUE,
-                     pca = TRUE){
-
-  result <- recipe(eval(parse(text = formula)), data = data)
-
+                     pca = TRUE,
+                     seed = 4814){
+  set.seed(seed = seed)
+  result <- recipes::recipe(eval(parse(text = formula)), data = data)
 
   # Imputation
   if (imputation == TRUE) {

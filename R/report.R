@@ -6,16 +6,19 @@
 #' @param models_list  models_list
 #' @param targetVar  targetVar
 #'
-#' @import yardstick
 #' @import RColorBrewer
-#' @import dplyr
+#' @import yardstick
+#' @importFrom dplyr group_by
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
 #'
 #' @export
 
-rocCurve <- function(models_list, targetVar){
+rocCurve <- function(modelsList, targetVar){
   colors = RColorBrewer::brewer.pal(7, "Set2")[1:8] # maximum 8 models?
 
-  plot <- do.call(rbind, models_list)[[5]] %>% ## rbind here does nothing
+  plot <- do.call(rbind, modelsList)[[5]] %>% ## rbind here does nothing
     do.call(rbind, .) %>%
     dplyr::group_by(model) %>%
     yardstick::roc_curve(truth = eval(parse(text = targetVar)),
@@ -46,23 +49,26 @@ rocCurve <- function(models_list, targetVar){
 #' @details
 #' Confusion matrix
 #'
-#' @param i  i
-#' @param models_list  models_list
+#' @param modelName  modelName
+#' @param modelsList  modelsList
 #' @param targetVar  targetVar
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
 #' @import yardstick
 #' @import tune
 #' @import ggplot2
 #'
 #' @export
 
-confusionMatrix <- function(i, models_list, targetVar){
+confusionMatrix <- function(modelName, modelsList, targetVar){
 
-  plot <- models_list[[as.numeric(i)]] %>%
+  plot <- modelsList[[modelName]] %>%
     tune::collect_predictions() %>%
     yardstick::conf_mat(eval(parse(text = targetVar)), .pred_class) %>%
     ggplot2::autoplot(type = "heatmap") +
-    ggplot2::labs(title = models_list[[as.numeric(i)]][[5]][[1]]$model[1])
+    ggplot2::labs(title = modelName)
 
   return(plot)
 }
@@ -73,17 +79,21 @@ confusionMatrix <- function(i, models_list, targetVar){
 #' @details
 #' Evaluation metrics
 #'
-#' @param i  i
-#' @param models_list  models_list
+#' @param modelsList  modelsList
 #' @param targetVar  targetVar
 #'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
 #' @import yardstick
 #' @import tune
 #' @import ggplot2
+#' @import data.table
+#' @importFrom dplyr select mutate
 #'
 #' @export
 
-evalMetrics <- function(models_list, targetVar){
+evalMetrics <- function(modelsList, targetVar){
 
   table <- data.frame()
   custom_metrics <- yardstick::metric_set(yardstick::accuracy,
@@ -95,7 +105,7 @@ evalMetrics <- function(models_list, targetVar){
                                           yardstick::mcc
   )
 
-  for (i in 1:length(models_list)) {
+  for (i in 1:length(modelsList)) {
     tmp <- custom_metrics(models_list[[as.numeric(i)]] %>%
                           tune::collect_predictions(),
                         truth = eval(parse(text = targetVar)),
@@ -105,7 +115,7 @@ evalMetrics <- function(models_list, targetVar){
       dplyr::mutate(across(where(is.numeric), ~ round(., 3)))
 
     table <- rbind(table, tmp)
-    rownames(table)[i] <- models_list[[as.numeric(i)]][[5]][[1]]$model[1]
+    rownames(table)[i] <- modelsList[[as.numeric(i)]][[5]][[1]]$model[1]
   }
   colnames(table) <- c("Accuracy", "Recall", "Specificity", "Precision", "F1-score", "Kappa", "MCC")
 
