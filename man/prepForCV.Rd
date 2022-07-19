@@ -10,9 +10,9 @@ prepForCV(
   imputationType = "mean",
   normalizationType = "range",
   pcaThres = "0.7",
-  imputation = TRUE,
-  normalization = TRUE,
-  pca = TRUE,
+  imputation = FALSE,
+  normalization = FALSE,
+  pca = FALSE,
   seed = 4814
 )
 }

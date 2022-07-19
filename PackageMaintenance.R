@@ -15,7 +15,7 @@ base::require("knitr")
 
 
 # DESCRIPTION 파일에 패키지 추가
-usethis::use_package("glue", type = "Imports")
+usethis::use_package("rlang", type = "Imports")
 usethis::use_package("readr", type = "Suggests")
 usethis::use_dev_package("treesnip", remote = "https://github.com/curso-r/treesnip.git") # remotes
 

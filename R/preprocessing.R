@@ -54,9 +54,9 @@ prepForCV <- function(data,
                      imputationType = "mean",
                      normalizationType = "range", # min-max normalization as default
                      pcaThres = "0.7", # string parameter for Shiny
-                     imputation = TRUE,
-                     normalization = TRUE,
-                     pca = TRUE,
+                     imputation = FALSE,
+                     normalization = FALSE,
+                     pca = FALSE,
                      seed = 4814){
   set.seed(seed = seed)
   result <- recipes::recipe(eval(parse(text = formula)), data = data)

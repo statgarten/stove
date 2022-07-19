@@ -19,9 +19,33 @@
 \alias{evalMetrics}
 \title{Logistic Regression}
 \usage{
-logisticRegression_phi(engine = "glm", mode = "classification")
+logisticRegression_phi(
+  engine = "glm",
+  mode = "classification",
+  data = NULL,
+  rec = NULL,
+  v = 5,
+  penaltyRangeMin = "0.0",
+  penaltyRangeMax = "1.0",
+  penaltyRangeLevels = "5",
+  mixtureRangeMin = "0.0",
+  mixtureRangeMax = "1.0",
+  mixtureRangeLevels = "5"
+)
 
-linearRegression_phi(engine = "lm", mode = "regression")
+linearRegression_phi(
+  engine = "lm",
+  mode = "regression",
+  data = NULL,
+  rec = NULL,
+  v = 5,
+  penaltyRangeMin = "0.0",
+  penaltyRangeMax = "1.0",
+  penaltyRangeLevels = "0.2",
+  mixtureRangeMin = "0.0",
+  mixtureRangeMax = "1.0",
+  mixtureRangeLevels = "0.2"
+)
 
 randomForest_phi(engine = "randomForest", mode = "classification")
 
@@ -45,7 +69,7 @@ kMeansClustering_phi(
   seed_num = 6471
 )
 
-gridSearchCV(rec, model, v = "5", data, parameterGrid, seed = 4814)
+gridSearchCV(rec, model, v = "5", data, parameterGrid = 10, seed = 4814)
 
 fitBestModel(
   gridSearchResult,
@@ -70,6 +94,10 @@ evalMetrics(modelsList, targetVar)
 
 \item{data}{data}
 
+\item{rec}{rec}
+
+\item{v}{v-fold CV}
+
 \item{maxK}{maxK}
 
 \item{nstart}{nstart}
@@ -78,11 +106,7 @@ evalMetrics(modelsList, targetVar)
 
 \item{seed_num}{seed_num}
 
-\item{rec}{rec}
-
 \item{model}{model}
-
-\item{v}{v-fold CV}
 
 \item{seed}{seed}
 
@@ -142,7 +166,7 @@ Evaluation metrics
 \details{
 로지스틱 회귀 알고리즘 함수. 예측 변수들이 정규분포를 따르지 않아도 사용할 수 있습니다.
 그러나 이 알고리즘은 결과 변수가 선형적으로 구분되며, 예측 변수들의 값이 결과 변수와 선형 관계를
-가진다고 가정합니다. 만약 데이터가 이 가정을 충족하지 않는 경우 성능이 저하될 수 있습니다.
+갖는다고 가정합니다. 만약 데이터가 이 가정을 충족하지 않는 경우 성능이 저하될 수 있습니다.
 hyperparameters: penalty, mixture
 
 Linear Regression

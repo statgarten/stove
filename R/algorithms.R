@@ -3,7 +3,7 @@
 #' @details
 #' 로지스틱 회귀 알고리즘 함수. 예측 변수들이 정규분포를 따르지 않아도 사용할 수 있습니다.
 #' 그러나 이 알고리즘은 결과 변수가 선형적으로 구분되며, 예측 변수들의 값이 결과 변수와 선형 관계를
-#' 가진다고 가정합니다. 만약 데이터가 이 가정을 충족하지 않는 경우 성능이 저하될 수 있습니다.
+#' 갖는다고 가정합니다. 만약 데이터가 이 가정을 충족하지 않는 경우 성능이 저하될 수 있습니다.
 #' hyperparameters: penalty, mixture
 #'
 #' @param engine  engine
@@ -17,21 +17,56 @@
 #'
 #' @export
 
-logisticRegression_phi <- function(engine = "glm",
-                                   mode = "classification"){
+logisticRegression <- function(engine = "glm",
+                               mode = "classification",
+                               data = NULL,
+                               rec = NULL,
+                               v = 5,
+                               penaltyRangeMin = "0.0",
+                               penaltyRangeMax = "1.0",
+                               penaltyRangeLevels = "5",
+                               mixtureRangeMin = "0.0",
+                               mixtureRangeMax = "1.0",
+                               mixtureRangeLevels = "5"){
 
-  result <- parsnip::logistic_reg(penalty = tune(),
-                                  mixture = tune()) %>%
-    parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode) %>%
-    translate()
+  penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
+  mixtureRange <- c(as.numeric(mixtureRangeMin), as.numeric(mixtureRangeMax))
 
-  parameterGrid <- dials::grid_regular(
-    penalty <- 1
+  if (engine == "glmnet" || engine == "liblinear" || engine == "brulee") {
+    parameterGrid <- dials::grid_regular(
+      dials::penalty(range = penaltyRange),
+      dials::mixture(range = mixtureRange),
+      levels = c(penalty = as.numeric(penaltyRangeLevels),
+                 mixture = as.numeric(mixtureRangeLevels)
+      )
+    )
+    model <- parsnip::logistic_reg(penalty = tune(),
+                                    mixture = tune()) %>%
+      parsnip::set_engine(engine = engine) %>%
+      parsnip::set_mode(mode = mode) %>%
+      translate()
 
-  )
+    grid_search_result <- goophi::gridSearchCV(rec = rec,
+                                               model = model,
+                                               v = v,
+                                               data = data,
+                                               parameterGrid = parameterGrid
+                                               )
 
-  return(result)
+  } else {
+    model <- parsnip::logistic_reg() %>%
+      parsnip::set_engine(engine = engine) %>%
+      parsnip::set_mode(mode = mode) %>%
+      translate()
+
+    grid_search_result <- goophi::gridSearchCV(rec = rec,
+                                               model = model,
+                                               v = v,
+                                               data = data
+    )
+  }
+
+  return(grid_search_result)
 }
 
 #' Linear Regression
@@ -52,15 +87,60 @@ logisticRegression_phi <- function(engine = "glm",
 #' @export
 
 linearRegression_phi <- function(engine = "lm",
-                                   mode = "regression"){
+                                 mode = "regression",
+                                 data = NULL,
+                                 rec = NULL,
+                                 v = 5,
+                                 penaltyRangeMin = "0.0",
+                                 penaltyRangeMax = "1.0",
+                                 penaltyRangeLevels = "0.2",
+                                 mixtureRangeMin = "0.0",
+                                 mixtureRangeMax = "1.0",
+                                 mixtureRangeLevels = "0.2"
+                                 ){
 
-  result <- parsnip::linear_reg(penalty = tune(),
-                                mixture = tune()) %>%
-    parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode) %>%
-    translate()
+  penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
+  mixtureRange <- c(as.numeric(mixtureRangeMin), as.numeric(mixtureRangeMax))
 
-  return(result)
+  if (engine == "glmnet" || engine == "brulee") {
+    parameterGrid <- dials::grid_regular(
+      dials::penalty(range = penaltyRange),
+      dials::mixture(range = mixtureRange),
+      levels = c(penalty = as.numeric(penaltyRangeLevels),
+                 mixture = as.numeric(mixtureRangeLevels)
+      )
+    )
+    model <- parsnip::linear_reg(penalty = tune(),
+                                    mixture = tune()) %>%
+      parsnip::set_engine(engine = engine) %>%
+      parsnip::set_mode(mode = mode) %>%
+      translate()
+
+    grid_search_result <- goophi::gridSearchCV(rec = rec,
+                                               model = model,
+                                               v = v,
+                                               data = data,
+                                               parameterGrid = parameterGrid
+    )
+
+
+  } else {
+    result <- parsnip::linear_reg() %>%
+      parsnip::set_engine(engine = engine) %>%
+      parsnip::set_mode(mode = mode) %>%
+      translate()
+
+    grid_search_result <- goophi::gridSearchCV(rec = rec,
+                                               model = model,
+                                               v = v,
+                                               data = data,
+                                               parameterGrid = 10 # default value of param 'grid' in tune::tune_grid
+    )
+
+  }
+
+
+  return(grid_search_result)
 }
 
 
