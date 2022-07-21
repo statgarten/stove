@@ -9,6 +9,7 @@
 #' @param seed  seed
 #'
 #' @import rsample
+#' @importFrom tidyselect all_of
 #'
 #' @export
 
@@ -17,7 +18,7 @@ trainTestSplit <- function(data = data,
                            prop,
                            seed = 4814){
   set.seed(seed = seed)
-  dataSplit <- rsample::initial_split(data, strata = target, prop = as.numeric(prop))
+  dataSplit <- rsample::initial_split(data, strata = tidyselect::all_of(target), prop = as.numeric(prop))
   train <- rsample::training(dataSplit)
   test  <- rsample::testing(dataSplit)
 
@@ -59,7 +60,8 @@ prepForCV <- function(data,
                      pca = FALSE,
                      seed = 4814){
   set.seed(seed = seed)
-  result <- recipes::recipe(eval(parse(text = formula)), data = data)
+  result <- recipes::recipe(eval(parse(text = formula)), data = data) %>%
+    recipes::step_dummy(recipes::all_nominal_predictors())
 
   # Imputation
   if (imputation == TRUE) {

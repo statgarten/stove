@@ -29,19 +29,11 @@ library(goophi)
 #### 샘플데이터를 불러와 전처리 합니다. (여기까지의 작업은 앞서 이미 진행되었다고 가정)
 
 ```{r}
-data(titanic_train, package = "titanic")
+cleaned_data <- Boston %>%
+  mutate(chas = as.factor(chas)) %>%
+  mutate(Pcrime  = ifelse(crim > median(crim), 1, 0) ) %>%
+  select(-c(crim))
 
-cleaned_data <- tibble::as_tibble(titanic_train) %>%
-  dplyr::select(-c(PassengerId, Name, Cabin, Ticket)) %>%
-  dplyr::mutate(across(where(is.character), factor)) %>%
-  dplyr::mutate(Survived = as.factor(Survived ))
-
-rec <- recipes::recipe(Survived ~ ., data = cleaned_data) %>%
-  recipes::step_dummy(recipes::all_predictors(), -recipes::all_numeric())
-
-rec_prep <- recipes::prep(rec)
-
-cleaned_data <- recipes::bake(rec_prep, new_data = cleaned_data)
 knitr::kable(head(cleaned_data, 10))
 ```
 
@@ -301,6 +293,50 @@ if (algo == "KNN") {
   models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
 }
 
+```
+
+
+### 3) Naive Bayes
+
+```{r}
+## User input
+
+mode <- "regression"
+algo <- "Naive Bayes"
+engine <- "klaR"
+
+smoothnessRangeMin = "0.1"
+smoothnessRangeMax = "2"
+smoothnessRangeLevels = "5"
+LaplaceRangeMin = "1"
+LaplaceRangeMax = "4"
+LaplaceRangeLevels = "4"
+
+v <- "2"
+
+metric <- "rmse"
+
+## grid search + cross validation + modeling
+
+finalized <- goophi::naiveBayes(algo = algo,
+                                engine = engine,
+                                mode = mode,
+                                trainingData = data_train,
+                                splitedData = data_split,
+                                formula = formula,
+                                rec = rec,
+                                v = 2,
+                                smoothnessRangeMin = smoothnessRangeMin,
+                                smoothnessRangeMax = smoothnessRangeMax,
+                                smoothnessRangeLevels = smoothnessRangeLevels,
+                                LaplaceRangeMin = LaplaceRangeMin,
+                                LaplaceRangeMax = LaplaceRangeMax,
+                                LaplaceRangeLevels = LaplaceRangeLevels,
+                                metric = metric
+                                )
+
+## models_list에 모델을 추가합니다.
+models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
 ```
 
 ## 4. Report Tab

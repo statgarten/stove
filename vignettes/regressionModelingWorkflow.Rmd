@@ -18,31 +18,23 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 require(dplyr) # import for loading/preprocessing the sample data
+require(MASS)
+data("Boston")
+attach(Boston)
 library(goophi)
-data(iris)
 ```
 
-#### Camel case : 유저로부터 받는 입력 및 goophi의 함수들 (다만 goophi 함수들 중 algorithm명은 다른 패키지와 겹치는 경우가 많아 '함수명_phi' 로 임시 명명하였습니다. 추후 수정 예정입니다.)
-#### Snake case: Shiny app의 server에서 사용(될 것이라고 예상)하는 Object명 및 snake case로 작성된 dependencies의 함수명
+#### Camel case : 유저로부터 받는 입력 및 goophi의 함수들
+#### Snake case: Shiny app의 server에서 사용(될 것이라고 예상)하는 변수명 및 snake case로 작성된 dependencies의 함수명
 
 ## 0. Import sample data
 
 #### 샘플데이터를 불러와 전처리 합니다. (여기까지의 작업은 앞서 이미 진행되었다고 가정)
 
 ```{r}
-# cleaned_data <- readr::read_csv(
-#     "../data/housePrice.csv") %>%
-#   dplyr::select(c("SalePrice", "MSSubClass", "LotArea", "OverallQual", "OverallCond", "Street"))
+cleaned_data <- Boston %>%
+  mutate(chas = as.factor(chas))
 
-cleaned_data <- iris
-
-rec <- recipes::recipe(Sepal.Length ~ ., data = cleaned_data) %>%
-  recipes::step_naomit(recipes::all_nominal_predictors()) %>%
-  recipes::step_dummy(recipes::all_nominal_predictors())
-
-rec_prep <- recipes::prep(rec)
-
-cleaned_data <- recipes::bake(rec_prep, new_data = cleaned_data)
 knitr::kable(head(cleaned_data, 10))
 ```
 ## 1. Train-test split Tab
@@ -57,8 +49,7 @@ knitr::kable(head(cleaned_data, 10))
 ### User input
 
 ```{r}
-# targetVar <- "SalePrice"
-targetVar <- "Sepal.Length"
+targetVar <- "crim"
 trainSetRatio <- "0.7"
 ```
 
@@ -70,7 +61,7 @@ data_train <- split_tmp$train # train data
 data_test <- split_tmp$test # test data
 data_split <- split_tmp$dataSplit # whole data with split information
 
-#DT::datatable(data_train, options = list(scrollX = TRUE))
+DT::datatable(data_train, options = list(scrollX = TRUE))
 ```
 
 ## 2. Preprocessing Tab
@@ -92,12 +83,11 @@ data_split <- split_tmp$dataSplit # whole data with split information
 formula <- paste0(targetVar, " ~ .") # user 입력 x (1에서 user가 targetVar를 입력했을 때 함께 생성) 
 
 imputation <- TRUE
-# normalization <- TRUE
-normalization <- FALSE
+normalization <- TRUE
 pca <- FALSE
 pcaThres <- "0.7"
-imputationType = "mean" # 정리필요
-normalizationType = "range" # 정리필요
+imputationType = "mean" 
+normalizationType = "range" 
 ```
 
 ### train set에 적용할 전처리 정보를 담은 recipe를 생성합니다
@@ -130,112 +120,15 @@ rec <- goophi::prepForCV(data = data_train,
 models_list <- list()
 ```
 
-### User input
+
+### 1) linear regression model
 
 ```{r}
-# 모델링 과정에서 사용할 engine, mode를 입력받습니다. 
-mode <- "regression"
-algo <- "LightGBM" # 해당 mode에 해당하는 algorithms 보여주기
-engine <- "lightgbm" # 해당 algo에 해당하는 engine 보여주기
+## User input
 
-# algo, engine에 맞는 hyperparameter를 입력받습니다 (모델마다 상이함, 정리필요). 
-
-minNRangeMin <- "20"
-minNRangeMax <- "20"
-minNRangeLevels <- "10"
-
-mtryRangeMin <- "3"
-mtryRangeMax <- "3"
-mtryRangeLevels <- "1"
-
-treesRangeMin <- "100"
-treesRangeMax <- "500"
-treesRangeLevels <- "200"
-
-treeDepthRangeMin <- "2"
-treeDepthRangeMax <- "6"
-treeDepthRangeLevels <- "2"
-
-learnRateRangeMin <- "0.1"
-learnRateRangeMax <- "0.1"
-learnRateRangeLevels <- "0.1"
-
-lossReductionRangeMin <- "0"
-lossReductionRangeMax <- "0"
-lossReductionRangeLevels <- "1"
-
-# training data를 몇 개로 나눌지 입력받습니다.
-v <- "2"
-
-# 어떤 지표로 best performance를 평가할건지 입력받습니다(정리필요).
-metric <- "rmse"
-```
-
-### grid search + cross validation + modeling
-
-```{r}
-# 사용자정의 ML 모델을 생성합니다
-if (algo == "LightGBM") {
-  
-  model <- goophi::lightGbm_phi(engine = engine,
-                                    mode = mode)
-  
-  ## 이 입력 전부 goophi::lightGbm_phi 안에 넣기
-  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-  mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
-  treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
-  treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
-  learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
-  lossReductionRange <- c(as.numeric(lossReductionRangeMin), as.numeric(lossReductionRangeMax))
-  
-  parameterGrid <- dials::grid_regular(
-    dials::min_n(range = minNRange),
-    dials::mtry(range = mtryRange),
-    dials::trees(range = treesRange),
-    dials::tree_depth(range = treeDepthRange), # num_leaves = 2^(max_depth)
-    dials::learn_rate(range = learnRateRange),
-    dials::loss_reduction(range = lossReductionRange),
-    levels = c(min_n = as.numeric(minNRangeLevels),
-               mtry = as.numeric(mtryRangeLevels),
-               trees = as.numeric(treesRangeLevels),
-               tree_depth = as.numeric(treeDepthRangeLevels),
-               learn_rate = as.numeric(learnRateRangeLevels),
-               loss_reduction = as.numeric(lossReductionRangeLevels)
-    )
-  )
-       ## 여기까지
-  
-  
-  # parameter grid를 적용한 cross validation을 수행합니다
-  grid_search_result <- goophi::gridSearchCV(rec = rec,
-                             model = model,
-                             v = v,
-                             data = data_train,
-                             parameterGrid = parameterGrid
-  )
-  
-  # 가장 성능이 좋은 모델을 저장합니다
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric, # "rmse" "rsq"
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = data_train,
-                                    splitedData = data_split,
-                                    algo = paste0(algo,"_",engine))
-  
-  
-  models_list <- append(models_list, list(finalized[[2]]))
-}
-```
-
-### 두 번째 모델을 추가합니다.
-
-### User input
-
-```{r}
 mode <- "regression"
 algo <- "LinearR"
-engine <- "lm"
+engine <- "glmnet"
 
 penaltyRangeMin = "0.1"
 penaltyRangeMax = "20"
@@ -244,134 +137,370 @@ mixtureRangeMin = "0.0"
 mixtureRangeMax = "1.0"
 mixtureRangeLevels = "5"
 
+v <- "2"
+
+metric <- "rmse"
+
+## grid search + cross validation + modeling
+
+finalized <- goophi::linearRegression(algo = algo,
+                                      engine = engine,
+                                      mode = mode,
+                                      trainingData = data_train,
+                                      splitedData = data_split,
+                                      formula = formula,
+                                      rec = rec,
+                                      v = 2,
+                                      penaltyRangeMin = penaltyRangeMin,
+                                      penaltyRangeMax = penaltyRangeMax,
+                                      penaltyRangeLevels = penaltyRangeLevels,
+                                      mixtureRangeMin = mixtureRangeMin,
+                                      mixtureRangeMax = mixtureRangeMax,
+                                      mixtureRangeLevels = mixtureRangeLevels,
+                                      metric = metric
+                                      )
+
+## models_list에 모델을 추가합니다.
+models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
+```
+
+
+### 2) K Nearest Neighbor
+
+```{r}
+## User input
+
+mode <- "regression"
+algo <- "KNN"
+engine <- "kknn"
+
+neighborsRangeMin = "2"
+neighborsRangeMax = "8"
+neighborsRangeLevels = "4"
 
 v <- "2"
 
 metric <- "rmse"
-```
 
-### grid search + cross validation + modeling
+## grid search + cross validation + modeling
 
-```{r}
-if (algo == "LinearR") {
-  
-  model <- goophi::linearRegression_phi(engine = engine,
+finalized <- goophi::KNN(algo = algo,
+                         engine = engine,
                          mode = mode,
-                         data = data_train,
+                         trainingData = data_train,
+                         splitedData = data_split,
+                         formula = formula,
                          rec = rec,
                          v = 2,
+                         neighborsRangeMin = neighborsRangeMin,
+                         neighborsRangeMax = neighborsRangeMax,
+                         neighborsRangeLevels = neighborsRangeLevels,
+                         metric = metric
+                         )
+
+## models_list에 모델을 추가합니다.
+models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
+```
+
+### 3) MLP
+
+```{r}
+## User input
+
+mode <- "regression"
+algo <- "MLP"
+engine <- "nnet"
+
+hiddenUnitsRangeMin = "1"
+hiddenUnitsRangeMax = "10"
+hiddenUnitsRangeLevels = "3"
+penaltyRangeMin = "0.01"
+penaltyRangeMax = "0.5"
+penaltyRangeLevels = "3"
+dropoutRangeMin = "0"
+dropoutRangeMax = "1"
+dropoutRangeLevels = "2"
+epochsRangeMin = "10"
+epochsRangeMax = "100"
+epochsRangeLevels = "2"
+activation = "linear" #"linear", "softmax", "relu", "elu"
+learnRateRangeMin = "0"
+learnRateRangeMax = "1"
+learnRateRangeLevels = "2"
+
+
+v <- "2"
+
+metric <- "rmse"
+
+## grid search + cross validation + modeling
+
+finalized <- goophi::MLP(algo = algo,
+                         engine = engine,
+                         mode = mode,
+                         trainingData = data_train,
+                         splitedData = data_split,
+                         formula = formula,
+                         rec = rec,
+                         v = 2,
+                         hiddenUnitsRangeMin = hiddenUnitsRangeMin,
+                         hiddenUnitsRangeMax = hiddenUnitsRangeMax,
+                         hiddenUnitsRangeLevels = hiddenUnitsRangeLevels,
                          penaltyRangeMin = penaltyRangeMin,
                          penaltyRangeMax = penaltyRangeMax,
                          penaltyRangeLevels = penaltyRangeLevels,
-                         mixtureRangeMin = mixtureRangeMin,
-                         mixtureRangeMax = mixtureRangeMax,
-                         mixtureRangeLevels = mixtureRangeLevels
+                         dropoutRangeMin = dropoutRangeMin,
+                         dropoutRangeMax = dropoutRangeMax,
+                         dropoutRangeLevels = dropoutRangeLevels,
+                         epochsRangeMin = epochsRangeMin,
+                         epochsRangeMax = epochsRangeMax,
+                         epochsRangeLevels = epochsRangeLevels,
+                         activation = activation, #"linear", "softmax", "relu", "elu"
+                         learnRateRangeMin = learnRateRangeMin,
+                         learnRateRangeMax = learnRateRangeMax,
+                         learnRateRangeLevels = learnRateRangeLevels,
+                         metric = metric
                          )
-  
-  #################
-#   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
-#   mixtureRange <- c(as.numeric(mixtureRangeMin), as.numeric(mixtureRangeMax))
-#   
-#   parameterGrid <- dials::grid_regular(
-#       dials::penalty(range = penaltyRange),
-#       dials::mixture(range = mixtureRange),
-#       levels = c(penalty = as.numeric(penaltyRangeLevels),
-#                  mixture = as.numeric(mixtureRangeLevels)
-#       )
-#     )
-#   ctrl <- tune::control_grid(save_pred = TRUE, verbose = TRUE)
-#   
-#   model <- parsnip::linear_reg(penalty = tune(), mixture = tune()) %>%
-#     parsnip::set_engine(engine = engine) %>%
-#     parsnip::set_mode(mode = mode) %>%
-#     translate()
-#     
-#   tunedWorkflow <- workflows::workflow() %>%
-#   workflows::add_recipe(rec) %>%
-#   workflows::add_model(model)
-# 
-#   result <- tune::tune_grid(tunedWorkflow,
-#                             resamples = rsample::vfold_cv(data_train, v = 2),
-#                             grid = parameterGrid) # warnings
-#   
-#   #################
-#     
-#   fit <- linear_reg(penalty = 1) %>% 
-#   set_engine("glmnet") %>% 
-#   fit(SalePrice ~ ., data = data_train)
-# 
-# # predict at penalty = 1
-#   predict(fit, data_train[1:3,])
-  ####################
-  
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric,
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = data_train,
-                                    splitedData = data_split,
-                                    algo = paste0(algo,"_",engine))
 
-  models_list <- append(models_list, list(finalized[[2]]))
-}
-
+## models_list에 모델을 추가합니다.
+models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
 ```
 
-### 세 번째 모델을 추가합니다.
-
-### User input
+### 4) Decision Tree
 
 ```{r}
-mode <- "regression"
-algo <- "linearRegression"
-engine <- "keras"
+## User input
 
-penaltyMin <- "0"
-penaltyMax <- "1"
-penaltyLevels <- "0.5"
-mixtureMin <- "0.2"
-mixtureMax <- "0.5"
-mixtureLevles <- "0.3"
+mode <- "regression"
+algo <- "Decision Tree"
+engine <- "rpart"
+
+treeDepthRangeMin = "3"
+treeDepthRangeMax = "10"
+treeDepthRangeLevels = "3"
+minNRangeMin = "10"
+minNRangeMax = "50"
+minNRangeLevels = "3"
+costComplexityRangeMin = "-1"
+costComplexityRangeMax = "5"
+costComplexityRangeLevels = "3"
 
 v <- "2"
 
 metric <- "rmse"
-```
 
-### grid search + cross validation + modeling
+## grid search + cross validation + modeling
 
-```{r}
-
-model <- goophi::linearRegression_phi(engine = engine,
-                       mode = mode)
-
-penaltyRange <- c(as.numeric(penaltyMin), as.numeric(penaltyMax))
-mixtureRange <- c(as.numeric(mixtureMin), as.numeric(mixtureMax))
-
-
-parameterGrid <- dials::grid_regular(
-  mixture(range = mixtureRange),
-  penalty(range = penaltyRange),
-  levels = c(mixture = as.numeric(mixtureLevles),
-             penalty = as.numeric(penaltyLevels)
-  )
-)
-
-grid_search_result <- goophi::gridSearchCV(rec = rec,
-                           model = model,
-                           v = v,
-                           data = data_train,
-                           parameterGrid = parameterGrid
-)
-
-finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                  metric = metric,
-                                  model = model,
-                                  formula = formula,
+finalized <- goophi::decisionTree(algo = algo,
+                                  engine = engine,
+                                  mode = mode,
                                   trainingData = data_train,
                                   splitedData = data_split,
-                                  algo = paste0(algo,"_",engine))
+                                  formula = formula,
+                                  rec = rec,
+                                  v = 2,
+                                  treeDepthRangeMin = treeDepthRangeMin,
+                                  treeDepthRangeMax = treeDepthRangeMax,
+                                  treeDepthRangeLevels = treeDepthRangeLevels,
+                                  minNRangeMin = minNRangeMin,
+                                  minNRangeMax = minNRangeMax,
+                                  minNRangeLevels = minNRangeLevels,
+                                  costComplexityRangeMin = costComplexityRangeMin,
+                                  costComplexityRangeMax = costComplexityRangeMax,
+                                  costComplexityRangeLevels = costComplexityRangeLevels,
+                                  metric = metric
+                                  )
 
-models_list <- append(models_list, list(finalized[[2]]))
-
+## models_list에 모델을 추가합니다.
+models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
 ```
+### 5) Random Forest
+
+```{r}
+## User input
+
+mode <- "regression"
+algo <- "Random Forest"
+engine <- "ranger"
+
+mtryRangeMin <- "1"
+mtryRangeMax <- "5"
+mtryRangeLevels <- "3"
+treesRangeMin <- "500"
+treesRangeMax <- "2000"
+treesRangeLevels <- "3"
+minNRangeMin <- "1"
+minNRangeMax <- "10"
+minNRangeLevels <- "3"
+
+v <- "2"
+
+metric <- "rmse"
+
+## grid search + cross validation + modeling
+
+finalized <- goophi::randomForest(algo = algo,
+                                  engine = engine,
+                                  mode = mode,
+                                  trainingData = data_train,
+                                  splitedData = data_split,
+                                  formula = formula,
+                                  rec = rec,
+                                  v = 2,
+                                  mtryRangeMin = mtryRangeMin,
+                                  mtryRangeMax = mtryRangeMax,
+                                  mtryRangeLevels = mtryRangeLevels,
+                                  treesRangeMin = treesRangeMin,
+                                  treesRangeMax = treesRangeMax,
+                                  treesRangeLevels = treesRangeLevels,
+                                  minNRangeMin = minNRangeMin,
+                                  minNRangeMax = minNRangeMax,
+                                  minNRangeLevels = minNRangeLevels,
+                                  metric = metric
+                                  )
+
+## models_list에 모델을 추가합니다.
+models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
+```
+
+### 6) XGBoost
+
+```{r}
+## User input
+
+mode <- "regression"
+algo <- "XGBoost"
+engine <- "xgboost"
+
+treeDepthRangeMin <- "3"
+treeDepthRangeMax <- "6"
+treeDepthRangeLevels <- "2"
+treesRangeMin <- "10"
+treesRangeMax <- "15"
+treesRangeLevels <- "2"
+learnRateRangeMin <- "0.01"
+learnRateRangeMax <- "0.3"
+learnRateRangeLevels <- "2"
+mtryRangeMin <- "1"
+mtryRangeMax <- "9"
+mtryRangeLevels <- "3"
+minNRangeMin <- "1"
+minNRangeMax <- "10"
+minNRangeLevels <- "3"
+lossReductionRangeMin <- "0"
+lossReductionRangeMax <- "10"
+lossReductionRangeLevels <- "2"
+sampleSizeRangeMin <- "0"
+sampleSizeRangeMax <- "1"
+sampleSizeRangeLevels <- "2"
+stopIter <- "10"
+
+v <- "2"
+
+metric <- "rmse"
+
+## grid search + cross validation + modeling
+
+finalized <- goophi::xgboost(algo = algo,
+                                  engine = engine,
+                                  mode = mode,
+                                  trainingData = data_train,
+                                  splitedData = data_split,
+                                  formula = formula,
+                                  rec = rec,
+                                  v = 2,
+                                  treeDepthRangeMin = treeDepthRangeMin,
+                                  treeDepthRangeMax = treeDepthRangeMax,
+                                  treeDepthRangeLevels = treeDepthRangeLevels,
+                                  treesRangeMin = treesRangeMin,
+                                  treesRangeMax = treesRangeMax,
+                                  treesRangeLevels = treesRangeLevels,
+                                  learnRateRangeMin = learnRateRangeMin,
+                                  learnRateRangeMax = learnRateRangeMax,
+                                  learnRateRangeLevels = learnRateRangeLevels,
+                                  mtryRangeMin = mtryRangeMin,
+                                  mtryRangeMax = mtryRangeMax,
+                                  mtryRangeLevels = mtryRangeLevels,
+                                  minNRangeMin = minNRangeMin,
+                                  minNRangeMax = minNRangeMax,
+                                  minNRangeLevels = minNRangeLevels,
+                                  lossReductionRangeMin = lossReductionRangeMin,
+                                  lossReductionRangeMax = lossReductionRangeMax,
+                                  lossReductionRangeLevels = lossReductionRangeLevels,
+                                  sampleSizeRangeMin = sampleSizeRangeMin,
+                                  sampleSizeRangeMax = sampleSizeRangeMax,
+                                  sampleSizeRangeLevels = sampleSizeRangeLevels,
+                                  stopIter = stopIter,
+                                  metric = metric
+                                  )
+
+## models_list에 모델을 추가합니다.
+models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
+```
+
+
+### 7) lightGBM
+
+```{r}
+## User input
+
+mode <- "regression"
+algo <- "XGBoost"
+engine <- "lightgbm"
+
+treeDepthRangeMin <- "3"
+treeDepthRangeMax <- "6"
+treeDepthRangeLevels <- "2"
+treesRangeMin <- "10"
+treesRangeMax <- "15"
+treesRangeLevels <- "2"
+learnRateRangeMin <- "0.01"
+learnRateRangeMax <- "0.3"
+learnRateRangeLevels <- "2"
+mtryRangeMin <- "1"
+mtryRangeMax <- "9"
+mtryRangeLevels <- "3"
+minNRangeMin <- "1"
+minNRangeMax <- "10"
+minNRangeLevels <- "3"
+lossReductionRangeMin <- "0"
+lossReductionRangeMax <- "10"
+lossReductionRangeLevels <- "2"
+
+v <- "2"
+
+metric <- "rmse"
+
+## grid search + cross validation + modeling
+
+finalized <- goophi::lightGbm(algo = algo,
+                                  engine = engine,
+                                  mode = mode,
+                                  trainingData = data_train,
+                                  splitedData = data_split,
+                                  formula = formula,
+                                  rec = rec,
+                                  v = 2,
+                                  treeDepthRangeMin = treeDepthRangeMin,
+                                  treeDepthRangeMax = treeDepthRangeMax,
+                                  treeDepthRangeLevels = treeDepthRangeLevels,
+                                  treesRangeMin = treesRangeMin,
+                                  treesRangeMax = treesRangeMax,
+                                  treesRangeLevels = treesRangeLevels,
+                                  learnRateRangeMin = learnRateRangeMin,
+                                  learnRateRangeMax = learnRateRangeMax,
+                                  learnRateRangeLevels = learnRateRangeLevels,
+                                  mtryRangeMin = mtryRangeMin,
+                                  mtryRangeMax = mtryRangeMax,
+                                  mtryRangeLevels = mtryRangeLevels,
+                                  minNRangeMin = minNRangeMin,
+                                  minNRangeMax = minNRangeMax,
+                                  minNRangeLevels = minNRangeLevels,
+                                  lossReductionRangeMin = lossReductionRangeMin,
+                                  lossReductionRangeMax = lossReductionRangeMax,
+                                  lossReductionRangeLevels = lossReductionRangeLevels,
+                                  metric = metric
+                                  )
+
+## models_list에 모델을 추가합니다.
+models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
