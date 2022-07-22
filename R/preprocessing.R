@@ -54,10 +54,8 @@ prepForCV <- function(data,
                      formula,
                      imputationType = "mean",
                      normalizationType = "range", # min-max normalization as default
-                     pcaThres = "0.7", # string parameter for Shiny
                      imputation = FALSE,
                      normalization = FALSE,
-                     pca = FALSE,
                      seed = 4814){
   set.seed(seed = seed)
   result <- recipes::recipe(eval(parse(text = formula)), data = data) %>%
@@ -101,14 +99,14 @@ prepForCV <- function(data,
     }
   }
 
-  # PCA
-  if (pca == TRUE) {
-    result <- result %>%
-      recipes::step_pca(all_numeric(),
-                        threshold = eval(parse(text = pcaThres))) ## todo: make users to perform PCA for numeric var only or numeric except for binary
-  } else {
-    # pass
-  }
+  # # PCA
+  # if (pca == TRUE) {
+  #   result <- result %>%
+  #     recipes::step_pca(all_numeric(),
+  #                       threshold = eval(parse(text = pcaThres))) ## todo: make users to perform PCA for numeric var only or numeric except for binary
+  # } else {
+  #   # pass
+  # }
 
   return(result)
 }

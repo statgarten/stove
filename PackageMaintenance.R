@@ -20,7 +20,7 @@ usethis::use_package("readr", type = "Suggests")
 usethis::use_dev_package("treesnip", remote = "https://github.com/curso-r/treesnip.git") # remotes
 
 # /vignettes 폴더에 패키지 설명서 추가
-usethis::use_vignette()
+usethis::use_vignette("clusteringWorkflow")
 
 # 패키지에 데이터가 추가될 경우, 아래 함수로 해당 object를 /data 폴더에 저장
 usethis::use_data()

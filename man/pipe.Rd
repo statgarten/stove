@@ -16,7 +16,9 @@
 \alias{fitBestModel}
 \alias{rocCurve}
 \alias{confusionMatrix}
-\alias{evalMetrics}
+\alias{regressionPlot}
+\alias{evalMetricsC}
+\alias{evalMetricsR}
 \title{Logistic Regression}
 \usage{
 logisticRegression(
@@ -103,16 +105,9 @@ MLP(
   penaltyRangeMin = "0.01",
   penaltyRangeMax = "0.5",
   penaltyRangeLevels = "3",
-  dropoutRangeMin = "0",
-  dropoutRangeMax = "1",
-  dropoutRangeLevels = "2",
   epochsRangeMin = "10",
   epochsRangeMax = "100",
   epochsRangeLevels = "2",
-  activation = "linear",
-  learnRateRangeMin = "0",
-  learnRateRangeMax = "1",
-  learnRateRangeLevels = "2",
   metric = NULL
 )
 
@@ -246,7 +241,11 @@ rocCurve(modelsList, targetVar)
 
 confusionMatrix(modelName, modelsList, targetVar)
 
-evalMetrics(modelsList, targetVar)
+regressionPlot(modelName, modelsList, targetVar)
+
+evalMetricsC(modelsList, targetVar)
+
+evalMetricsR(modelsList, targetVar)
 }
 \arguments{
 \item{algo}{algo}
@@ -303,25 +302,11 @@ evalMetrics(modelsList, targetVar)
 
 \item{hiddenUnitsRangeLevels}{hiddenUnitsRangeLevels}
 
-\item{dropoutRangeMin}{dropoutRangeMin}
-
-\item{dropoutRangeMax}{dropoutRangeMax}
-
-\item{dropoutRangeLevels}{dropoutRangeLevels}
-
 \item{epochsRangeMin}{epochsRangeMin}
 
 \item{epochsRangeMax}{epochsRangeMax}
 
 \item{epochsRangeLevels}{epochsRangeLevels}
-
-\item{activation}{activation}
-
-\item{learnRateRangeMin}{learnRateRangeMin}
-
-\item{learnRateRangeMax}{learnRateRangeMax}
-
-\item{learnRateRangeLevels}{learnRateRangeLevels}
 
 \item{treeDepthRangeMin}{treeDepthRangeMin}
 
@@ -353,6 +338,12 @@ evalMetrics(modelsList, targetVar)
 
 \item{treesRangeLevels}{treesRangeLevels}
 
+\item{learnRateRangeMin}{learnRateRangeMin}
+
+\item{learnRateRangeMax}{learnRateRangeMax}
+
+\item{learnRateRangeLevels}{learnRateRangeLevels}
+
 \item{data}{data}
 
 \item{maxK}{maxK}
@@ -374,6 +365,14 @@ evalMetrics(modelsList, targetVar)
 \item{targetVar}{targetVar}
 
 \item{modelName}{modelName}
+
+\item{dropoutRangeMin}{dropoutRangeMin}
+
+\item{dropoutRangeMax}{dropoutRangeMax}
+
+\item{dropoutRangeLevels}{dropoutRangeLevels}
+
+\item{activation}{activation}
 
 \item{parameter_grid}{parameter_grid}
 
@@ -408,7 +407,11 @@ AUC-ROC Curve
 
 Confusion matrix
 
-Evaluation metrics
+Regression plot
+
+Evaluation metrics for Classification
+
+Evaluation metrics for Regression
 }
 \details{
 로지스틱 회귀 알고리즘 함수. 예측 변수들이 정규분포를 따르지 않아도 사용할 수 있습니다.
@@ -459,5 +462,9 @@ AUC-ROC Curve
 
 Confusion matrix
 
-Evaluation metrics
+Regression plot
+
+Evaluation metrics for Classification
+
+Evaluation metrics for Regression
 }

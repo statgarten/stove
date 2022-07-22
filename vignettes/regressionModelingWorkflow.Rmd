@@ -84,8 +84,6 @@ formula <- paste0(targetVar, " ~ .") # user 입력 x (1에서 user가 targetVar�
 
 imputation <- TRUE
 normalization <- TRUE
-pca <- FALSE
-pcaThres <- "0.7"
 imputationType = "mean" 
 normalizationType = "range" 
 ```
@@ -94,13 +92,12 @@ normalizationType = "range"
 
 ```{r}
 rec <- goophi::prepForCV(data = data_train,
-                             formula = formula,
-                             imputationType = imputationType,
-                             normalizationType = normalizationType,
-                             pcaThres = pcaThres,
-                             imputation = imputation,
-                             normalization = normalization,
-                             pca = pca)
+                         formula = formula,
+                         imputationType = imputationType,
+                         normalizationType = normalizationType,
+                         imputation = imputation,
+                         normalization = normalization,
+                         seed = 1234)
 ```
 
 ## 3. Modeling with CV Tab
@@ -313,6 +310,8 @@ finalized <- goophi::decisionTree(algo = algo,
 
 ## models_list에 모델을 추가합니다.
 models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
+
+## A correlation computation is required, but `estimate` is constant and has 0 standard deviation ... warning은 
 ```
 ### 5) Random Forest
 
@@ -445,7 +444,7 @@ models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
 ## User input
 
 mode <- "regression"
-algo <- "XGBoost"
+algo <- "light GBM"
 engine <- "lightgbm"
 
 treeDepthRangeMin <- "3"
@@ -504,3 +503,36 @@ finalized <- goophi::lightGbm(algo = algo,
 
 ## models_list에 모델을 추가합니다.
 models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
+```
+
+
+## 4. Report Tab
+
+```{r}
+## user input
+for (i in 1:7){
+  print(models_list[[i]]$.predictions[[1]]$model[1])
+}
+
+modelName <- "Random Forest_ranger"
+```
+### 1) Regression plot
+
+```{r}
+models_list[[modelName]] %>% 
+  tune::collect_predictions() %>%
+  ggplot2::ggplot(aes(x = eval(parse(text = targetVar)), y = models_list[[modelName]]$.predictions[[1]][1]$.pred)) +
+  ggplot2::labs(title = "Regression Plot (Truth vs Prediced)",
+         x = "Truth",
+         y = "Predicted") +
+  ggplot2::geom_abline(color = "gray50", lty = 2) + 
+  ggplot2::geom_point(alpha = 0.5) + 
+  tune::coord_obs_pred()
+```
+### 2) Evaluation metrics
+
+```{r}
+## evaluation index
+evalMet <- goophi::evalMetricsR(models_list, targetVar)
+knitr::kable(evalMet)
+```

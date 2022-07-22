@@ -412,47 +412,47 @@ MLP <- function(algo = "MLP",
                 penaltyRangeMin = "0.01",
                 penaltyRangeMax = "0.5",
                 penaltyRangeLevels = "3",
-                dropoutRangeMin = "0",
-                dropoutRangeMax = "1",
-                dropoutRangeLevels = "2",
+                # dropoutRangeMin = "0",
+                # dropoutRangeMax = "1",
+                # dropoutRangeLevels = "2",
                 epochsRangeMin = "10",
                 epochsRangeMax = "100",
                 epochsRangeLevels = "2",
-                activation = "linear", #"linear", "softmax", "relu", and "elu"
-                learnRateRangeMin = "0",
-                learnRateRangeMax = "1",
-                learnRateRangeLevels = "2",
+                # activation = "linear", #"linear", "softmax", "relu", and "elu"
+                # learnRateRangeMin = "0",
+                # learnRateRangeMax = "1",
+                # learnRateRangeLevels = "2",
                 metric = NULL
                 ){
 
   hiddenUnitsRange <- c(as.numeric(hiddenUnitsRangeMin), as.numeric(hiddenUnitsRangeMax))
   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
-  dropoutRange <- c(as.numeric(dropoutRangeMin), as.numeric(dropoutRangeMax))
+  # dropoutRange <- c(as.numeric(dropoutRangeMin), as.numeric(dropoutRangeMax))
   epochsRange <- c(as.numeric(epochsRangeMin), as.numeric(epochsRangeMax))
-  learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
+  # learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
 
   parameterGrid <- dials::grid_regular(
     dials::hidden_units(range = hiddenUnitsRange),
     dials::penalty(range = penaltyRange),
-    dials::dropout(range = dropoutRange),
+    # dials::dropout(range = dropoutRange),
     dials::epochs(range = epochsRange),
-    dials::learn_rate(range = learnRateRange),
-    dials::activation(values = activation),
+    # dials::learn_rate(range = learnRateRange),
+    # dials::activation(values = activation),
     levels = c(hidden_units = as.numeric(hiddenUnitsRangeLevels),
                penalty = as.numeric(penaltyRangeLevels),
-               dropout = as.numeric(dropoutRangeLevels),
-               epochs = as.numeric(epochsRangeLevels),
-               learn_rate = as.numeric(learnRateRangeLevels),
-               activation = 1
+               # dropout = as.numeric(dropoutRangeLevels),
+               epochs = as.numeric(epochsRangeLevels)
+               # learn_rate = as.numeric(learnRateRangeLevels),
+               # activation = 1
     )
   )
 
   model <- parsnip::mlp(hidden_units = tune(),
                         penalty = tune(),
                         epochs = tune(),
-                        dropout = tune(),
-                        activation = tune(),
-                        learn_rate = tune()
+                        # dropout = tune(),
+                        # activation = tune(),
+                        # learn_rate = tune()
                         ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
@@ -899,10 +899,10 @@ lightGbm <- function(algo = "Random Forest",
 #'
 
 kMeansClustering <- function(data,
-                                 maxK = 10,
-                                 nstart = 25,
-                                 selectOptimal = "silhouette",
-                                 seed_num = 6471){
+                             maxK = 10,
+                             nstart = 25,
+                             selectOptimal = "silhouette",
+                             seed_num = 6471){
 
   set.seed(seed_num)
   tmp_result <- factoextra::fviz_nbclust(data, stats::kmeans, method = selectOptimal, k.max = maxK)
