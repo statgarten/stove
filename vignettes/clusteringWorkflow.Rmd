@@ -1,0 +1,67 @@
+---
+title: "clusteringWorkflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{clusteringWorkflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## R environment
+
+```{r setup}
+require(dplyr) # import for loading/preprocessing the sample data
+library(goophi)
+```
+
+#### Camel case : 유저로부터 받는 입력 및 goophi의 함수들
+#### Snake case: Shiny app의 server에서 사용(될 것이라고 예상)하는 변수명 및 snake case로 작성된 dependencies의 함수명
+
+## 0. Import sample data
+
+#### 샘플데이터를 불러와 전처리 합니다. (여기까지의 작업은 앞서 이미 진행되었다고 가정)
+
+```{r}
+url = 'http://www.biz.uiowa.edu/faculty/jledolter/DataMining/protein.csv'
+mydata <- readr::read_csv(url)
+data_cleaned <- mydata %>% dplyr::select(RedMeat, WhiteMeat, Eggs, Milk) ## unsupervised -> target 변수는 제외
+```
+
+## 1. K-means clustering
+
+```{r}
+## user input
+maxK <- 15 # k = 2:maxK
+selectOptimal <- "silhouette" # "silhouette", "gap_stat" // there's no mathematical definition for selecting optimal k using 'elbow' method.
+nStart <- 25 # attempts 25 initial configurations
+seed = 1234
+
+## K-means clustering
+km_model <- goophi::kMeansClustering(data = data_cleaned,
+                                     maxK = maxK,
+                                     nstart = nStart,
+                                     selectOptimal = selectOptimal,
+                                     seed_num = seed)
+
+km_model
+```
+
+## 2. Visualize
+
+```{r}
+vis_result <- goophi::clusteringVis(data = data_cleaned,
+                          model = km_model,
+                          nStart = 25,
+                          maxK = 10)
+vis_result$clustVis
+
+vis_result$optimalK
+```
+

@@ -2,42 +2,222 @@
 % Please edit documentation in R/algorithms.R, R/fitting.R, R/report.R
 \name{\%>\%}
 \alias{\%>\%}
-\alias{logisticRegression_phi}
-\alias{linearRegression_phi}
-\alias{randomForest_phi}
-\alias{knn_phi}
-\alias{mlp_phi}
-\alias{decisionTree_phi}
-\alias{naiveBayes_phi}
-\alias{xgboost_phi}
-\alias{lightGbm_phi}
-\alias{kMeansClustering_phi}
+\alias{logisticRegression}
+\alias{linearRegression}
+\alias{KNN}
+\alias{naiveBayes}
+\alias{MLP}
+\alias{decisionTree}
+\alias{randomForest}
+\alias{xgboost}
+\alias{lightGbm}
+\alias{kMeansClustering}
 \alias{gridSearchCV}
 \alias{fitBestModel}
 \alias{rocCurve}
 \alias{confusionMatrix}
-\alias{evalMetrics}
+\alias{regressionPlot}
+\alias{evalMetricsC}
+\alias{evalMetricsR}
 \title{Logistic Regression}
 \usage{
-logisticRegression_phi(engine = "glm", mode = "classification")
+logisticRegression(
+  algo = "logistic Regression",
+  engine = "glm",
+  mode = "classification",
+  trainingData = NULL,
+  splitedData = NULL,
+  formula = NULL,
+  rec = NULL,
+  v = 5,
+  penaltyRangeMin = "0.0",
+  penaltyRangeMax = "1.0",
+  penaltyRangeLevels = "5",
+  mixtureRangeMin = "0.0",
+  mixtureRangeMax = "1.0",
+  mixtureRangeLevels = "5",
+  metric = NULL
+)
 
-linearRegression_phi(engine = "lm", mode = "regression")
+linearRegression(
+  algo = "linear Regression",
+  engine = "lm",
+  mode = "regression",
+  trainingData = NULL,
+  splitedData = NULL,
+  formula = NULL,
+  rec = NULL,
+  v = 5,
+  penaltyRangeMin = "0.0",
+  penaltyRangeMax = "1.0",
+  penaltyRangeLevels = "5",
+  mixtureRangeMin = "0.0",
+  mixtureRangeMax = "1.0",
+  mixtureRangeLevels = "5",
+  metric = NULL
+)
 
-randomForest_phi(engine = "randomForest", mode = "classification")
+KNN(
+  algo = "KNN",
+  engine = "kknn",
+  mode = "classification",
+  trainingData = NULL,
+  splitedData = NULL,
+  formula = NULL,
+  rec = NULL,
+  v = 5,
+  neighborsRangeMin = "2",
+  neighborsRangeMax = "8",
+  neighborsRangeLevels = "4",
+  metric = NULL
+)
 
-knn_phi(engine = "kknn", mode = "classification")
+naiveBayes(
+  algo = "Naive Bayes",
+  engine = "klaR",
+  mode = "classification",
+  trainingData = NULL,
+  splitedData = NULL,
+  formula = NULL,
+  rec = NULL,
+  v = 5,
+  smoothnessRangeMin = "0.1",
+  smoothnessRangeMax = "2",
+  smoothnessRangeLevels = "5",
+  LaplaceRangeMin = "1",
+  LaplaceRangeMax = "4",
+  LaplaceRangeLevels = "4",
+  metric = NULL
+)
 
-mlp_phi(engine = "nnet", mode = "classification")
+MLP(
+  algo = "MLP",
+  engine = "nnet",
+  mode = "classification",
+  trainingData = NULL,
+  splitedData = NULL,
+  formula = NULL,
+  rec = NULL,
+  v = 5,
+  hiddenUnitsRangeMin = "1",
+  hiddenUnitsRangeMax = "10",
+  hiddenUnitsRangeLevels = "3",
+  penaltyRangeMin = "0.01",
+  penaltyRangeMax = "0.5",
+  penaltyRangeLevels = "3",
+  epochsRangeMin = "10",
+  epochsRangeMax = "100",
+  epochsRangeLevels = "2",
+  metric = NULL
+)
 
-decisionTree_phi(engine = "rpart", mode = "classification")
+decisionTree(
+  algo = "MLP",
+  engine = "rpart",
+  mode = "classification",
+  trainingData = NULL,
+  splitedData = NULL,
+  formula = NULL,
+  rec = NULL,
+  v = 5,
+  treeDepthRangeMin = "3",
+  treeDepthRangeMax = "10",
+  treeDepthRangeLevels = "3",
+  minNRangeMin = "10",
+  minNRangeMax = "50",
+  minNRangeLevels = "3",
+  costComplexityRangeMin = "-1",
+  costComplexityRangeMax = "5",
+  costComplexityRangeLevels = "3",
+  metric = NULL
+)
 
-naiveBayes_phi(engine = "klaR", mode = "classification")
+randomForest(
+  algo = "Random Forest",
+  engine = "ranger",
+  mode = "classification",
+  trainingData = NULL,
+  splitedData = NULL,
+  formula = NULL,
+  rec = NULL,
+  v = 5,
+  mtryRangeMin = "1",
+  mtryRangeMax = "5",
+  mtryRangeLevels = "3",
+  treesRangeMin = "500",
+  treesRangeMax = "2000",
+  treesRangeLevels = "3",
+  minNRangeMin = "10",
+  minNRangeMax = "40",
+  minNRangeLevels = "3",
+  metric = NULL
+)
 
-xgboost_phi(engine = "xgboost", mode = "classification")
+xgboost(
+  algo = "Random Forest",
+  engine = "xgboost",
+  mode = "classification",
+  trainingData = NULL,
+  splitedData = NULL,
+  formula = NULL,
+  rec = NULL,
+  v = 5,
+  treeDepthRangeMin = "3",
+  treeDepthRangeMax = "6",
+  treeDepthRangeLevels = "2",
+  treesRangeMin = "10",
+  treesRangeMax = "15",
+  treesRangeLevels = "2",
+  learnRateRangeMin = "0.01",
+  learnRateRangeMax = "0.3",
+  learnRateRangeLevels = "2",
+  mtryRangeMin = "1",
+  mtryRangeMax = "9",
+  mtryRangeLevels = "3",
+  minNRangeMin = "1",
+  minNRangeMax = "10",
+  minNRangeLevels = "3",
+  lossReductionRangeMin = "0",
+  lossReductionRangeMax = "10",
+  lossReductionRangeLevels = "2",
+  sampleSizeRangeMin = "0",
+  sampleSizeRangeMax = "1",
+  sampleSizeRangeLevels = "2",
+  stopIter = "10",
+  metric = NULL
+)
 
-lightGbm_phi(engine = "lightgbm", mode = "classification")
+lightGbm(
+  algo = "Random Forest",
+  engine = "lightgbm",
+  mode = "classification",
+  trainingData = NULL,
+  splitedData = NULL,
+  formula = NULL,
+  rec = NULL,
+  v = 5,
+  treeDepthRangeMin = "3",
+  treeDepthRangeMax = "6",
+  treeDepthRangeLevels = "2",
+  treesRangeMin = "10",
+  treesRangeMax = "15",
+  treesRangeLevels = "2",
+  learnRateRangeMin = "0.01",
+  learnRateRangeMax = "0.3",
+  learnRateRangeLevels = "2",
+  mtryRangeMin = "1",
+  mtryRangeMax = "9",
+  mtryRangeLevels = "3",
+  minNRangeMin = "1",
+  minNRangeMax = "10",
+  minNRangeLevels = "3",
+  lossReductionRangeMin = "0",
+  lossReductionRangeMax = "10",
+  lossReductionRangeLevels = "2",
+  metric = NULL
+)
 
-kMeansClustering_phi(
+kMeansClustering(
   data,
   maxK = 10,
   nstart = 25,
@@ -45,7 +225,7 @@ kMeansClustering_phi(
   seed_num = 6471
 )
 
-gridSearchCV(rec, model, v = "5", data, parameterGrid, seed = 4814)
+gridSearchCV(rec, model, v = "5", data, parameterGrid = 10, seed = 4814)
 
 fitBestModel(
   gridSearchResult,
@@ -61,12 +241,108 @@ rocCurve(modelsList, targetVar)
 
 confusionMatrix(modelName, modelsList, targetVar)
 
-evalMetrics(modelsList, targetVar)
+regressionPlot(modelName, modelsList, targetVar)
+
+evalMetricsC(modelsList, targetVar)
+
+evalMetricsR(modelsList, targetVar)
 }
 \arguments{
+\item{algo}{algo}
+
 \item{engine}{engine}
 
 \item{mode}{mode}
+
+\item{trainingData}{trainingData}
+
+\item{splitedData}{splitedData}
+
+\item{formula}{formula}
+
+\item{rec}{rec}
+
+\item{v}{v-fold CV}
+
+\item{penaltyRangeMin}{penaltyRangeMin}
+
+\item{penaltyRangeMax}{penaltyRangeMax}
+
+\item{penaltyRangeLevels}{penaltyRangeLevels}
+
+\item{mixtureRangeMin}{mixtureRangeMin}
+
+\item{mixtureRangeMax}{mixtureRangeMax}
+
+\item{mixtureRangeLevels}{mixtureRangeLevels}
+
+\item{metric}{metric}
+
+\item{neighborsRangeMin}{neighborsRangeMin}
+
+\item{neighborsRangeMax}{neighborsRangeMax}
+
+\item{neighborsRangeLevels}{neighborsRangeLevels}
+
+\item{smoothnessRangeMin}{smoothnessRangeMin}
+
+\item{smoothnessRangeMax}{smoothnessRangeMax}
+
+\item{smoothnessRangeLevels}{smoothnessRangeLevels}
+
+\item{LaplaceRangeMin}{LaplaceRangeMin}
+
+\item{LaplaceRangeMax}{LaplaceRangeMax}
+
+\item{LaplaceRangeLevels}{LaplaceRangeLevels}
+
+\item{hiddenUnitsRangeMin}{hiddenUnitsRangeMin}
+
+\item{hiddenUnitsRangeMax}{hiddenUnitsRangeMax}
+
+\item{hiddenUnitsRangeLevels}{hiddenUnitsRangeLevels}
+
+\item{epochsRangeMin}{epochsRangeMin}
+
+\item{epochsRangeMax}{epochsRangeMax}
+
+\item{epochsRangeLevels}{epochsRangeLevels}
+
+\item{treeDepthRangeMin}{treeDepthRangeMin}
+
+\item{treeDepthRangeMax}{treeDepthRangeMax}
+
+\item{treeDepthRangeLevels}{treeDepthRangeLevels}
+
+\item{minNRangeMin}{minNRangeMin}
+
+\item{minNRangeMax}{minNRangeMax}
+
+\item{minNRangeLevels}{minNRangeLevels}
+
+\item{costComplexityRangeMin}{costComplexityRangeMin}
+
+\item{costComplexityRangeMax}{costComplexityRangeMax}
+
+\item{costComplexityRangeLevels}{costComplexityRangeLevels}
+
+\item{mtryRangeMin}{mtryRangeMin}
+
+\item{mtryRangeMax}{mtryRangeMax}
+
+\item{mtryRangeLevels}{mtryRangeLevels}
+
+\item{treesRangeMin}{treesRangeMin}
+
+\item{treesRangeMax}{treesRangeMax}
+
+\item{treesRangeLevels}{treesRangeLevels}
+
+\item{learnRateRangeMin}{learnRateRangeMin}
+
+\item{learnRateRangeMax}{learnRateRangeMax}
+
+\item{learnRateRangeLevels}{learnRateRangeLevels}
 
 \item{data}{data}
 
@@ -78,31 +354,25 @@ evalMetrics(modelsList, targetVar)
 
 \item{seed_num}{seed_num}
 
-\item{rec}{rec}
-
 \item{model}{model}
-
-\item{v}{v-fold CV}
 
 \item{seed}{seed}
 
 \item{gridSearchResult}{gridSearchResult}
-
-\item{metric}{metric}
-
-\item{formula}{formula}
-
-\item{trainingData}{trainingData}
-
-\item{splitedData}{splitedData}
-
-\item{algo}{algo}
 
 \item{modelsList}{modelsList}
 
 \item{targetVar}{targetVar}
 
 \item{modelName}{modelName}
+
+\item{dropoutRangeMin}{dropoutRangeMin}
+
+\item{dropoutRangeMax}{dropoutRangeMax}
+
+\item{dropoutRangeLevels}{dropoutRangeLevels}
+
+\item{activation}{activation}
 
 \item{parameter_grid}{parameter_grid}
 
@@ -113,15 +383,15 @@ Logistic Regression
 
 Linear Regression
 
-Random Forest
-
 K-Nearest Neighbors
+
+Naive Bayes
 
 neural network
 
 Decision Tree
 
-Naive Bayes
+Random Forest
 
 XGBoost
 
@@ -137,25 +407,27 @@ AUC-ROC Curve
 
 Confusion matrix
 
-Evaluation metrics
+Regression plot
+
+Evaluation metrics for Classification
+
+Evaluation metrics for Regression
 }
 \details{
 로지스틱 회귀 알고리즘 함수. 예측 변수들이 정규분포를 따르지 않아도 사용할 수 있습니다.
 그러나 이 알고리즘은 결과 변수가 선형적으로 구분되며, 예측 변수들의 값이 결과 변수와 선형 관계를
-가진다고 가정합니다. 만약 데이터가 이 가정을 충족하지 않는 경우 성능이 저하될 수 있습니다.
+갖는다고 가정합니다. 만약 데이터가 이 가정을 충족하지 않는 경우 성능이 저하될 수 있습니다.
 hyperparameters: penalty, mixture
 
 Linear Regression
 hyperparameters: penalty, mixture
 
-랜덤 포레스트 알고리즘 함수. 여러개의 Decision Tree를 형성.
-새로운 데이터 포인트를 각 트리에 동시에 통과 시켜 각 트리가 분류한 결과에서 투표를 실시하여
-가장 많이 득표한 결과를 최종 분류 결과로 선택
-hyperparameters: trees, min_n, mtry
-
 KNN 알고리즘 함수.
 데이터로부터 거리가 가까운 K개의 다른 데이터의 레이블을 참조하여 분류하는 알고리즘
 hyperparameters: neighbors
+
+Naive Bayes
+hyperparameters: smoothness, Laplace
 
 neural network 알고리즘 함수.
 neural network 모델은 생물학적인 뉴런을 수학적으로 모델링한 것.
@@ -166,8 +438,10 @@ hyperparameters: hidden_units, penalty, dropout, epochs, activation, learn_rate
 의사결정나무 알고리즘 함수. 의사 결정 규칙 (Decision rule)을 나무 형태로 분류해 나가는 분석 기법을 말합니다.
 hyperparameters: cost_complexity, tree_depth, min_n
 
-Naive Bayes
-hyperparameters: smoothness, Laplace
+랜덤 포레스트 알고리즘 함수. 여러개의 Decision Tree를 형성.
+새로운 데이터 포인트를 각 트리에 동시에 통과 시켜 각 트리가 분류한 결과에서 투표를 실시하여
+가장 많이 득표한 결과를 최종 분류 결과로 선택
+hyperparameters: trees, min_n, mtry
 
 XGBoost
 hyperparameters: mtry, min_n, tree_depth, loss_reduction, learn_rate, sample_size
@@ -188,5 +462,9 @@ AUC-ROC Curve
 
 Confusion matrix
 
-Evaluation metrics
+Regression plot
+
+Evaluation metrics for Classification
+
+Evaluation metrics for Regression
 }
