@@ -17,13 +17,6 @@ knitr::opts_chunk$set(
 ## R environment
 
 ```{r setup}
-require(readr)
-require(dplyr)
-library(tidymodels)
-library(vip)
-library(RColorBrewer)
-library(cowplot)
-library(data.table)
 library(DT)
 library(goophi)
 ```
@@ -42,8 +35,8 @@ cleaned_data <- readr::read_csv(
   
 
 rec <- recipes::recipe(SalePrice ~ ., data = cleaned_data) %>%
-  recipes::step_naomit(all_nominal_predictors()) %>%
-  recipes::step_dummy(all_nominal_predictors())
+  recipes::step_naomit(recipes::all_nominal_predictors()) %>%
+  recipes::step_dummy(recipes::all_nominal_predictors())
 
 rec_prep <- recipes::prep(rec)
 
@@ -79,14 +72,12 @@ DT::datatable(data_train, options = list(scrollX = TRUE))
 
 ## 2. Preprocessing Tab
 
-#### Train set에 대한 전처리 방식을 설정합니다. 예측 변수(features, attributes)는 0번째 단계에서 유저가 원하는 column을 선택했다고 가정하고, 전체를 사용합니다. PCA는 아직 구현되지 않았습니다.
+#### Train set에 대한 전처리 방식을 설정합니다. 예측 변수(features, attributes)는 0번째 단계에서 유저가 원하는 column을 선택했다고 가정하고, 전체를 사용합니다.
 
 |        User Input |                                             description |
 |-------------------:|---------------------------------------------------:|
 |        imputation |                          imputation 적용 여부 (Boolean) |
 |     normalization |                       normalization 적용 여부 (Boolean) |
-|               pca |                                 pca 적용 여부 (Boolean) |
-|          pcaThres | 주요 성분 선택 기준이 되는 전체 고유값에 대한 threshold |
 |    imputationType |                                         imputation 방식 |
 | normalizationType |                                      normalization 방식 |
 
@@ -110,10 +101,8 @@ rec <- goophi::prepForCV(data = data_train,
                              formula = formula,
                              imputationType = imputationType,
                              normalizationType = normalizationType,
-                             pcaThres = pcaThres,
                              imputation = imputation,
-                             normalization = normalization,
-                             pca = pca)
+                             normalization = normalization)
 ```
 
 ## 3. Modeling with CV Tab
@@ -180,8 +169,8 @@ metric <- "rmse"
 # 사용자정의 ML 모델을 생성합니다
 if (algo == "LightGBM") {
   
-  model <- goophi::lightGbm_phi(engine = engine,
-                                    mode = mode)
+  model <- goophi::lightGbm(engine = engine,
+                            mode = mode)
   
   ## 이 입력 전부 goophi::lightGbm_phi 안에 넣기
   minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
