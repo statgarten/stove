@@ -9,10 +9,8 @@ prepForCV(
   formula,
   imputationType = "mean",
   normalizationType = "range",
-  pcaThres = "0.7",
-  imputation = TRUE,
-  normalization = TRUE,
-  pca = TRUE,
+  imputation = FALSE,
+  normalization = FALSE,
   seed = 4814
 )
 }
@@ -25,15 +23,15 @@ prepForCV(
 
 \item{normalizationType}{normalizationType}
 
-\item{pcaThres}{pcaThres}
-
 \item{imputation}{imputation}
 
 \item{normalization}{normalization}
 
-\item{pca}{pca}
-
 \item{seed}{seed}
+
+\item{pcaThres}{pcaThres}
+
+\item{pca}{pca}
 }
 \description{
 Preprocessing for cross validation
