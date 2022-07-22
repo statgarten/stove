@@ -72,8 +72,6 @@ DT::datatable(data_train, options = list(scrollX = TRUE))
 |-------------------:|---------------------------------------------------:|
 |        imputation |                          imputation 적용 여부 (Boolean) |
 |     normalization |                       normalization 적용 여부 (Boolean) |
-|               pca |                                 pca 적용 여부 (Boolean) |
-|          pcaThres | 주요 성분 선택 기준이 되는 전체 고유값에 대한 threshold |
 |    imputationType |                                         imputation 방식 |
 | normalizationType |                                      normalization 방식 |
 
@@ -214,16 +212,16 @@ hiddenUnitsRangeLevels = "3"
 penaltyRangeMin = "0.01"
 penaltyRangeMax = "0.5"
 penaltyRangeLevels = "3"
-dropoutRangeMin = "0"
-dropoutRangeMax = "1"
-dropoutRangeLevels = "2"
 epochsRangeMin = "10"
 epochsRangeMax = "100"
 epochsRangeLevels = "2"
-activation = "linear" #"linear", "softmax", "relu", "elu"
-learnRateRangeMin = "0"
-learnRateRangeMax = "1"
-learnRateRangeLevels = "2"
+# dropoutRangeMin = "0"
+# dropoutRangeMax = "1"
+# dropoutRangeLevels = "2"
+# activation = "linear" #"linear", "softmax", "relu", "elu"
+# learnRateRangeMin = "0"
+# learnRateRangeMax = "1"
+# learnRateRangeLevels = "2"
 
 
 v <- "2"
@@ -246,16 +244,16 @@ finalized <- goophi::MLP(algo = algo,
                          penaltyRangeMin = penaltyRangeMin,
                          penaltyRangeMax = penaltyRangeMax,
                          penaltyRangeLevels = penaltyRangeLevels,
-                         dropoutRangeMin = dropoutRangeMin,
-                         dropoutRangeMax = dropoutRangeMax,
-                         dropoutRangeLevels = dropoutRangeLevels,
                          epochsRangeMin = epochsRangeMin,
                          epochsRangeMax = epochsRangeMax,
                          epochsRangeLevels = epochsRangeLevels,
-                         activation = activation, #"linear", "softmax", "relu", "elu"
-                         learnRateRangeMin = learnRateRangeMin,
-                         learnRateRangeMax = learnRateRangeMax,
-                         learnRateRangeLevels = learnRateRangeLevels,
+                         # dropoutRangeMin = dropoutRangeMin,
+                         # dropoutRangeMax = dropoutRangeMax,
+                         # dropoutRangeLevels = dropoutRangeLevels,
+                         # activation = activation, #"linear", "softmax", "relu", "elu"
+                         # learnRateRangeMin = learnRateRangeMin,
+                         # learnRateRangeMax = learnRateRangeMax,
+                         # learnRateRangeLevels = learnRateRangeLevels,
                          metric = metric
                          )
 
@@ -516,19 +514,16 @@ for (i in 1:7){
 
 modelName <- "Random Forest_ranger"
 ```
+
 ### 1) Regression plot
 
 ```{r}
-models_list[[modelName]] %>% 
-  tune::collect_predictions() %>%
-  ggplot2::ggplot(aes(x = eval(parse(text = targetVar)), y = models_list[[modelName]]$.predictions[[1]][1]$.pred)) +
-  ggplot2::labs(title = "Regression Plot (Truth vs Prediced)",
-         x = "Truth",
-         y = "Predicted") +
-  ggplot2::geom_abline(color = "gray50", lty = 2) + 
-  ggplot2::geom_point(alpha = 0.5) + 
-  tune::coord_obs_pred()
+rp <- goophi::regressionPlot(modelName = modelName, 
+                             modelsList = models_list, 
+                             targetVar = targetVar)
+rp
 ```
+
 ### 2) Evaluation metrics
 
 ```{r}
