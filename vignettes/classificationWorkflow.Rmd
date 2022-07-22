@@ -35,10 +35,10 @@ options(yardstick.event_first = FALSE) # 오름차순으로 factor의 level 설�
 
 ```{r}
 cleaned_data <- Boston %>%
-  mutate(chas = as.factor(chas)) %>%
-  mutate(Pcrime  = ifelse(crim > median(crim), 1, 0) ) %>%
-  mutate(Pcrime = as.factor(Pcrime)) %>%
-  select(-c(crim))
+  dplyr::mutate(chas = as.factor(chas)) %>%
+  dplyr::mutate(Pcrime  = ifelse(crim > median(crim), 1, 0) ) %>%
+  dplyr::mutate(Pcrime = as.factor(Pcrime)) %>%
+  dplyr::select(-c(crim))
 
 knitr::kable(head(cleaned_data, 10))
 ```
@@ -81,8 +81,6 @@ DT::datatable(data_train, options = list(scrollX = TRUE))
 |-------------------:|---------------------------------------------------:|
 |        imputation |                          imputation 적용 여부 (Boolean) |
 |     normalization |                       normalization 적용 여부 (Boolean) |
-|               pca |                                 pca 적용 여부 (Boolean) |
-|          pcaThres | 주요 성분 선택 기준이 되는 전체 고유값에 대한 threshold |
 |    imputationType |                                         imputation 방식 |
 | normalizationType |                                      normalization 방식 |
 

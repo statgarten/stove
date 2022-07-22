@@ -95,11 +95,15 @@ confusionMatrix <- function(modelName, modelsList, targetVar){
 
 regressionPlot <- function(modelName, modelsList, targetVar){
 
-  plot <- modelsList[[modelName]] %>%
+  models_list[[modelName]] %>%
     tune::collect_predictions() %>%
-    yardstick::conf_mat(eval(parse(text = targetVar)), .pred_class) %>%
-    ggplot2::autoplot(type = "heatmap") +
-    ggplot2::labs(title = modelName)
+    ggplot2::ggplot(aes(x = eval(parse(text = targetVar)), y = models_list[[modelName]]$.predictions[[1]][1]$.pred)) +
+    ggplot2::labs(title = "Regression Plot (Truth vs Prediced)",
+                  x = "Truth",
+                  y = "Predicted") +
+    ggplot2::geom_abline(color = "gray50", lty = 2) +
+    ggplot2::geom_point(alpha = 0.5) +
+    tune::coord_obs_pred()
 
   return(plot)
 }
