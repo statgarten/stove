@@ -16,8 +16,8 @@
 trainTestSplit <- function(data = data,
                            target = NULL,
                            prop,
-                           seed = 4814){
-  set.seed(seed = seed)
+                           seed = "4814"){
+  set.seed(seed = as.numeric(seed))
   dataSplit <- rsample::initial_split(data, strata = tidyselect::all_of(target), prop = as.numeric(prop))
   train <- rsample::training(dataSplit)
   test  <- rsample::testing(dataSplit)
@@ -56,8 +56,8 @@ prepForCV <- function(data,
                      normalizationType = "range", # min-max normalization as default
                      imputation = FALSE,
                      normalization = FALSE,
-                     seed = 4814){
-  set.seed(seed = seed)
+                     seed = "4814"){
+  set.seed(seed = as.numeric(seed))
   result <- recipes::recipe(eval(parse(text = formula)), data = data) %>%
     recipes::step_dummy(recipes::all_nominal_predictors())
 
@@ -75,10 +75,6 @@ prepForCV <- function(data,
       result <- result %>% recipes::step_impute_mean(all_predictors())
     } else if (imputationType == "median"){
       result <- result %>% recipes::step_impute_median(all_predictors())
-    } else if (imputationType == "mode"){
-      result <- result %>% recipes::step_impute_mode(all_predictors())
-    } else if (imputationType == "roll"){
-      result <- result %>% recipes::step_impute_roll(all_predictors())
     } else {
       # pass
     }

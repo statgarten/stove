@@ -11,7 +11,7 @@ prepForCV(
   normalizationType = "range",
   imputation = FALSE,
   normalization = FALSE,
-  seed = 4814
+  seed = "4814"
 )
 }
 \arguments{

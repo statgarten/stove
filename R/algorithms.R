@@ -48,7 +48,7 @@ logisticRegression <- function(algo = "logistic Regression",
                                     mixture = tune()) %>%
       parsnip::set_engine(engine = engine) %>%
       parsnip::set_mode(mode = mode) %>%
-      translate()
+      parsnip::translate()
 
     grid_search_result <- goophi::gridSearchCV(rec = rec,
                                                model = model,
@@ -69,7 +69,7 @@ logisticRegression <- function(algo = "logistic Regression",
     model <- parsnip::logistic_reg() %>%
       parsnip::set_engine(engine = engine) %>%
       parsnip::set_mode(mode = mode) %>%
-      translate()
+      parsnip::translate()
 
     grid_search_result <- goophi::gridSearchCV(rec = rec,
                                                model = model,
@@ -153,7 +153,7 @@ linearRegression <- function(algo = "linear Regression",
                                  mixture = tune()) %>%
       parsnip::set_engine(engine = engine) %>%
       parsnip::set_mode(mode = mode) %>%
-      translate()
+      parsnip::translate()
 
     grid_search_result <- goophi::gridSearchCV(rec = rec,
                                                model = model,
@@ -175,7 +175,7 @@ linearRegression <- function(algo = "linear Regression",
     model <- parsnip::linear_reg() %>%
       parsnip::set_engine(engine = engine) %>%
       parsnip::set_mode(mode = mode) %>%
-      translate()
+      parsnip::translate()
 
     grid_search_result <- goophi::gridSearchCV(rec = rec,
                                                model = model,
@@ -252,7 +252,7 @@ KNN <- function(algo = "KNN",
   model <- parsnip::nearest_neighbor(neighbors = tune()) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
-    translate()
+    parsnip::translate()
 
   grid_search_result <- goophi::gridSearchCV(rec = rec,
                                              model = model,
@@ -297,7 +297,6 @@ KNN <- function(algo = "KNN",
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import dials
 #' @import parsnip
 #' @import klaR
 #'
@@ -314,8 +313,8 @@ naiveBayes <- function(algo = "Naive Bayes",
                        smoothnessRangeMin = "0.1",
                        smoothnessRangeMax = "2",
                        smoothnessRangeLevels = "5",
-                       LaplaceRangeMin = "1",
-                       LaplaceRangeMax = "4",
+                       LaplaceRangeMin = "0",
+                       LaplaceRangeMax = "3",
                        LaplaceRangeLevels = "4",
                        metric = NULL){
 
@@ -323,7 +322,7 @@ naiveBayes <- function(algo = "Naive Bayes",
   LaplaceRange <- c(as.numeric(LaplaceRangeMin), as.numeric(LaplaceRangeMax))
 
   parameterGrid <- dials::grid_regular(
-    dials::smoothness(range = smoothnessRange),
+    discrim::smoothness(range = smoothnessRange),
     dials::Laplace(range = LaplaceRange),
     levels = c(smoothness = as.numeric(smoothnessRangeLevels),
                Laplace = as.numeric(LaplaceRangeLevels)
@@ -331,10 +330,10 @@ naiveBayes <- function(algo = "Naive Bayes",
   )
 
   model <- parsnip::naive_Bayes(smoothness = tune(),
-                                 Laplace = tune()) %>%
+                                Laplace = tune()) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
-    translate()
+    parsnip::translate()
 
   grid_search_result <- goophi::gridSearchCV(rec = rec,
                                              model = model,
@@ -456,7 +455,7 @@ MLP <- function(algo = "MLP",
                         ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
-    translate()
+    parsnip::translate()
 
   grid_search_result <- goophi::gridSearchCV(rec = rec,
                                              model = model,
@@ -549,7 +548,7 @@ decisionTree <- function(algo = "MLP",
                                   min_n = tune()) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
-    translate()
+    parsnip::translate()
 
   grid_search_result <- goophi::gridSearchCV(rec = rec,
                                              model = model,
@@ -642,7 +641,7 @@ randomForest <- function(algo = "Random Forest",
                                 mtry = tune()) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
-    translate()
+    parsnip::translate()
 
   grid_search_result <- goophi::gridSearchCV(rec = rec,
                                              model = model,
@@ -754,7 +753,7 @@ xgboost <- function(algo = "Random Forest",
     ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
-    translate()
+    parsnip::translate()
 
   grid_search_result <- goophi::gridSearchCV(rec = rec,
                                              model = model,
@@ -854,7 +853,7 @@ lightGbm <- function(algo = "Random Forest",
   ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
-    translate()
+    parsnip::translate()
 
   grid_search_result <- goophi::gridSearchCV(rec = rec,
                                              model = model,
@@ -899,13 +898,13 @@ lightGbm <- function(algo = "Random Forest",
 #'
 
 kMeansClustering <- function(data,
-                             maxK = 10,
-                             nstart = 25,
+                             maxK = "10",
+                             nstart = "25",
                              selectOptimal = "silhouette",
-                             seed_num = 6471){
+                             seed_num = "6471"){
 
-  set.seed(seed_num)
-  tmp_result <- factoextra::fviz_nbclust(data, stats::kmeans, method = selectOptimal, k.max = maxK)
+  set.seed(as.numeric(seed_num))
+  tmp_result <- factoextra::fviz_nbclust(data, stats::kmeans, method = selectOptimal, k.max = as.numeric(maxK))
 
   if(selectOptimal == "silhouette"){
     result_clust<-tmp_result$data
@@ -917,7 +916,7 @@ kMeansClustering <- function(data,
     stop("selectOptimal must be 'silhouette' or 'gap_stat'.")
   }
 
-  result <- stats::kmeans(data, optimalK, nstart = nstart)
+  result <- stats::kmeans(data, optimalK, nstart = as.numeric(nstart))
 
   return(result)
 }

@@ -24,8 +24,8 @@ gridSearchCV <- function(rec,
                          v = "5", # 5-fold CV as default
                          data,
                          parameterGrid = 10,
-                         seed = 4814){
-  set.seed(seed = seed)
+                         seed = "4814"){
+  set.seed(seed = as.numeric(seed))
   tunedWorkflow <- workflows::workflow() %>%
     workflows::add_recipe(rec) %>%
     workflows::add_model(model)

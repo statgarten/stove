@@ -90,12 +90,18 @@ confusionMatrix <- function(modelName, modelsList, targetVar){
 #' @import yardstick
 #' @import tune
 #' @import ggplot2
+#' @import ggrepel
 #'
 #' @export
 
 regressionPlot <- function(modelName, modelsList, targetVar){
 
-  models_list[[modelName]] %>%
+  tmpDf <-  models_list[[modelName]] %>%
+    tune::collect_predictions()
+
+  lims <- c(min(tmpDf[[targetVar]]),max(tmpDf[[targetVar]]))
+
+  rgplot <- models_list[[modelName]] %>%
     tune::collect_predictions() %>%
     ggplot2::ggplot(aes(x = eval(parse(text = targetVar)), y = models_list[[modelName]]$.predictions[[1]][1]$.pred)) +
     ggplot2::labs(title = "Regression Plot (Truth vs Prediced)",
@@ -103,9 +109,10 @@ regressionPlot <- function(modelName, modelsList, targetVar){
                   y = "Predicted") +
     ggplot2::geom_abline(color = "gray50", lty = 2) +
     ggplot2::geom_point(alpha = 0.5) +
-    tune::coord_obs_pred()
+    scale_x_continuous(limits = lims) +
+    scale_y_continuous(limits = lims)
 
-  return(plot)
+  return(rgplot)
 }
 
 

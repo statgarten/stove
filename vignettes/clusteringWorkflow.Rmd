@@ -58,8 +58,8 @@ km_model
 ```{r}
 vis_result <- goophi::clusteringVis(data = data_cleaned,
                           model = km_model,
-                          nStart = 25,
-                          maxK = 10)
+                          nStart = "25",
+                          maxK = "10")
 vis_result$clustVis
 
 vis_result$optimalK

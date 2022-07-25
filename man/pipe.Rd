@@ -84,8 +84,8 @@ naiveBayes(
   smoothnessRangeMin = "0.1",
   smoothnessRangeMax = "2",
   smoothnessRangeLevels = "5",
-  LaplaceRangeMin = "1",
-  LaplaceRangeMax = "4",
+  LaplaceRangeMin = "0",
+  LaplaceRangeMax = "3",
   LaplaceRangeLevels = "4",
   metric = NULL
 )
@@ -219,13 +219,13 @@ lightGbm(
 
 kMeansClustering(
   data,
-  maxK = 10,
-  nstart = 25,
+  maxK = "10",
+  nstart = "25",
   selectOptimal = "silhouette",
-  seed_num = 6471
+  seed_num = "6471"
 )
 
-gridSearchCV(rec, model, v = "5", data, parameterGrid = 10, seed = 4814)
+gridSearchCV(rec, model, v = "5", data, parameterGrid = 10, seed = "4814")
 
 fitBestModel(
   gridSearchResult,

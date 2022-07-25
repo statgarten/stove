@@ -17,14 +17,11 @@ knitr::opts_chunk$set(
 ## R environment
 
 ```{r setup}
-<<<<<<< HEAD
 library(DT)
-=======
 require(dplyr) # import for loading/preprocessing the sample data
 require(MASS)
 data("Boston")
 attach(Boston)
->>>>>>> 5936d23fe87570d19ddfd6f9d6cafc7819b828ec
 library(goophi)
 ```
 
@@ -37,18 +34,8 @@ library(goophi)
 
 ```{r}
 cleaned_data <- Boston %>%
-  mutate(chas = as.factor(chas))
+  dplyr::mutate(chas = as.factor(chas))
 
-<<<<<<< HEAD
-rec <- recipes::recipe(SalePrice ~ ., data = cleaned_data) %>%
-  recipes::step_naomit(recipes::all_nominal_predictors()) %>%
-  recipes::step_dummy(recipes::all_nominal_predictors())
-
-rec_prep <- recipes::prep(rec)
-
-cleaned_data <- recipes::bake(rec_prep, new_data = cleaned_data)
-=======
->>>>>>> 5936d23fe87570d19ddfd6f9d6cafc7819b828ec
 knitr::kable(head(cleaned_data, 10))
 ```
 ## 1. Train-test split Tab
@@ -65,12 +52,16 @@ knitr::kable(head(cleaned_data, 10))
 ```{r}
 targetVar <- "crim"
 trainSetRatio <- "0.7"
+seed = "1234"
 ```
 
 ### Train-test split 작업이 완료된 Object를 저장하고, Train set을 보여줍니다.
 
 ```{r}
-split_tmp <- goophi::trainTestSplit(data = cleaned_data, target = targetVar, prop = trainSetRatio)
+split_tmp <- goophi::trainTestSplit(data = cleaned_data, 
+                                    target = targetVar, 
+                                    prop = trainSetRatio,
+                                    seed = as.numeric(seed))
 data_train <- split_tmp$train # train data
 data_test <- split_tmp$test # test data
 data_split <- split_tmp$dataSplit # whole data with split information
@@ -98,26 +89,19 @@ imputation <- TRUE
 normalization <- TRUE
 imputationType = "mean" 
 normalizationType = "range" 
+seed = "1234"
 ```
 
 ### train set에 적용할 전처리 정보를 담은 recipe를 생성합니다
 
 ```{r}
 rec <- goophi::prepForCV(data = data_train,
-<<<<<<< HEAD
-                             formula = formula,
-                             imputationType = imputationType,
-                             normalizationType = normalizationType,
-                             imputation = imputation,
-                             normalization = normalization)
-=======
                          formula = formula,
                          imputationType = imputationType,
                          normalizationType = normalizationType,
                          imputation = imputation,
                          normalization = normalization,
-                         seed = 1234)
->>>>>>> 5936d23fe87570d19ddfd6f9d6cafc7819b828ec
+                         seed = seed)
 ```
 
 ## 3. Modeling with CV Tab
@@ -185,7 +169,6 @@ models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
 ### 2) K Nearest Neighbor
 
 ```{r}
-<<<<<<< HEAD
 # 사용자정의 ML 모델을 생성합니다
 if (algo == "LightGBM") {
   
@@ -238,7 +221,6 @@ if (algo == "LightGBM") {
   
   models_list <- append(models_list, list(finalized[[2]]))
 }
-=======
 ## User input
 
 mode <- "regression"
@@ -271,7 +253,6 @@ finalized <- goophi::KNN(algo = algo,
 
 ## models_list에 모델을 추가합니다.
 models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
->>>>>>> 5936d23fe87570d19ddfd6f9d6cafc7819b828ec
 ```
 
 ### 3) MLP
@@ -585,16 +566,14 @@ models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
 
 ```{r}
 ## user input
-for (i in 1:7){
-  print(models_list[[i]]$.predictions[[1]]$model[1])
-}
+names(models_list)
 
-modelName <- "Random Forest_ranger"
+modelName <- "LinearR_glmnet"
 ```
 
 ### 1) Regression plot
 
-```{r}
+```{r, fig.width = 7, fig.height = 7}
 rp <- goophi::regressionPlot(modelName = modelName, 
                              modelsList = models_list, 
                              targetVar = targetVar)

@@ -4,7 +4,7 @@
 \alias{trainTestSplit}
 \title{Train-Test Split}
 \usage{
-trainTestSplit(data = data, target = NULL, prop, seed = 4814)
+trainTestSplit(data = data, target = NULL, prop, seed = "4814")
 }
 \arguments{
 \item{data}{data}
