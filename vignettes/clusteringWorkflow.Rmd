@@ -55,7 +55,7 @@ km_model
 
 ## 2. Visualize
 
-```{r}
+```{r, fig.width = 7, fig.height = 7}
 vis_result <- goophi::clusteringVis(data = data_cleaned,
                           model = km_model,
                           nStart = "25",

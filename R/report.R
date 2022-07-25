@@ -66,13 +66,27 @@ rocCurve <- function(modelsList, targetVar){
 
 confusionMatrix <- function(modelName, modelsList, targetVar){
 
-  plot <- modelsList[[modelName]] %>%
+  tmpDf<- models_list[[modelName]] %>%
     tune::collect_predictions() %>%
-    yardstick::conf_mat(eval(parse(text = targetVar)), .pred_class) %>%
-    ggplot2::autoplot(type = "heatmap") +
-    ggplot2::labs(title = modelName)
+    as.data.frame() %>%
+    dplyr::select(targetVar, .pred_class)
+
+  confDf <- xtabs(~tmpDf$.pred_class + tmpDf[[targetVar]])
+
+  input.matrix <- data.matrix(confDf)
+  confusion <- as.data.frame(as.table(input.matrix))
+  colnames(confusion)[1] <- "y_pred"
+  colnames(confusion)[2] <- "actual_y"
+  colnames(confusion)[3] <- "Frequency"
+
+  plot <- ggplot(confusion, aes(x = actual_y, y = y_pred, fill = Frequency)) + geom_tile() +
+    geom_text(aes(label=Frequency)) +
+    scale_x_discrete(name="Actual Class") + scale_y_discrete(name="Predicted Class") +
+    geom_text(aes(label = Frequency),colour = "white") +
+    scale_fill_continuous(high = "#132B43", low = "#56B1F7")
 
   return(plot)
+
 }
 
 #' Regression plot

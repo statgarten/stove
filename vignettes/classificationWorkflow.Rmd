@@ -571,7 +571,7 @@ names(models_list)
 ```
 
 ```{r}
-model_name = "Random Forest_ranger" # 원하는 모델의 이름 입력받기
+model_name = "LogisticR_glmnet" # 원하는 모델의 이름 입력받기
 ```
 
 ```{r, fig.width = 7, fig.height = 6}
@@ -579,6 +579,7 @@ cm <- goophi::confusionMatrix(modelName = model_name,
                               modelsList = models_list,
                               targetVar = targetVar)
 cm
+
 ```
 
 ### 3) Evaluation metrics
