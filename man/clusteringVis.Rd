@@ -4,20 +4,27 @@
 \alias{clusteringVis}
 \title{clusteringVis}
 \usage{
-clusteringVis(data = NULL, model = NULL, nStart = 25, maxK = 10)
+clusteringVis(
+  data = NULL,
+  model = NULL,
+  maxK = NULL,
+  nStart = NULL,
+  nBoot = 100,
+  selectOptimal = NULL
+)
 }
 \arguments{
 \item{data}{data}
 
 \item{model}{model}
 
-\item{nStart}{nStart}
-
 \item{maxK}{maxK}
+
+\item{nStart}{nStart}
 }
 \description{
 clusteringVis
 }
 \details{
-clusteringVis
+clusteringVis // cluster factoextra stats ggplot2
 }

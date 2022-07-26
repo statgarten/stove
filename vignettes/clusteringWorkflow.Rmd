@@ -38,17 +38,24 @@ data_cleaned <- mydata %>% dplyr::select(RedMeat, WhiteMeat, Eggs, Milk) ## unsu
 
 ```{r}
 ## user input
-maxK <- 15 # k = 2:maxK
-selectOptimal <- "silhouette" # "silhouette", "gap_stat" // there's no mathematical definition for selecting optimal k using 'elbow' method.
-nStart <- 25 # attempts 25 initial configurations
-seed = 1234
+maxK <- "15" # k = 2:maxK
+nStart <- "25" # attempts 25 initial configurations, < 175
+iterMax <- "10" # < 5000
+nBoot <- "100" # Used only for determining the number of clusters using gap statistic
+algorithm = "Hartigan-Wong" ## "Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"
+selectOptimal <- "silhouette" # "silhouette", "gap_stat" // there's no mathematical definition for selecting optimal k using elbow(wss) method.
+seed = "1234"
 
 ## K-means clustering
 km_model <- goophi::kMeansClustering(data = data_cleaned,
                                      maxK = maxK,
-                                     nstart = nStart,
+                                     nStart = nStart,
+                                     iterMax = iterMax,
+                                     nBoot = nBoot,
+                                     algorithm = algorithm,
                                      selectOptimal = selectOptimal,
-                                     seed_num = seed)
+                                     seed_num = seed
+                                     )
 
 km_model
 ```
@@ -58,10 +65,13 @@ km_model
 ```{r, fig.width = 7, fig.height = 7}
 vis_result <- goophi::clusteringVis(data = data_cleaned,
                           model = km_model,
-                          nStart = "25",
-                          maxK = "10")
-vis_result$clustVis
-
+                          maxK = maxK,
+                          nStart = nStart,
+                          nBoot = nBoot,
+                          selectOptimal = selectOptimal)
+vis_result$elbowPlot
 vis_result$optimalK
+vis_result$clustVis
 ```
+
 

@@ -886,6 +886,8 @@ lightGbm <- function(algo = "Random Forest",
 #' @param nstart nstart
 #' @param selectOptimal selectOptimal
 #' @param seed_num seed_num
+#' @param iter.max iter.max
+#' @param algorithm  algorithm
 #'
 #' @importFrom magrittr %>%
 #' @name %>%
@@ -899,24 +901,45 @@ lightGbm <- function(algo = "Random Forest",
 
 kMeansClustering <- function(data,
                              maxK = "10",
-                             nstart = "25",
-                             selectOptimal = "silhouette",
+                             nStart = "25",
+                             iterMax = "10",
+                             nBoot = '100',
+                             algorithm = "Hartigan-Wong", ## "Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"
+                             selectOptimal = "silhouette", # silhouette, gap_stat
                              seed_num = "6471"){
 
   set.seed(as.numeric(seed_num))
-  tmp_result <- factoextra::fviz_nbclust(data, stats::kmeans, method = selectOptimal, k.max = as.numeric(maxK))
 
   if(selectOptimal == "silhouette"){
+    tmp_result <- factoextra::fviz_nbclust(x = data,
+                                           FUNcluster = stats::kmeans,
+                                           method = selectOptimal,
+                                           k.max = as.numeric(maxK)
+                                           )
     result_clust<-tmp_result$data
+
     optimalK <- as.numeric(result_clust$clusters[which.max(result_clust$y)])
   } else if (selectOptimal == "gap_stat"){
+    tmp_result <- factoextra::fviz_nbclust(x = data,
+                                           FUNcluster = stats::kmeans,
+                                           method = selectOptimal,
+                                           k.max = as.numeric(maxK),
+                                           nboot = as.numeric(nBoot)
+                                           )
+
     result_clust<-tmp_result$data
+
     optimalK <- as.numeric(result_clust$clusters[which.max(result_clust$gap)])
   } else {
     stop("selectOptimal must be 'silhouette' or 'gap_stat'.")
   }
 
-  result <- stats::kmeans(data, optimalK, nstart = as.numeric(nstart))
+  result <- stats::kmeans(x = data,
+                          centers = optimalK,
+                          iter.max = iterMax,
+                          nstart = as.numeric(nStart),
+                          algorithm = algorithm
+                          )
 
   return(result)
 }

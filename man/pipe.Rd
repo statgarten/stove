@@ -220,7 +220,10 @@ lightGbm(
 kMeansClustering(
   data,
   maxK = "10",
-  nstart = "25",
+  nStart = "25",
+  iterMax = "10",
+  nBoot = "100",
+  algorithm = "Hartigan-Wong",
   selectOptimal = "silhouette",
   seed_num = "6471"
 )
@@ -348,7 +351,7 @@ evalMetricsR(modelsList, targetVar)
 
 \item{maxK}{maxK}
 
-\item{nstart}{nstart}
+\item{algorithm}{algorithm}
 
 \item{selectOptimal}{selectOptimal}
 
@@ -373,6 +376,10 @@ evalMetricsR(modelsList, targetVar)
 \item{dropoutRangeLevels}{dropoutRangeLevels}
 
 \item{activation}{activation}
+
+\item{nstart}{nstart}
+
+\item{iter.max}{iter.max}
 
 \item{parameter_grid}{parameter_grid}
 
@@ -454,17 +461,17 @@ K means clustering
 selectOptimal: silhouette, gap_stat
 hyperparameters: maxK, nstart
 
-Grid Search with cross validation
+Grid Search with cross validation // workflows rsample tune
 
-fitting in best model
+fitting in best model // tune workflows
 
-AUC-ROC Curve
+AUC-ROC Curve // RColorBrewer cowplot ggplot2 yardstick
 
-Confusion matrix
+Confusion matrix // yardstick tune ggplot2
 
-Regression plot
+Regression plot // yardstick tune ggplot2 ggrepel
 
-Evaluation metrics for Classification
+Evaluation metrics for Classification // yardstick tune ggplot2 data.table
 
-Evaluation metrics for Regression
+Evaluation metrics for Regression // yardstick tune ggplot2 data.table
 }

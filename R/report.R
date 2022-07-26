@@ -1,15 +1,11 @@
 #' AUC-ROC Curve
 #'
 #' @details
-#' AUC-ROC Curve
+#' AUC-ROC Curve // RColorBrewer cowplot ggplot2 yardstick
 #'
 #' @param models_list  models_list
 #' @param targetVar  targetVar
 #'
-#' @import RColorBrewer
-#' @import cowplot
-#' @import ggplot2
-#' @import yardstick
 #' @importFrom dplyr group_by
 #' @importFrom magrittr %>%
 #' @name %>%
@@ -49,7 +45,7 @@ rocCurve <- function(modelsList, targetVar){
 #' Confusion matrix
 #'
 #' @details
-#' Confusion matrix
+#' Confusion matrix // yardstick tune ggplot2
 #'
 #' @param modelName  modelName
 #' @param modelsList  modelsList
@@ -58,9 +54,6 @@ rocCurve <- function(modelsList, targetVar){
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import yardstick
-#' @import tune
-#' @import ggplot2
 #'
 #' @export
 
@@ -71,7 +64,7 @@ confusionMatrix <- function(modelName, modelsList, targetVar){
     as.data.frame() %>%
     dplyr::select(targetVar, .pred_class)
 
-  confDf <- xtabs(~tmpDf$.pred_class + tmpDf[[targetVar]])
+  confDf <- stats::xtabs(~tmpDf$.pred_class + tmpDf[[targetVar]])
 
   input.matrix <- data.matrix(confDf)
   confusion <- as.data.frame(as.table(input.matrix))
@@ -79,11 +72,13 @@ confusionMatrix <- function(modelName, modelsList, targetVar){
   colnames(confusion)[2] <- "actual_y"
   colnames(confusion)[3] <- "Frequency"
 
-  plot <- ggplot(confusion, aes(x = actual_y, y = y_pred, fill = Frequency)) + geom_tile() +
-    geom_text(aes(label=Frequency)) +
-    scale_x_discrete(name="Actual Class") + scale_y_discrete(name="Predicted Class") +
-    geom_text(aes(label = Frequency),colour = "white") +
-    scale_fill_continuous(high = "#132B43", low = "#56B1F7")
+  plot <- ggplot2::ggplot(confusion, aes(x = actual_y, y = y_pred, fill = Frequency)) +
+    ggplot2::geom_tile() +
+    ggplot2::geom_text(aes(label=Frequency)) +
+    ggplot2::scale_x_discrete(name="Actual Class") +
+    ggplot2::scale_y_discrete(name="Predicted Class") +
+    ggplot2::geom_text(aes(label = Frequency),colour = "black") +
+    ggplot2::scale_fill_continuous(high = "#E9BC09", low = "#F3E5AC")
 
   return(plot)
 
@@ -92,7 +87,7 @@ confusionMatrix <- function(modelName, modelsList, targetVar){
 #' Regression plot
 #'
 #' @details
-#' Regression plot
+#' Regression plot // yardstick tune ggplot2 ggrepel
 #'
 #' @param modelName  modelName
 #' @param modelsList  modelsList
@@ -101,10 +96,6 @@ confusionMatrix <- function(modelName, modelsList, targetVar){
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import yardstick
-#' @import tune
-#' @import ggplot2
-#' @import ggrepel
 #'
 #' @export
 
@@ -115,7 +106,7 @@ regressionPlot <- function(modelName, modelsList, targetVar){
 
   lims <- c(min(tmpDf[[targetVar]]),max(tmpDf[[targetVar]]))
 
-  rgplot <- models_list[[modelName]] %>%
+  plot <- models_list[[modelName]] %>%
     tune::collect_predictions() %>%
     ggplot2::ggplot(aes(x = eval(parse(text = targetVar)), y = models_list[[modelName]]$.predictions[[1]][1]$.pred)) +
     ggplot2::labs(title = "Regression Plot (Truth vs Prediced)",
@@ -123,17 +114,17 @@ regressionPlot <- function(modelName, modelsList, targetVar){
                   y = "Predicted") +
     ggplot2::geom_abline(color = "gray50", lty = 2) +
     ggplot2::geom_point(alpha = 0.5) +
-    scale_x_continuous(limits = lims) +
-    scale_y_continuous(limits = lims)
+    ggplot2::scale_x_continuous(limits = lims) +
+    ggplot2::scale_y_continuous(limits = lims)
 
-  return(rgplot)
+  return(plot)
 }
 
 
 #' Evaluation metrics for Classification
 #'
 #' @details
-#' Evaluation metrics for Classification
+#' Evaluation metrics for Classification // yardstick tune ggplot2 data.table
 #'
 #' @param modelsList  modelsList
 #' @param targetVar  targetVar
@@ -141,10 +132,6 @@ regressionPlot <- function(modelName, modelsList, targetVar){
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import yardstick
-#' @import tune
-#' @import ggplot2
-#' @import data.table
 #' @importFrom dplyr select mutate
 #'
 #' @export
@@ -184,7 +171,7 @@ evalMetricsC <- function(modelsList, targetVar){
 #' Evaluation metrics for Regression
 #'
 #' @details
-#' Evaluation metrics for Regression
+#' Evaluation metrics for Regression // yardstick tune ggplot2 data.table
 #'
 #' @param modelsList  modelsList
 #' @param targetVar  targetVar
@@ -192,10 +179,6 @@ evalMetricsC <- function(modelsList, targetVar){
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import yardstick
-#' @import tune
-#' @import ggplot2
-#' @import data.table
 #' @importFrom dplyr select mutate
 #'
 #' @export
@@ -232,34 +215,54 @@ evalMetricsR <- function(modelsList, targetVar){
 #' clusteringVis
 #'
 #' @details
-#' clusteringVis
+#' clusteringVis // cluster factoextra stats ggplot2
 #'
 #' @param data  data
 #' @param model  model
 #' @param nStart  nStart
 #' @param maxK  maxK
 #'
-#' @import cluster
-#' @import factoextra
-#' @import stats
-#' @import ggplot2
-#'
 #' @export
 
 clusteringVis <- function(data = NULL,
                           model = NULL,
-                          nStart = 25,
-                          maxK = 10){
+                          maxK = NULL,
+                          nStart = NULL,
+                          nBoot = 100,
+                          selectOptimal = NULL
+                          ){
+  elbowPlot <- factoextra::fviz_nbclust(x = data,
+                                        FUNcluster  = stats::kmeans,
+                                        method = "wss")
 
-  optimalK <- fviz_nbclust(data, stats::kmeans, method = "silhouette")
+  if(selectOptimal == "silhouette"){
+    optimalK <- factoextra::fviz_nbclust(x = data,
+                                         FUNcluster = stats::kmeans,
+                                         method = selectOptimal,
+                                         k.max = as.numeric(maxK),
+                                         barfill = "slateblue",
+                                         barcolor = "slateblue",
+                                         linecolor = "slateblue"
+    )
+  } else if (selectOptimal == "gap_stat"){
+    optimalK <- factoextra::fviz_nbclust(x = data,
+                                         FUNcluster = stats::kmeans,
+                                         method = selectOptimal,
+                                         k.max = as.numeric(maxK),
+                                         nboot = as.numeric(nBoot),
+                                         barfill = "slateblue",
+                                         barcolor = "slateblue",
+                                         linecolor = "slateblue"
+                                         )
+  }
 
   clustVis <- factoextra::fviz_cluster(object = model,
                                        data = data,
-                                       palette = c("#2E9FDF", "#00AFBB", "#E7B800"),
+                                       #palette = c("#2E9FDF", "#00AFBB", "#E7B800"),
                                        geom = "point",
                                        ellipse.type = "convex",
                                        ggtheme = ggplot2::theme_bw()
   )
 
-  return(list(clustVis = clustVis, optimalK = optimalK))
+  return(list(elbowPlot = elbowPlot, optimalK = optimalK, clustVis = clustVis))
 }

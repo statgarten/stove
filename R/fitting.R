@@ -1,7 +1,7 @@
 #' Grid Search with cross validation
 #'
 #' @details
-#' Grid Search with cross validation
+#' Grid Search with cross validation // workflows rsample tune
 #'
 #' @param rec  rec
 #' @param model  model
@@ -13,9 +13,6 @@
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import workflows
-#' @import rsample
-#' @import tune
 #'
 #' @export
 
@@ -41,7 +38,7 @@ gridSearchCV <- function(rec,
 #' fitting in best model
 #'
 #' @details
-#' fitting in best model
+#' fitting in best model // tune workflows
 #'
 #' @param gridSearchResult  gridSearchResult
 #' @param metric  metric
@@ -54,8 +51,6 @@ gridSearchCV <- function(rec,
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import tune
-#' @import workflows
 #' @importFrom dplyr mutate
 #'
 #' @export

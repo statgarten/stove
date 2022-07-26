@@ -24,7 +24,6 @@ Imports:
     data.table,
     dials,
     discrim,
-    dplyr,
     DT,
     factoextra,
     ggplot2,
