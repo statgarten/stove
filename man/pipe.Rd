@@ -6,11 +6,11 @@
 \alias{linearRegression}
 \alias{KNN}
 \alias{naiveBayes}
-\alias{MLP}
 \alias{decisionTree}
 \alias{randomForest}
 \alias{xgboost}
 \alias{lightGbm}
+\alias{MLP}
 \alias{kMeansClustering}
 \alias{gridSearchCV}
 \alias{fitBestModel}
@@ -29,9 +29,9 @@ logisticRegression(
   splitedData = NULL,
   formula = NULL,
   rec = NULL,
-  v = 5,
+  v = "5",
   penaltyRangeMin = "0.0",
-  penaltyRangeMax = "1.0",
+  penaltyRangeMax = "20.0",
   penaltyRangeLevels = "5",
   mixtureRangeMin = "0.0",
   mixtureRangeMax = "1.0",
@@ -47,9 +47,9 @@ linearRegression(
   splitedData = NULL,
   formula = NULL,
   rec = NULL,
-  v = 5,
+  v = "5",
   penaltyRangeMin = "0.0",
-  penaltyRangeMax = "1.0",
+  penaltyRangeMax = "20.0",
   penaltyRangeLevels = "5",
   mixtureRangeMin = "0.0",
   mixtureRangeMax = "1.0",
@@ -65,10 +65,10 @@ KNN(
   splitedData = NULL,
   formula = NULL,
   rec = NULL,
-  v = 5,
+  v = "5",
   neighborsRangeMin = "2",
-  neighborsRangeMax = "8",
-  neighborsRangeLevels = "4",
+  neighborsRangeMax = "20",
+  neighborsRangeLevels = "10",
   metric = NULL
 )
 
@@ -80,54 +80,33 @@ naiveBayes(
   splitedData = NULL,
   formula = NULL,
   rec = NULL,
-  v = 5,
-  smoothnessRangeMin = "0.1",
-  smoothnessRangeMax = "2",
+  v = "5",
+  smoothnessRangeMin = "0.001",
+  smoothnessRangeMax = "10",
   smoothnessRangeLevels = "5",
   LaplaceRangeMin = "0",
-  LaplaceRangeMax = "3",
-  LaplaceRangeLevels = "4",
-  metric = NULL
-)
-
-MLP(
-  algo = "MLP",
-  engine = "nnet",
-  mode = "classification",
-  trainingData = NULL,
-  splitedData = NULL,
-  formula = NULL,
-  rec = NULL,
-  v = 5,
-  hiddenUnitsRangeMin = "1",
-  hiddenUnitsRangeMax = "10",
-  hiddenUnitsRangeLevels = "3",
-  penaltyRangeMin = "0.01",
-  penaltyRangeMax = "0.5",
-  penaltyRangeLevels = "3",
-  epochsRangeMin = "10",
-  epochsRangeMax = "100",
-  epochsRangeLevels = "2",
+  LaplaceRangeMax = "50",
+  LaplaceRangeLevels = "6",
   metric = NULL
 )
 
 decisionTree(
-  algo = "MLP",
+  algo = "Decision Tree",
   engine = "rpart",
   mode = "classification",
   trainingData = NULL,
   splitedData = NULL,
   formula = NULL,
   rec = NULL,
-  v = 5,
-  treeDepthRangeMin = "3",
-  treeDepthRangeMax = "10",
+  v = "5",
+  treeDepthRangeMin = "10",
+  treeDepthRangeMax = "30",
   treeDepthRangeLevels = "3",
-  minNRangeMin = "10",
-  minNRangeMax = "50",
+  minNRangeMin = "2",
+  minNRangeMax = "500",
   minNRangeLevels = "3",
-  costComplexityRangeMin = "-1",
-  costComplexityRangeMax = "5",
+  costComplexityRangeMin = "0",
+  costComplexityRangeMax = "1",
   costComplexityRangeLevels = "3",
   metric = NULL
 )
@@ -140,15 +119,15 @@ randomForest(
   splitedData = NULL,
   formula = NULL,
   rec = NULL,
-  v = 5,
+  v = "5",
   mtryRangeMin = "1",
-  mtryRangeMax = "5",
+  mtryRangeMax = "20",
   mtryRangeLevels = "3",
-  treesRangeMin = "500",
+  treesRangeMin = "100",
   treesRangeMax = "2000",
   treesRangeLevels = "3",
-  minNRangeMin = "10",
-  minNRangeMax = "40",
+  minNRangeMin = "2",
+  minNRangeMax = "500",
   minNRangeLevels = "3",
   metric = NULL
 )
@@ -161,29 +140,29 @@ xgboost(
   splitedData = NULL,
   formula = NULL,
   rec = NULL,
-  v = 5,
-  treeDepthRangeMin = "3",
-  treeDepthRangeMax = "6",
-  treeDepthRangeLevels = "2",
+  v = "5",
+  treeDepthRangeMin = "2",
+  treeDepthRangeMax = "50",
+  treeDepthRangeLevels = "3",
   treesRangeMin = "10",
-  treesRangeMax = "15",
+  treesRangeMax = "50",
   treesRangeLevels = "2",
   learnRateRangeMin = "0.01",
   learnRateRangeMax = "0.3",
   learnRateRangeLevels = "2",
   mtryRangeMin = "1",
-  mtryRangeMax = "9",
+  mtryRangeMax = "20",
   mtryRangeLevels = "3",
   minNRangeMin = "1",
-  minNRangeMax = "10",
+  minNRangeMax = "500",
   minNRangeLevels = "3",
   lossReductionRangeMin = "0",
-  lossReductionRangeMax = "10",
-  lossReductionRangeLevels = "2",
+  lossReductionRangeMax = "1",
+  lossReductionRangeLevels = "3",
   sampleSizeRangeMin = "0",
   sampleSizeRangeMax = "1",
-  sampleSizeRangeLevels = "2",
-  stopIter = "10",
+  sampleSizeRangeLevels = "3",
+  stopIter = "30",
   metric = NULL
 )
 
@@ -195,37 +174,58 @@ lightGbm(
   splitedData = NULL,
   formula = NULL,
   rec = NULL,
-  v = 5,
-  treeDepthRangeMin = "3",
-  treeDepthRangeMax = "6",
-  treeDepthRangeLevels = "2",
+  v = "5",
+  treeDepthRangeMin = "2",
+  treeDepthRangeMax = "30",
+  treeDepthRangeLevels = "3",
   treesRangeMin = "10",
-  treesRangeMax = "15",
+  treesRangeMax = "50",
   treesRangeLevels = "2",
   learnRateRangeMin = "0.01",
   learnRateRangeMax = "0.3",
   learnRateRangeLevels = "2",
   mtryRangeMin = "1",
-  mtryRangeMax = "9",
+  mtryRangeMax = "20",
   mtryRangeLevels = "3",
   minNRangeMin = "1",
-  minNRangeMax = "10",
+  minNRangeMax = "500",
   minNRangeLevels = "3",
   lossReductionRangeMin = "0",
-  lossReductionRangeMax = "10",
-  lossReductionRangeLevels = "2",
+  lossReductionRangeMax = "1",
+  lossReductionRangeLevels = "3",
+  metric = NULL
+)
+
+MLP(
+  algo = "MLP",
+  engine = "nnet",
+  mode = "classification",
+  trainingData = NULL,
+  splitedData = NULL,
+  formula = NULL,
+  rec = NULL,
+  v = "5",
+  hiddenUnitsRangeMin = "1",
+  hiddenUnitsRangeMax = "10",
+  hiddenUnitsRangeLevels = "3",
+  penaltyRangeMin = "0.01",
+  penaltyRangeMax = "0.5",
+  penaltyRangeLevels = "3",
+  epochsRangeMin = "10",
+  epochsRangeMax = "100",
+  epochsRangeLevels = "2",
   metric = NULL
 )
 
 kMeansClustering(
   data,
-  maxK = "10",
+  maxK = "15",
   nStart = "25",
   iterMax = "10",
   nBoot = "100",
   algorithm = "Hartigan-Wong",
   selectOptimal = "silhouette",
-  seed_num = "6471"
+  seedNum = "6471"
 )
 
 gridSearchCV(rec, model, v = "5", data, parameterGrid = 10, seed = "4814")
@@ -299,18 +299,6 @@ evalMetricsR(modelsList, targetVar)
 
 \item{LaplaceRangeLevels}{LaplaceRangeLevels}
 
-\item{hiddenUnitsRangeMin}{hiddenUnitsRangeMin}
-
-\item{hiddenUnitsRangeMax}{hiddenUnitsRangeMax}
-
-\item{hiddenUnitsRangeLevels}{hiddenUnitsRangeLevels}
-
-\item{epochsRangeMin}{epochsRangeMin}
-
-\item{epochsRangeMax}{epochsRangeMax}
-
-\item{epochsRangeLevels}{epochsRangeLevels}
-
 \item{treeDepthRangeMin}{treeDepthRangeMin}
 
 \item{treeDepthRangeMax}{treeDepthRangeMax}
@@ -347,6 +335,18 @@ evalMetricsR(modelsList, targetVar)
 
 \item{learnRateRangeLevels}{learnRateRangeLevels}
 
+\item{hiddenUnitsRangeMin}{hiddenUnitsRangeMin}
+
+\item{hiddenUnitsRangeMax}{hiddenUnitsRangeMax}
+
+\item{hiddenUnitsRangeLevels}{hiddenUnitsRangeLevels}
+
+\item{epochsRangeMin}{epochsRangeMin}
+
+\item{epochsRangeMax}{epochsRangeMax}
+
+\item{epochsRangeLevels}{epochsRangeLevels}
+
 \item{data}{data}
 
 \item{maxK}{maxK}
@@ -354,8 +354,6 @@ evalMetricsR(modelsList, targetVar)
 \item{algorithm}{algorithm}
 
 \item{selectOptimal}{selectOptimal}
-
-\item{seed_num}{seed_num}
 
 \item{model}{model}
 
@@ -379,6 +377,8 @@ evalMetricsR(modelsList, targetVar)
 
 \item{nstart}{nstart}
 
+\item{seed_num}{seed_num}
+
 \item{iter.max}{iter.max}
 
 \item{parameter_grid}{parameter_grid}
@@ -394,8 +394,6 @@ K-Nearest Neighbors
 
 Naive Bayes
 
-neural network
-
 Decision Tree
 
 Random Forest
@@ -403,6 +401,8 @@ Random Forest
 XGBoost
 
 Light GBM
+
+neural network
 
 K means clustering
 
@@ -436,26 +436,40 @@ hyperparameters: neighbors
 Naive Bayes
 hyperparameters: smoothness, Laplace
 
+의사결정나무 알고리즘 함수. 의사 결정 규칙 (Decision rule)을 나무 형태로 분류해 나가는 분석 기법을 말합니다.
+hyperparameters:
+tree_depth: 최종 예측값에 다다르기까지 몇 번 트리를 분할할지 설정합니다.
+min_n: 트리를 분할하기 위해 필요한 관측값의 최소 개수를 설정합니다.
+cost_complexity: 트리 분할을 위해 필요한 비용을 설정합니다. 0일 경우, 가능한 모든 분할이 수행됩니다.
+
+랜덤 포레스트 알고리즘 함수. 여러개의 Decision Tree를 형성.
+새로운 데이터 포인트를 각 트리에 동시에 통과 시켜 각 트리가 분류한 결과에서 투표를 실시하여
+가장 많이 득표한 결과를 최종 분류 결과로 선택
+hyperparameters:
+trees: 결정트리의 개수를 지정합니다.
+min_n: 트리를 분할하기 위해 필요한 관측값의 최소 개수를 설정합니다.
+mtry: 트리를 분할하기 위해 필요한 feature의 수를 설정합니다.
+
+XGBoost
+hyperparameters:
+tree_depth: 최종 예측값에 다다르기까지 몇 번 트리를 분할할지 설정합니다.
+trees:
+learn_rate,
+mtry,
+min_n,
+loss_reduction,
+sample_size
+stop_iter
+
+Light GBM
+install treesnip package by: remotes::install_github("curso-r/treesnip")
+hyperparameters: mtry, min_n, tree_depth, loss_reduction, learn_rate, sample_size
+
 neural network 알고리즘 함수.
 neural network 모델은 생물학적인 뉴런을 수학적으로 모델링한 것.
 여러개의 뉴런으로부터 입력값을 받아서 세포체에 저장하다가 자신의 용량을 넘어서면 외부로 출력값을 내보내는 것처럼,
 인공신경망 뉴런은 여러 입력값을 받아서 일정 수준이 넘어서면 활성화되어 출력값을 내보낸다.
 hyperparameters: hidden_units, penalty, dropout, epochs, activation, learn_rate
-
-의사결정나무 알고리즘 함수. 의사 결정 규칙 (Decision rule)을 나무 형태로 분류해 나가는 분석 기법을 말합니다.
-hyperparameters: cost_complexity, tree_depth, min_n
-
-랜덤 포레스트 알고리즘 함수. 여러개의 Decision Tree를 형성.
-새로운 데이터 포인트를 각 트리에 동시에 통과 시켜 각 트리가 분류한 결과에서 투표를 실시하여
-가장 많이 득표한 결과를 최종 분류 결과로 선택
-hyperparameters: trees, min_n, mtry
-
-XGBoost
-hyperparameters: mtry, min_n, tree_depth, loss_reduction, learn_rate, sample_size
-
-Light GBM
-install treesnip package by: remotes::install_github("curso-r/treesnip")
-hyperparameters: mtry, min_n, tree_depth, loss_reduction, learn_rate, sample_size
 
 K means clustering
 selectOptimal: silhouette, gap_stat

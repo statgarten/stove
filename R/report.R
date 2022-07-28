@@ -6,6 +6,7 @@
 #' @param models_list  models_list
 #' @param targetVar  targetVar
 #'
+#' @import ggplot2
 #' @importFrom dplyr group_by
 #' @importFrom magrittr %>%
 #' @name %>%
@@ -14,7 +15,7 @@
 #' @export
 
 rocCurve <- function(modelsList, targetVar){
-  colors = RColorBrewer::brewer.pal(7, "Set2")[1:8] # maximum 8 models?
+  colors = grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
 
   plot <- do.call(rbind, modelsList)[[5]] %>% ## rbind here does nothing
     do.call(rbind, .) %>%
@@ -22,20 +23,20 @@ rocCurve <- function(modelsList, targetVar){
     yardstick::roc_curve(truth = eval(parse(text = targetVar)),
                          .pred_1,
                          event_level = 'second') %>%
-    ggplot2::ggplot(
+    ggplot(
       aes(
         x = 1-specificity,
         y = sensitivity,
         color = model
       )
     ) +
-    ggplot2::labs(title = "ROC curve",
+    labs(title = "ROC curve",
          x = "False Positive Rate (1-Specificity)",
          y = "True Positive Rate (Sensitivity)") +
-    ggplot2::geom_line(size = 1.1) +
-    ggplot2::geom_abline(slope = 1, intercept = 0, size = 0.5) +
-    ggplot2::scale_color_manual(values = colors) +
-    ggplot2::coord_fixed() +
+    geom_line(size = 1.1) +
+    geom_abline(slope = 1, intercept = 0, size = 0.5) +
+    scale_color_manual(values = colors(length(modelsList))) +
+    coord_fixed() +
     cowplot::theme_cowplot()
 
   return(plot)
@@ -51,6 +52,7 @@ rocCurve <- function(modelsList, targetVar){
 #' @param modelsList  modelsList
 #' @param targetVar  targetVar
 #'
+#' @import ggplot2
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
@@ -72,13 +74,13 @@ confusionMatrix <- function(modelName, modelsList, targetVar){
   colnames(confusion)[2] <- "actual_y"
   colnames(confusion)[3] <- "Frequency"
 
-  plot <- ggplot2::ggplot(confusion, aes(x = actual_y, y = y_pred, fill = Frequency)) +
-    ggplot2::geom_tile() +
-    ggplot2::geom_text(aes(label=Frequency)) +
-    ggplot2::scale_x_discrete(name="Actual Class") +
-    ggplot2::scale_y_discrete(name="Predicted Class") +
-    ggplot2::geom_text(aes(label = Frequency),colour = "black") +
-    ggplot2::scale_fill_continuous(high = "#E9BC09", low = "#F3E5AC")
+  plot <- ggplot(confusion, aes(x = actual_y, y = y_pred, fill = Frequency)) +
+    geom_tile() +
+    geom_text(aes(label=Frequency)) +
+    scale_x_discrete(name="Actual Class") +
+    scale_y_discrete(name="Predicted Class") +
+    geom_text(aes(label = Frequency),colour = "black") +
+    scale_fill_continuous(high = "#E9BC09", low = "#F3E5AC")
 
   return(plot)
 
@@ -93,6 +95,7 @@ confusionMatrix <- function(modelName, modelsList, targetVar){
 #' @param modelsList  modelsList
 #' @param targetVar  targetVar
 #'
+#' @import ggplot2
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
@@ -101,21 +104,23 @@ confusionMatrix <- function(modelName, modelsList, targetVar){
 
 regressionPlot <- function(modelName, modelsList, targetVar){
 
-  tmpDf <-  models_list[[modelName]] %>%
+  tmpDf <-  modelsList[[modelName]] %>%
     tune::collect_predictions()
 
   lims <- c(min(tmpDf[[targetVar]]),max(tmpDf[[targetVar]]))
 
-  plot <- models_list[[modelName]] %>%
+  plot <- modelsList[[modelName]] %>%
     tune::collect_predictions() %>%
-    ggplot2::ggplot(aes(x = eval(parse(text = targetVar)), y = models_list[[modelName]]$.predictions[[1]][1]$.pred)) +
-    ggplot2::labs(title = "Regression Plot (Truth vs Prediced)",
-                  x = "Truth",
-                  y = "Predicted") +
-    ggplot2::geom_abline(color = "gray50", lty = 2) +
-    ggplot2::geom_point(alpha = 0.5) +
-    ggplot2::scale_x_continuous(limits = lims) +
-    ggplot2::scale_y_continuous(limits = lims)
+    ggplot(aes(x = eval(parse(text = targetVar)), y = modelsList[[modelName]]$.predictions[[1]][1]$.pred)) +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), axis.line = element_line(colour = "#C70A80")) +
+    labs(title = "Regression Plot (Actual vs Prediced)",
+                  x = "Actual Value",
+                  y = "Predicted Value") +
+    geom_abline(color = "black", lty = 2) +
+    geom_point(alpha = 0.8, colour = "#C70A80") +
+    scale_x_continuous(limits = lims) +
+    scale_y_continuous(limits = lims)
 
   return(plot)
 }
@@ -129,6 +134,7 @@ regressionPlot <- function(modelName, modelsList, targetVar){
 #' @param modelsList  modelsList
 #' @param targetVar  targetVar
 #'
+#' @import ggplot2
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
@@ -176,6 +182,7 @@ evalMetricsC <- function(modelsList, targetVar){
 #' @param modelsList  modelsList
 #' @param targetVar  targetVar
 #'
+#' @import ggplot2
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
@@ -231,6 +238,8 @@ clusteringVis <- function(data = NULL,
                           nBoot = 100,
                           selectOptimal = NULL
                           ){
+  colors = grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
+
   elbowPlot <- factoextra::fviz_nbclust(x = data,
                                         FUNcluster  = stats::kmeans,
                                         method = "wss")
@@ -244,6 +253,7 @@ clusteringVis <- function(data = NULL,
                                          barcolor = "slateblue",
                                          linecolor = "slateblue"
     )
+    cols <- colors(optimalK$data$clusters[which.max(optimalK$data$y)])
   } else if (selectOptimal == "gap_stat"){
     optimalK <- factoextra::fviz_nbclust(x = data,
                                          FUNcluster = stats::kmeans,
@@ -254,14 +264,15 @@ clusteringVis <- function(data = NULL,
                                          barcolor = "slateblue",
                                          linecolor = "slateblue"
                                          )
+    cols <- colors(optimalK$data$clusters[which.max(optimalK$data$gap)])
   }
 
   clustVis <- factoextra::fviz_cluster(object = model,
                                        data = data,
-                                       #palette = c("#2E9FDF", "#00AFBB", "#E7B800"),
+                                       palette = cols,
                                        geom = "point",
                                        ellipse.type = "convex",
-                                       ggtheme = ggplot2::theme_bw()
+                                       ggtheme = theme_bw()
   )
 
   return(list(elbowPlot = elbowPlot, optimalK = optimalK, clustVis = clustVis))

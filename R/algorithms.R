@@ -24,9 +24,9 @@ logisticRegression <- function(algo = "logistic Regression",
                                splitedData = NULL,
                                formula = NULL,
                                rec = NULL,
-                               v = 5,
+                               v = "5",
                                penaltyRangeMin = "0.0",
-                               penaltyRangeMax = "1.0",
+                               penaltyRangeMax = "20.0",
                                penaltyRangeLevels = "5",
                                mixtureRangeMin = "0.0",
                                mixtureRangeMax = "1.0",
@@ -52,7 +52,7 @@ logisticRegression <- function(algo = "logistic Regression",
 
     grid_search_result <- goophi::gridSearchCV(rec = rec,
                                                model = model,
-                                               v = v,
+                                               v = as.numeric(v),
                                                data = trainingData,
                                                parameterGrid = parameterGrid
                                                )
@@ -73,7 +73,7 @@ logisticRegression <- function(algo = "logistic Regression",
 
     grid_search_result <- goophi::gridSearchCV(rec = rec,
                                                model = model,
-                                               v = v,
+                                               v = as.numeric(v),
                                                data = trainingData,
                                                parameterGrid = 10 # default value of param 'grid' in tune::tune_grid
                                                )
@@ -128,9 +128,9 @@ linearRegression <- function(algo = "linear Regression",
                              splitedData = NULL,
                              formula = NULL,
                              rec = NULL,
-                             v = 5,
+                             v = "5",
                              penaltyRangeMin = "0.0",
-                             penaltyRangeMax = "1.0",
+                             penaltyRangeMax = "20.0",
                              penaltyRangeLevels = "5",
                              mixtureRangeMin = "0.0",
                              mixtureRangeMax = "1.0",
@@ -157,7 +157,7 @@ linearRegression <- function(algo = "linear Regression",
 
     grid_search_result <- goophi::gridSearchCV(rec = rec,
                                                model = model,
-                                               v = v,
+                                               v = as.numeric(v),
                                                data = trainingData,
                                                parameterGrid = parameterGrid
     )
@@ -179,7 +179,7 @@ linearRegression <- function(algo = "linear Regression",
 
     grid_search_result <- goophi::gridSearchCV(rec = rec,
                                                model = model,
-                                               v = v,
+                                               v = as.numeric(v),
                                                data = trainingData,
                                                parameterGrid = 10 # default value of param 'grid' in tune::tune_grid
     )
@@ -234,10 +234,10 @@ KNN <- function(algo = "KNN",
                 splitedData = NULL,
                 formula = NULL,
                 rec = NULL,
-                v = 5,
+                v = "5",
                 neighborsRangeMin = "2",
-                neighborsRangeMax = "8",
-                neighborsRangeLevels = "4",
+                neighborsRangeMax = "20",
+                neighborsRangeLevels = "10",
                 metric = NULL){
 
   neighborsRange <- c(as.numeric(neighborsRangeMin), as.numeric(neighborsRangeMax))
@@ -256,7 +256,7 @@ KNN <- function(algo = "KNN",
 
   grid_search_result <- goophi::gridSearchCV(rec = rec,
                                              model = model,
-                                             v = v,
+                                             v = as.numeric(v),
                                              data = trainingData,
                                              parameterGrid = parameterGrid
   )
@@ -309,13 +309,13 @@ naiveBayes <- function(algo = "Naive Bayes",
                        splitedData = NULL,
                        formula = NULL,
                        rec = NULL,
-                       v = 5,
-                       smoothnessRangeMin = "0.1",
-                       smoothnessRangeMax = "2",
+                       v = "5",
+                       smoothnessRangeMin = "0.001",
+                       smoothnessRangeMax = "10",
                        smoothnessRangeLevels = "5",
                        LaplaceRangeMin = "0",
-                       LaplaceRangeMax = "3",
-                       LaplaceRangeLevels = "4",
+                       LaplaceRangeMax = "50",
+                       LaplaceRangeLevels = "6",
                        metric = NULL){
 
   smoothnessRange <- c(as.numeric(smoothnessRangeMin), as.numeric(smoothnessRangeMax))
@@ -337,7 +337,7 @@ naiveBayes <- function(algo = "Naive Bayes",
 
   grid_search_result <- goophi::gridSearchCV(rec = rec,
                                              model = model,
-                                             v = v,
+                                             v = as.numeric(v),
                                              data = trainingData,
                                              parameterGrid = parameterGrid
   )
@@ -354,6 +354,414 @@ naiveBayes <- function(algo = "Naive Bayes",
 
 }
 
+#' Decision Tree
+#'
+#' @details
+#' 의사결정나무 알고리즘 함수. 의사 결정 규칙 (Decision rule)을 나무 형태로 분류해 나가는 분석 기법을 말합니다.
+#' hyperparameters:
+#' tree_depth: 최종 예측값에 다다르기까지 몇 번 트리를 분할할지 설정합니다.
+#' min_n: 트리를 분할하기 위해 필요한 관측값의 최소 개수를 설정합니다.
+#' cost_complexity: 트리 분할을 위해 필요한 비용을 설정합니다. 0일 경우, 가능한 모든 분할이 수행됩니다.
+#'
+#' @param algo algo
+#' @param engine engine
+#' @param mode mode
+#' @param trainingData trainingData
+#' @param splitedData splitedData
+#' @param formula formula
+#' @param rec rec
+#' @param v v
+#' @param treeDepthRangeMin treeDepthRangeMin
+#' @param treeDepthRangeMax treeDepthRangeMax
+#' @param treeDepthRangeLevels treeDepthRangeLevels
+#' @param minNRangeMin minNRangeMin
+#' @param minNRangeMax minNRangeMax
+#' @param minNRangeLevels minNRangeLevels
+#' @param costComplexityRangeMin costComplexityRangeMin
+#' @param costComplexityRangeMax costComplexityRangeMax
+#' @param costComplexityRangeLevels costComplexityRangeLevels
+#'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
+#' @import parsnip
+#'
+#' @export
+
+decisionTree <- function(algo = "Decision Tree",
+                         engine = "rpart",
+                         mode = "classification",
+                         trainingData = NULL,
+                         splitedData = NULL,
+                         formula = NULL,
+                         rec = NULL,
+                         v = "5",
+                         treeDepthRangeMin = "10",
+                         treeDepthRangeMax = "30",
+                         treeDepthRangeLevels = "3",
+                         minNRangeMin = "2",
+                         minNRangeMax = "500",
+                         minNRangeLevels = "3",
+                         costComplexityRangeMin = "0",
+                         costComplexityRangeMax = "1",
+                         costComplexityRangeLevels = "3",
+                         metric = NULL){
+
+  treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
+  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
+  costComplexityRange <- c(as.numeric(costComplexityRangeMin), as.numeric(costComplexityRangeMax))
+
+  parameterGrid <- dials::grid_regular(
+    dials::tree_depth(range = treeDepthRange),
+    dials::min_n(range = minNRange),
+    dials::cost_complexity(range = costComplexityRange),
+    levels = c(tree_depth = as.numeric(treeDepthRangeLevels),
+               min_n = as.numeric(minNRangeLevels),
+               cost_complexity = as.numeric(costComplexityRangeLevels)
+    )
+  )
+
+  model <- parsnip::decision_tree(cost_complexity = tune(),
+                                  tree_depth = tune(),
+                                  min_n = tune()) %>%
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::translate()
+
+  grid_search_result <- goophi::gridSearchCV(rec = rec,
+                                             model = model,
+                                             v = as.numeric(v),
+                                             data = trainingData,
+                                             parameterGrid = parameterGrid
+  )
+
+  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
+                                    metric = metric,
+                                    model = model,
+                                    formula = formula,
+                                    trainingData = trainingData,
+                                    splitedData = splitedData,
+                                    algo = paste0(algo,"_",engine))
+
+  return(finalized)
+}
+
+
+#' Random Forest
+#'
+#' @details
+#' 랜덤 포레스트 알고리즘 함수. 여러개의 Decision Tree를 형성.
+#' 새로운 데이터 포인트를 각 트리에 동시에 통과 시켜 각 트리가 분류한 결과에서 투표를 실시하여
+#' 가장 많이 득표한 결과를 최종 분류 결과로 선택
+#' hyperparameters:
+#' trees: 결정트리의 개수를 지정합니다.
+#' min_n: 트리를 분할하기 위해 필요한 관측값의 최소 개수를 설정합니다.
+#' mtry: 트리를 분할하기 위해 필요한 feature의 수를 설정합니다.
+#'
+#' @param algo algo
+#' @param engine engine
+#' @param mode mode
+#' @param trainingData trainingData
+#' @param splitedData splitedData
+#' @param formula formula
+#' @param rec rec
+#' @param v v
+#' @param mtryRangeMin mtryRangeMin
+#' @param mtryRangeMax mtryRangeMax
+#' @param mtryRangeLevels mtryRangeLevels
+#' @param treesRangeMin treesRangeMin
+#' @param treesRangeMax treesRangeMax
+#' @param treesRangeLevels treesRangeLevels
+#' @param minNRangeMin minNRangeMin
+#' @param minNRangeMax minNRangeMax
+#' @param minNRangeLevels minNRangeLevels
+#'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
+#' @import parsnip
+#'
+#' @export
+
+randomForest <- function(algo = "Random Forest",
+                         engine = "ranger",
+                         mode = "classification",
+                         trainingData = NULL,
+                         splitedData = NULL,
+                         formula = NULL,
+                         rec = NULL,
+                         v = "5",
+                         mtryRangeMin = "1",
+                         mtryRangeMax = "20",
+                         mtryRangeLevels = "3",
+                         treesRangeMin = "100",
+                         treesRangeMax = "2000",
+                         treesRangeLevels = "3",
+                         minNRangeMin = "2",
+                         minNRangeMax = "500",
+                         minNRangeLevels = "3",
+                         metric = NULL){
+
+  mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
+  treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
+  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
+
+  parameterGrid <- dials::grid_regular(
+    dials::mtry(range = mtryRange),
+    dials::trees(range = treesRange),
+    dials::min_n(range = minNRange),
+    levels = c(mtry = as.numeric(mtryRangeLevels),
+               trees = as.numeric(treesRangeLevels),
+               min_n = as.numeric(minNRangeLevels)
+    )
+  )
+
+  model <- parsnip::rand_forest(trees = tune(),
+                                min_n = tune(),
+                                mtry = tune()) %>%
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::translate()
+
+  grid_search_result <- goophi::gridSearchCV(rec = rec,
+                                             model = model,
+                                             v = as.numeric(v),
+                                             data = trainingData,
+                                             parameterGrid = parameterGrid
+  )
+
+  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
+                                    metric = metric,
+                                    model = model,
+                                    formula = formula,
+                                    trainingData = trainingData,
+                                    splitedData = splitedData,
+                                    algo = paste0(algo,"_",engine))
+
+  return(finalized)
+}
+
+
+#' XGBoost
+#'
+#' @details
+#' XGBoost
+#' hyperparameters:
+#' tree_depth: 최종 예측값에 다다르기까지 몇 번 트리를 분할할지 설정합니다.
+#' trees:
+#' learn_rate,
+#' mtry,
+#' min_n,
+#' loss_reduction,
+#' sample_size
+#' stop_iter
+#'
+#' @param engine engine
+#' @param mode mode
+#'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
+#' @import parsnip
+#' @import xgboost
+#'
+#' @export
+
+xgboost <- function(algo = "Random Forest",
+                    engine = "xgboost",
+                    mode = "classification",
+                    trainingData = NULL,
+                    splitedData = NULL,
+                    formula = NULL,
+                    rec = NULL,
+                    v = "5",
+                    treeDepthRangeMin = "2",
+                    treeDepthRangeMax = "50",
+                    treeDepthRangeLevels = "3",
+                    treesRangeMin = "10",
+                    treesRangeMax = "50",
+                    treesRangeLevels = "2",
+                    learnRateRangeMin = "0.01",
+                    learnRateRangeMax = "0.3",
+                    learnRateRangeLevels = "2",
+                    mtryRangeMin = "1",
+                    mtryRangeMax = "20",
+                    mtryRangeLevels = "3",
+                    minNRangeMin = "1",
+                    minNRangeMax = "500",
+                    minNRangeLevels = "3",
+                    lossReductionRangeMin = "0",
+                    lossReductionRangeMax = "1",
+                    lossReductionRangeLevels = "3",
+                    sampleSizeRangeMin = "0",
+                    sampleSizeRangeMax = "1",
+                    sampleSizeRangeLevels = "3",
+                    stopIter = "30",
+                    metric = NULL){
+
+  treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
+  treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
+  learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
+  mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
+  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
+  lossReductionRange <- c(as.numeric(lossReductionRangeMin), as.numeric(lossReductionRangeMax))
+  sampleSizeRange <- c(as.numeric(sampleSizeRangeMin), as.numeric(sampleSizeRangeMax))
+  stopIterRange <- c(as.numeric(stopIter), as.numeric(stopIter)) # constant
+
+  parameterGrid <- dials::grid_regular(
+    dials::tree_depth(range = treeDepthRange),
+    dials::trees(range = treesRange),
+    dials::learn_rate(range = learnRateRange),
+    dials::mtry(range = mtryRange),
+    dials::min_n(range = minNRange),
+    dials::loss_reduction(range = lossReductionRange),
+    dials::sample_size(range = sampleSizeRange),
+    dials::stop_iter(range = stopIterRange),
+    levels = c(tree_depth = as.numeric(treeDepthRangeLevels),
+               trees = as.numeric(treesRangeLevels),
+               learn_rate = as.numeric(learnRateRangeLevels),
+               mtry = as.numeric(mtryRangeLevels),
+               min_n = as.numeric(minNRangeLevels),
+               loss_reduction = as.numeric(lossReductionRangeLevels),
+               sample_size = as.numeric(sampleSizeRangeLevels),
+               stop_iter = 1
+    )
+  )
+
+  model <- parsnip::boost_tree(
+    tree_depth = tune(),
+    trees = tune(),
+    learn_rate = tune(),
+    mtry = tune(),
+    min_n = tune(),
+    loss_reduction = tune(),
+    sample_size = tune(),
+    stop_iter = tune()
+    ) %>%
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::translate()
+
+  grid_search_result <- goophi::gridSearchCV(rec = rec,
+                                             model = model,
+                                             v = as.numeric(v),
+                                             data = trainingData,
+                                             parameterGrid = parameterGrid
+  )
+
+  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
+                                    metric = metric,
+                                    model = model,
+                                    formula = formula,
+                                    trainingData = trainingData,
+                                    splitedData = splitedData,
+                                    algo = paste0(algo,"_",engine))
+
+  return(finalized)
+}
+
+#' Light GBM
+#'
+#' @details
+#' Light GBM
+#' install treesnip package by: remotes::install_github("curso-r/treesnip")
+#' hyperparameters: mtry, min_n, tree_depth, loss_reduction, learn_rate, sample_size
+#'
+#' @param engine engine
+#' @param mode mode
+#'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @import dials
+#' @import parsnip
+#' @import treesnip
+#'
+#' @export
+
+lightGbm <- function(algo = "Random Forest",
+                     engine = "lightgbm",
+                     mode = "classification",
+                     trainingData = NULL,
+                     splitedData = NULL,
+                     formula = NULL,
+                     rec = NULL,
+                     v = "5",
+                     treeDepthRangeMin = "2",
+                     treeDepthRangeMax = "30",
+                     treeDepthRangeLevels = "3",
+                     treesRangeMin = "10",
+                     treesRangeMax = "50",
+                     treesRangeLevels = "2",
+                     learnRateRangeMin = "0.01",
+                     learnRateRangeMax = "0.3",
+                     learnRateRangeLevels = "2",
+                     mtryRangeMin = "1",
+                     mtryRangeMax = "20",
+                     mtryRangeLevels = "3",
+                     minNRangeMin = "1",
+                     minNRangeMax = "500",
+                     minNRangeLevels = "3",
+                     lossReductionRangeMin = "0",
+                     lossReductionRangeMax = "1",
+                     lossReductionRangeLevels = "3",
+                     metric = NULL){
+
+  treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
+  treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
+  learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
+  mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
+  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
+  lossReductionRange <- c(as.numeric(lossReductionRangeMin), as.numeric(lossReductionRangeMax))
+
+  parameterGrid <- dials::grid_regular(
+    dials::tree_depth(range = treeDepthRange),
+    dials::trees(range = treesRange),
+    dials::learn_rate(range = learnRateRange),
+    dials::mtry(range = mtryRange),
+    dials::min_n(range = minNRange),
+    dials::loss_reduction(range = lossReductionRange),
+    levels = c(tree_depth = as.numeric(treeDepthRangeLevels),
+               trees = as.numeric(treesRangeLevels),
+               learn_rate = as.numeric(learnRateRangeLevels),
+               mtry = as.numeric(mtryRangeLevels),
+               min_n = as.numeric(minNRangeLevels),
+               loss_reduction = as.numeric(lossReductionRangeLevels)
+    )
+  )
+
+  model <- parsnip::boost_tree(
+    tree_depth = tune(),
+    trees = tune(),
+    learn_rate = tune(),
+    mtry = tune(),
+    min_n = tune(),
+    loss_reduction = tune()
+  ) %>%
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::translate()
+
+  grid_search_result <- goophi::gridSearchCV(rec = rec,
+                                             model = model,
+                                             v = as.numeric(v),
+                                             data = trainingData,
+                                             parameterGrid = parameterGrid
+  )
+
+  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
+                                    metric = metric,
+                                    model = model,
+                                    formula = formula,
+                                    trainingData = trainingData,
+                                    splitedData = splitedData,
+                                    algo = paste0(algo,"_",engine))
+
+  return(finalized)
+}
 
 #' neural network
 #'
@@ -404,43 +812,43 @@ MLP <- function(algo = "MLP",
                 splitedData = NULL,
                 formula = NULL,
                 rec = NULL,
-                v = 5,
+                v = "5",
                 hiddenUnitsRangeMin = "1",
                 hiddenUnitsRangeMax = "10",
                 hiddenUnitsRangeLevels = "3",
                 penaltyRangeMin = "0.01",
                 penaltyRangeMax = "0.5",
                 penaltyRangeLevels = "3",
-                # dropoutRangeMin = "0",
-                # dropoutRangeMax = "1",
-                # dropoutRangeLevels = "2",
                 epochsRangeMin = "10",
                 epochsRangeMax = "100",
                 epochsRangeLevels = "2",
+                # dropoutRangeMin = "0",
+                # dropoutRangeMax = "1",
+                # dropoutRangeLevels = "2",
                 # activation = "linear", #"linear", "softmax", "relu", and "elu"
                 # learnRateRangeMin = "0",
                 # learnRateRangeMax = "1",
                 # learnRateRangeLevels = "2",
                 metric = NULL
-                ){
+){
 
   hiddenUnitsRange <- c(as.numeric(hiddenUnitsRangeMin), as.numeric(hiddenUnitsRangeMax))
   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
-  # dropoutRange <- c(as.numeric(dropoutRangeMin), as.numeric(dropoutRangeMax))
   epochsRange <- c(as.numeric(epochsRangeMin), as.numeric(epochsRangeMax))
+  # dropoutRange <- c(as.numeric(dropoutRangeMin), as.numeric(dropoutRangeMax))
   # learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
 
   parameterGrid <- dials::grid_regular(
     dials::hidden_units(range = hiddenUnitsRange),
     dials::penalty(range = penaltyRange),
-    # dials::dropout(range = dropoutRange),
     dials::epochs(range = epochsRange),
+    # dials::dropout(range = dropoutRange),
     # dials::learn_rate(range = learnRateRange),
     # dials::activation(values = activation),
     levels = c(hidden_units = as.numeric(hiddenUnitsRangeLevels),
                penalty = as.numeric(penaltyRangeLevels),
-               # dropout = as.numeric(dropoutRangeLevels),
                epochs = as.numeric(epochsRangeLevels)
+               # dropout = as.numeric(dropoutRangeLevels),
                # learn_rate = as.numeric(learnRateRangeLevels),
                # activation = 1
     )
@@ -452,404 +860,6 @@ MLP <- function(algo = "MLP",
                         # dropout = tune(),
                         # activation = tune(),
                         # learn_rate = tune()
-                        ) %>%
-    parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode) %>%
-    parsnip::translate()
-
-  grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                             model = model,
-                                             v = v,
-                                             data = trainingData,
-                                             parameterGrid = parameterGrid
-  )
-
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric,
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = trainingData,
-                                    splitedData = splitedData,
-                                    algo = paste0(algo,"_",engine))
-
-  return(finalized)
-}
-
-
-
-#' Decision Tree
-#'
-#' @details
-#' 의사결정나무 알고리즘 함수. 의사 결정 규칙 (Decision rule)을 나무 형태로 분류해 나가는 분석 기법을 말합니다.
-#' hyperparameters: cost_complexity, tree_depth, min_n
-#'
-#' @param algo algo
-#' @param engine engine
-#' @param mode mode
-#' @param trainingData trainingData
-#' @param splitedData splitedData
-#' @param formula formula
-#' @param rec rec
-#' @param v v
-#' @param treeDepthRangeMin treeDepthRangeMin
-#' @param treeDepthRangeMax treeDepthRangeMax
-#' @param treeDepthRangeLevels treeDepthRangeLevels
-#' @param minNRangeMin minNRangeMin
-#' @param minNRangeMax minNRangeMax
-#' @param minNRangeLevels minNRangeLevels
-#' @param costComplexityRangeMin costComplexityRangeMin
-#' @param costComplexityRangeMax costComplexityRangeMax
-#' @param costComplexityRangeLevels costComplexityRangeLevels
-#'
-#' @importFrom magrittr %>%
-#' @name %>%
-#' @rdname pipe
-#' @import dials
-#' @import parsnip
-#'
-#' @export
-
-decisionTree <- function(algo = "MLP",
-                         engine = "rpart",
-                         mode = "classification",
-                         trainingData = NULL,
-                         splitedData = NULL,
-                         formula = NULL,
-                         rec = NULL,
-                         v = 5,
-                         treeDepthRangeMin = "3",
-                         treeDepthRangeMax = "10",
-                         treeDepthRangeLevels = "3",
-                         minNRangeMin = "10",
-                         minNRangeMax = "50",
-                         minNRangeLevels = "3",
-                         costComplexityRangeMin = "-1",
-                         costComplexityRangeMax = "5",
-                         costComplexityRangeLevels = "3",
-                         metric = NULL){
-
-  treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
-  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-  costComplexityRange <- c(as.numeric(costComplexityRangeMin), as.numeric(costComplexityRangeMax))
-
-
-  parameterGrid <- dials::grid_regular(
-    dials::tree_depth(range = treeDepthRange),
-    dials::min_n(range = minNRange),
-    dials::cost_complexity(range = costComplexityRange),
-    levels = c(tree_depth = as.numeric(treeDepthRangeLevels),
-               min_n = as.numeric(minNRangeLevels),
-               cost_complexity = as.numeric(costComplexityRangeLevels)
-    )
-  )
-
-  model <- parsnip::decision_tree(cost_complexity = tune(),
-                                  tree_depth = tune(),
-                                  min_n = tune()) %>%
-    parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode) %>%
-    parsnip::translate()
-
-  grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                             model = model,
-                                             v = v,
-                                             data = trainingData,
-                                             parameterGrid = parameterGrid
-  )
-
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric,
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = trainingData,
-                                    splitedData = splitedData,
-                                    algo = paste0(algo,"_",engine))
-
-  return(finalized)
-}
-
-
-#' Random Forest
-#'
-#' @details
-#' 랜덤 포레스트 알고리즘 함수. 여러개의 Decision Tree를 형성.
-#' 새로운 데이터 포인트를 각 트리에 동시에 통과 시켜 각 트리가 분류한 결과에서 투표를 실시하여
-#' 가장 많이 득표한 결과를 최종 분류 결과로 선택
-#' hyperparameters: trees, min_n, mtry
-#'
-#' @param algo algo
-#' @param engine engine
-#' @param mode mode
-#' @param trainingData trainingData
-#' @param splitedData splitedData
-#' @param formula formula
-#' @param rec rec
-#' @param v v
-#' @param mtryRangeMin mtryRangeMin
-#' @param mtryRangeMax mtryRangeMax
-#' @param mtryRangeLevels mtryRangeLevels
-#' @param treesRangeMin treesRangeMin
-#' @param treesRangeMax treesRangeMax
-#' @param treesRangeLevels treesRangeLevels
-#' @param minNRangeMin minNRangeMin
-#' @param minNRangeMax minNRangeMax
-#' @param minNRangeLevels minNRangeLevels
-#'
-#' @importFrom magrittr %>%
-#' @name %>%
-#' @rdname pipe
-#' @import dials
-#' @import parsnip
-#'
-#' @export
-
-randomForest <- function(algo = "Random Forest",
-                         engine = "ranger",
-                         mode = "classification",
-                         trainingData = NULL,
-                         splitedData = NULL,
-                         formula = NULL,
-                         rec = NULL,
-                         v = 5,
-                         mtryRangeMin = "1",
-                         mtryRangeMax = "5",
-                         mtryRangeLevels = "3",
-                         treesRangeMin = "500",
-                         treesRangeMax = "2000",
-                         treesRangeLevels = "3",
-                         minNRangeMin = "10",
-                         minNRangeMax = "40",
-                         minNRangeLevels = "3",
-                         metric = NULL){
-
-  mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
-  treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
-  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-
-  parameterGrid <- dials::grid_regular(
-    dials::mtry(range = mtryRange),
-    dials::trees(range = treesRange),
-    dials::min_n(range = minNRange),
-    levels = c(mtry = as.numeric(mtryRangeLevels),
-               trees = as.numeric(treesRangeLevels),
-               min_n = as.numeric(minNRangeLevels)
-    )
-  )
-
-  model <- parsnip::rand_forest(trees = tune(),
-                                min_n = tune(),
-                                mtry = tune()) %>%
-    parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode) %>%
-    parsnip::translate()
-
-  grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                             model = model,
-                                             v = v,
-                                             data = trainingData,
-                                             parameterGrid = parameterGrid
-  )
-
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric,
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = trainingData,
-                                    splitedData = splitedData,
-                                    algo = paste0(algo,"_",engine))
-
-  return(finalized)
-}
-
-
-#' XGBoost
-#'
-#' @details
-#' XGBoost
-#' hyperparameters: mtry, min_n, tree_depth, loss_reduction, learn_rate, sample_size
-#'
-#' @param engine engine
-#' @param mode mode
-#'
-#' @importFrom magrittr %>%
-#' @name %>%
-#' @rdname pipe
-#' @import dials
-#' @import parsnip
-#' @import xgboost
-#'
-#' @export
-
-xgboost <- function(algo = "Random Forest",
-                    engine = "xgboost",
-                    mode = "classification",
-                    trainingData = NULL,
-                    splitedData = NULL,
-                    formula = NULL,
-                    rec = NULL,
-                    v = 5,
-                    treeDepthRangeMin = "3",
-                    treeDepthRangeMax = "6",
-                    treeDepthRangeLevels = "2",
-                    treesRangeMin = "10",
-                    treesRangeMax = "15",
-                    treesRangeLevels = "2",
-                    learnRateRangeMin = "0.01",
-                    learnRateRangeMax = "0.3",
-                    learnRateRangeLevels = "2",
-                    mtryRangeMin = "1",
-                    mtryRangeMax = "9",
-                    mtryRangeLevels = "3",
-                    minNRangeMin = "1",
-                    minNRangeMax = "10",
-                    minNRangeLevels = "3",
-                    lossReductionRangeMin = "0",
-                    lossReductionRangeMax = "10",
-                    lossReductionRangeLevels = "2",
-                    sampleSizeRangeMin = "0",
-                    sampleSizeRangeMax = "1",
-                    sampleSizeRangeLevels = "2",
-                    stopIter = "10",
-                    metric = NULL){
-
-  treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
-  treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
-  learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
-  mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
-  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-  lossReductionRange <- c(as.numeric(lossReductionRangeMin), as.numeric(lossReductionRangeMax))
-  sampleSizeRange <- c(as.numeric(sampleSizeRangeMin), as.numeric(sampleSizeRangeMax))
-  stopIterRange <- c(as.numeric(stopIter), as.numeric(stopIter)) # constant
-
-  parameterGrid <- dials::grid_regular(
-    dials::tree_depth(range = treeDepthRange),
-    dials::trees(range = treesRange),
-    dials::learn_rate(range = learnRateRange),
-    dials::mtry(range = mtryRange),
-    dials::min_n(range = minNRange),
-    dials::loss_reduction(range = lossReductionRange),
-    dials::sample_size(range = sampleSizeRange),
-    dials::stop_iter(range = stopIterRange),
-    levels = c(tree_depth = as.numeric(treeDepthRangeLevels),
-               trees = as.numeric(treesRangeLevels),
-               learn_rate = as.numeric(learnRateRangeLevels),
-               mtry = as.numeric(mtryRangeLevels),
-               min_n = as.numeric(minNRangeLevels),
-               loss_reduction = as.numeric(lossReductionRangeLevels),
-               sample_size = as.numeric(sampleSizeRangeLevels),
-               stop_iter = 1
-    )
-  )
-
-  model <- parsnip::boost_tree(
-    tree_depth = tune(),
-    trees = tune(),
-    learn_rate = tune(),
-    mtry = tune(),
-    min_n = tune(),
-    loss_reduction = tune(),
-    sample_size = tune(),
-    stop_iter = tune()
-    ) %>%
-    parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode) %>%
-    parsnip::translate()
-
-  grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                             model = model,
-                                             v = v,
-                                             data = trainingData,
-                                             parameterGrid = parameterGrid
-  )
-
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric,
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = trainingData,
-                                    splitedData = splitedData,
-                                    algo = paste0(algo,"_",engine))
-
-  return(finalized)
-}
-
-#' Light GBM
-#'
-#' @details
-#' Light GBM
-#' install treesnip package by: remotes::install_github("curso-r/treesnip")
-#' hyperparameters: mtry, min_n, tree_depth, loss_reduction, learn_rate, sample_size
-#'
-#' @param engine engine
-#' @param mode mode
-#'
-#' @importFrom magrittr %>%
-#' @name %>%
-#' @rdname pipe
-#' @import dials
-#' @import parsnip
-#' @import treesnip
-#'
-#' @export
-
-lightGbm <- function(algo = "Random Forest",
-                     engine = "lightgbm",
-                     mode = "classification",
-                     trainingData = NULL,
-                     splitedData = NULL,
-                     formula = NULL,
-                     rec = NULL,
-                     v = 5,
-                     treeDepthRangeMin = "3",
-                     treeDepthRangeMax = "6",
-                     treeDepthRangeLevels = "2",
-                     treesRangeMin = "10",
-                     treesRangeMax = "15",
-                     treesRangeLevels = "2",
-                     learnRateRangeMin = "0.01",
-                     learnRateRangeMax = "0.3",
-                     learnRateRangeLevels = "2",
-                     mtryRangeMin = "1",
-                     mtryRangeMax = "9",
-                     mtryRangeLevels = "3",
-                     minNRangeMin = "1",
-                     minNRangeMax = "10",
-                     minNRangeLevels = "3",
-                     lossReductionRangeMin = "0",
-                     lossReductionRangeMax = "10",
-                     lossReductionRangeLevels = "2",
-                     metric = NULL){
-
-  treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
-  treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
-  learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
-  mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
-  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-  lossReductionRange <- c(as.numeric(lossReductionRangeMin), as.numeric(lossReductionRangeMax))
-
-  parameterGrid <- dials::grid_regular(
-    dials::tree_depth(range = treeDepthRange),
-    dials::trees(range = treesRange),
-    dials::learn_rate(range = learnRateRange),
-    dials::mtry(range = mtryRange),
-    dials::min_n(range = minNRange),
-    dials::loss_reduction(range = lossReductionRange),
-    levels = c(tree_depth = as.numeric(treeDepthRangeLevels),
-               trees = as.numeric(treesRangeLevels),
-               learn_rate = as.numeric(learnRateRangeLevels),
-               mtry = as.numeric(mtryRangeLevels),
-               min_n = as.numeric(minNRangeLevels),
-               loss_reduction = as.numeric(lossReductionRangeLevels)
-    )
-  )
-
-  model <- parsnip::boost_tree(
-    tree_depth = tune(),
-    trees = tune(),
-    learn_rate = tune(),
-    mtry = tune(),
-    min_n = tune(),
-    loss_reduction = tune()
   ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
@@ -857,7 +867,7 @@ lightGbm <- function(algo = "Random Forest",
 
   grid_search_result <- goophi::gridSearchCV(rec = rec,
                                              model = model,
-                                             v = v,
+                                             v = as.numeric(v),
                                              data = trainingData,
                                              parameterGrid = parameterGrid
   )
@@ -900,22 +910,22 @@ lightGbm <- function(algo = "Random Forest",
 #'
 
 kMeansClustering <- function(data,
-                             maxK = "10",
+                             maxK = "15",
                              nStart = "25",
                              iterMax = "10",
                              nBoot = '100',
                              algorithm = "Hartigan-Wong", ## "Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"
                              selectOptimal = "silhouette", # silhouette, gap_stat
-                             seed_num = "6471"){
+                             seedNum = "6471"){
 
-  set.seed(as.numeric(seed_num))
+  set.seed(as.numeric(seedNum))
 
   if(selectOptimal == "silhouette"){
     tmp_result <- factoextra::fviz_nbclust(x = data,
                                            FUNcluster = stats::kmeans,
                                            method = selectOptimal,
                                            k.max = as.numeric(maxK)
-                                           )
+    )
     result_clust<-tmp_result$data
 
     optimalK <- as.numeric(result_clust$clusters[which.max(result_clust$y)])
@@ -925,7 +935,7 @@ kMeansClustering <- function(data,
                                            method = selectOptimal,
                                            k.max = as.numeric(maxK),
                                            nboot = as.numeric(nBoot)
-                                           )
+    )
 
     result_clust<-tmp_result$data
 
@@ -939,7 +949,7 @@ kMeansClustering <- function(data,
                           iter.max = iterMax,
                           nstart = as.numeric(nStart),
                           algorithm = algorithm
-                          )
+  )
 
   return(result)
 }

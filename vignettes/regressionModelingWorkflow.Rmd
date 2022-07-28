@@ -21,7 +21,6 @@ library(DT)
 require(dplyr) # import for loading/preprocessing the sample data
 require(MASS)
 data("Boston")
-attach(Boston)
 library(goophi)
 ```
 
@@ -131,8 +130,8 @@ mode <- "regression"
 algo <- "LinearR"
 engine <- "glmnet"
 
-penaltyRangeMin = "0.1"
-penaltyRangeMax = "20"
+penaltyRangeMin = "0.0"
+penaltyRangeMax = "20.0"
 penaltyRangeLevels = "5"
 mixtureRangeMin = "0.0"
 mixtureRangeMax = "1.0"
@@ -164,63 +163,9 @@ finalized <- goophi::linearRegression(algo = algo,
 ## models_list에 모델을 추가합니다.
 models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
 ```
-
-
 ### 2) K Nearest Neighbor
 
 ```{r}
-# 사용자정의 ML 모델을 생성합니다
-if (algo == "LightGBM") {
-  
-  model <- goophi::lightGbm(engine = engine,
-                            mode = mode)
-  
-  ## 이 입력 전부 goophi::lightGbm_phi 안에 넣기
-  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-  mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
-  treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
-  treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
-  learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
-  lossReductionRange <- c(as.numeric(lossReductionRangeMin), as.numeric(lossReductionRangeMax))
-  
-  parameterGrid <- dials::grid_regular(
-    min_n(range = minNRange),
-    mtry(range = mtryRange),
-    trees(range = treesRange),
-    tree_depth(range = treeDepthRange), # num_leaves = 2^(max_depth)
-    learn_rate(range = learnRateRange),
-    loss_reduction(range = lossReductionRange),
-    levels = c(min_n = as.numeric(minNRangeLevels),
-               mtry = as.numeric(mtryRangeLevels),
-               trees = as.numeric(treesRangeLevels),
-               tree_depth = as.numeric(treeDepthRangeLevels),
-               learn_rate = as.numeric(learnRateRangeLevels),
-               loss_reduction = as.numeric(lossReductionRangeLevels)
-    )
-  )
-       ## 여기까지
-  
-  
-  # parameter grid를 적용한 cross validation을 수행합니다
-  grid_search_result <- goophi::gridSearchCV(rec = rec,
-                             model = model,
-                             v = v,
-                             data = data_train,
-                             parameterGrid = parameterGrid
-  )
-  
-  # 가장 성능이 좋은 모델을 저장합니다
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric, # "rmse" "rsq"
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = data_train,
-                                    splitedData = data_split,
-                                    algo = paste0(algo,"_",engine))
-  
-  
-  models_list <- append(models_list, list(finalized[[2]]))
-}
 ## User input
 
 mode <- "regression"
@@ -228,8 +173,8 @@ algo <- "KNN"
 engine <- "kknn"
 
 neighborsRangeMin = "2"
-neighborsRangeMax = "8"
-neighborsRangeLevels = "4"
+neighborsRangeMax = "20"
+neighborsRangeLevels = "10"
 
 v <- "2"
 
@@ -281,7 +226,6 @@ epochsRangeLevels = "2"
 # learnRateRangeMax = "1"
 # learnRateRangeLevels = "2"
 
-
 v <- "2"
 
 metric <- "rmse"
@@ -328,14 +272,14 @@ mode <- "regression"
 algo <- "Decision Tree"
 engine <- "rpart"
 
-treeDepthRangeMin = "3"
-treeDepthRangeMax = "10"
+treeDepthRangeMin = "10"
+treeDepthRangeMax = "30"
 treeDepthRangeLevels = "3"
-minNRangeMin = "10"
-minNRangeMax = "50"
+minNRangeMin = "2"
+minNRangeMax = "500"
 minNRangeLevels = "3"
 costComplexityRangeMin = "-1"
-costComplexityRangeMax = "5"
+costComplexityRangeMax = "1"
 costComplexityRangeLevels = "3"
 
 v <- "2"
@@ -367,8 +311,8 @@ finalized <- goophi::decisionTree(algo = algo,
 ## models_list에 모델을 추가합니다.
 models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
 
-## A correlation computation is required, but `estimate` is constant and has 0 standard deviation ... warning은 
 ```
+
 ### 5) Random Forest
 
 ```{r}
@@ -379,13 +323,13 @@ algo <- "Random Forest"
 engine <- "ranger"
 
 mtryRangeMin <- "1"
-mtryRangeMax <- "5"
+mtryRangeMax <- "20"
 mtryRangeLevels <- "3"
-treesRangeMin <- "500"
+treesRangeMin <- "100"
 treesRangeMax <- "2000"
 treesRangeLevels <- "3"
-minNRangeMin <- "1"
-minNRangeMax <- "10"
+minNRangeMin <- "2"
+minNRangeMax <- "500"
 minNRangeLevels <- "3"
 
 v <- "2"
@@ -427,28 +371,28 @@ mode <- "regression"
 algo <- "XGBoost"
 engine <- "xgboost"
 
-treeDepthRangeMin <- "3"
-treeDepthRangeMax <- "6"
-treeDepthRangeLevels <- "2"
+treeDepthRangeMin <- "2"
+treeDepthRangeMax <- "50"
+treeDepthRangeLevels <- "3"
 treesRangeMin <- "10"
-treesRangeMax <- "15"
+treesRangeMax <- "50"
 treesRangeLevels <- "2"
 learnRateRangeMin <- "0.01"
 learnRateRangeMax <- "0.3"
 learnRateRangeLevels <- "2"
 mtryRangeMin <- "1"
-mtryRangeMax <- "9"
+mtryRangeMax <- "20"
 mtryRangeLevels <- "3"
 minNRangeMin <- "1"
-minNRangeMax <- "10"
+minNRangeMax <- "500"
 minNRangeLevels <- "3"
 lossReductionRangeMin <- "0"
-lossReductionRangeMax <- "10"
-lossReductionRangeLevels <- "2"
+lossReductionRangeMax <- "1"
+lossReductionRangeLevels <- "3"
 sampleSizeRangeMin <- "0"
 sampleSizeRangeMax <- "1"
-sampleSizeRangeLevels <- "2"
-stopIter <- "10"
+sampleSizeRangeLevels <- "3"
+stopIter <- "30"
 
 v <- "2"
 
@@ -493,7 +437,6 @@ finalized <- goophi::xgboost(algo = algo,
 models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
 ```
 
-
 ### 7) lightGBM
 
 ```{r}
@@ -503,24 +446,24 @@ mode <- "regression"
 algo <- "light GBM"
 engine <- "lightgbm"
 
-treeDepthRangeMin <- "3"
-treeDepthRangeMax <- "6"
-treeDepthRangeLevels <- "2"
+treeDepthRangeMin <- "2"
+treeDepthRangeMax <- "30"
+treeDepthRangeLevels <- "3"
 treesRangeMin <- "10"
-treesRangeMax <- "15"
+treesRangeMax <- "50"
 treesRangeLevels <- "2"
 learnRateRangeMin <- "0.01"
 learnRateRangeMax <- "0.3"
 learnRateRangeLevels <- "2"
 mtryRangeMin <- "1"
-mtryRangeMax <- "9"
+mtryRangeMax <- "20"
 mtryRangeLevels <- "3"
 minNRangeMin <- "1"
-minNRangeMax <- "10"
+minNRangeMax <- "500"
 minNRangeLevels <- "3"
 lossReductionRangeMin <- "0"
-lossReductionRangeMax <- "10"
-lossReductionRangeLevels <- "2"
+lossReductionRangeMax <- "1"
+lossReductionRangeLevels <- "3"
 
 v <- "2"
 
@@ -568,7 +511,7 @@ models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
 ## user input
 names(models_list)
 
-modelName <- "LinearR_glmnet"
+modelName <- "Decision Tree_rpart"
 ```
 
 ### 1) Regression plot

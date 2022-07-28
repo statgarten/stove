@@ -15,7 +15,7 @@ base::require("knitr")
 
 
 # DESCRIPTION 파일에 패키지 추가
-usethis::use_package("ggrepel", type = "Imports")
+usethis::use_package("ggplot2", type = "Imports")
 usethis::use_package("readr", type = "Suggests")
 usethis::use_dev_package("treesnip", remote = "https://github.com/curso-r/treesnip.git") # remotes
 

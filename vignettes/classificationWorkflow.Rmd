@@ -20,7 +20,6 @@ knitr::opts_chunk$set(
 require(dplyr) # import for loading/preprocessing the sample data
 require(MASS)
 data("Boston")
-attach(Boston)
 library(goophi)
 ```
 
@@ -132,8 +131,8 @@ mode <- "classification"
 algo <- "LogisticR"
 engine <- "glmnet"
 
-penaltyRangeMin = "0.1"
-penaltyRangeMax = "20"
+penaltyRangeMin = "0.0"
+penaltyRangeMax = "20.0"
 penaltyRangeLevels = "5"
 mixtureRangeMin = "0.0"
 mixtureRangeMax = "1.0"
@@ -177,8 +176,8 @@ algo <- "KNN"
 engine <- "kknn"
 
 neighborsRangeMin = "2"
-neighborsRangeMax = "8"
-neighborsRangeLevels = "4"
+neighborsRangeMax = "20"
+neighborsRangeLevels = "10"
 
 v <- "2"
 
@@ -213,12 +212,12 @@ mode <- "classification"
 algo <- "Naive Bayes"
 engine <- "klaR"
 
-smoothnessRangeMin = "0.1"
-smoothnessRangeMax = "2"
+smoothnessRangeMin = "0.001"
+smoothnessRangeMax = "10"
 smoothnessRangeLevels = "5"
-LaplaceRangeMin = "1"
-LaplaceRangeMax = "4"
-LaplaceRangeLevels = "4"
+LaplaceRangeMin = "0"
+LaplaceRangeMax = "50"
+LaplaceRangeLevels = "6"
 
 v <- "2"
 
@@ -320,14 +319,14 @@ mode <- "classification"
 algo <- "Decision Tree"
 engine <- "rpart"
 
-treeDepthRangeMin = "3"
-treeDepthRangeMax = "10"
+treeDepthRangeMin = "10"
+treeDepthRangeMax = "30"
 treeDepthRangeLevels = "3"
-minNRangeMin = "10"
-minNRangeMax = "50"
+minNRangeMin = "2"
+minNRangeMax = "500"
 minNRangeLevels = "3"
 costComplexityRangeMin = "-1"
-costComplexityRangeMax = "5"
+costComplexityRangeMax = "1"
 costComplexityRangeLevels = "3"
 
 v <- "2"
@@ -343,7 +342,7 @@ finalized <- goophi::decisionTree(algo = algo,
                                   splitedData = data_split,
                                   formula = formula,
                                   rec = rec,
-                                  v = 2,
+                                  v = v,
                                   treeDepthRangeMin = treeDepthRangeMin,
                                   treeDepthRangeMax = treeDepthRangeMax,
                                   treeDepthRangeLevels = treeDepthRangeLevels,
@@ -371,13 +370,13 @@ algo <- "Random Forest"
 engine <- "ranger"
 
 mtryRangeMin <- "1"
-mtryRangeMax <- "5"
+mtryRangeMax <- "20"
 mtryRangeLevels <- "3"
-treesRangeMin <- "500"
+treesRangeMin <- "100"
 treesRangeMax <- "2000"
 treesRangeLevels <- "3"
-minNRangeMin <- "1"
-minNRangeMax <- "10"
+minNRangeMin <- "2"
+minNRangeMax <- "500"
 minNRangeLevels <- "3"
 
 v <- "2"
@@ -393,7 +392,7 @@ finalized <- goophi::randomForest(algo = algo,
                                   splitedData = data_split,
                                   formula = formula,
                                   rec = rec,
-                                  v = 2,
+                                  v = v,
                                   mtryRangeMin = mtryRangeMin,
                                   mtryRangeMax = mtryRangeMax,
                                   mtryRangeLevels = mtryRangeLevels,
@@ -419,28 +418,28 @@ mode <- "classification"
 algo <- "XGBoost"
 engine <- "xgboost"
 
-treeDepthRangeMin <- "3"
-treeDepthRangeMax <- "6"
-treeDepthRangeLevels <- "2"
+treeDepthRangeMin <- "2"
+treeDepthRangeMax <- "50"
+treeDepthRangeLevels <- "3"
 treesRangeMin <- "10"
-treesRangeMax <- "15"
+treesRangeMax <- "50"
 treesRangeLevels <- "2"
 learnRateRangeMin <- "0.01"
 learnRateRangeMax <- "0.3"
 learnRateRangeLevels <- "2"
 mtryRangeMin <- "1"
-mtryRangeMax <- "9"
+mtryRangeMax <- "20"
 mtryRangeLevels <- "3"
 minNRangeMin <- "1"
-minNRangeMax <- "10"
+minNRangeMax <- "500"
 minNRangeLevels <- "3"
 lossReductionRangeMin <- "0"
-lossReductionRangeMax <- "10"
-lossReductionRangeLevels <- "2"
+lossReductionRangeMax <- "1"
+lossReductionRangeLevels <- "3"
 sampleSizeRangeMin <- "0"
 sampleSizeRangeMax <- "1"
-sampleSizeRangeLevels <- "2"
-stopIter <- "10"
+sampleSizeRangeLevels <- "3"
+stopIter <- "30"
 
 v <- "2"
 
@@ -455,7 +454,7 @@ finalized <- goophi::xgboost(algo = algo,
                                   splitedData = data_split,
                                   formula = formula,
                                   rec = rec,
-                                  v = 2,
+                                  v = v,
                                   treeDepthRangeMin = treeDepthRangeMin,
                                   treeDepthRangeMax = treeDepthRangeMax,
                                   treeDepthRangeLevels = treeDepthRangeLevels,
@@ -495,24 +494,24 @@ mode <- "classification"
 algo <- "light GBM"
 engine <- "lightgbm"
 
-treeDepthRangeMin <- "3"
-treeDepthRangeMax <- "6"
-treeDepthRangeLevels <- "2"
+treeDepthRangeMin <- "2"
+treeDepthRangeMax <- "30"
+treeDepthRangeLevels <- "3"
 treesRangeMin <- "10"
-treesRangeMax <- "15"
+treesRangeMax <- "50"
 treesRangeLevels <- "2"
 learnRateRangeMin <- "0.01"
 learnRateRangeMax <- "0.3"
 learnRateRangeLevels <- "2"
 mtryRangeMin <- "1"
-mtryRangeMax <- "9"
+mtryRangeMax <- "20"
 mtryRangeLevels <- "3"
 minNRangeMin <- "1"
-minNRangeMax <- "10"
+minNRangeMax <- "500"
 minNRangeLevels <- "3"
 lossReductionRangeMin <- "0"
-lossReductionRangeMax <- "10"
-lossReductionRangeLevels <- "2"
+lossReductionRangeMax <- "1"
+lossReductionRangeLevels <- "3"
 
 v <- "2"
 
@@ -527,7 +526,7 @@ finalized <- goophi::lightGbm(algo = algo,
                               splitedData = data_split,
                               formula = formula,
                               rec = rec,
-                              v = 2,
+                              v = v,
                               treeDepthRangeMin = treeDepthRangeMin,
                               treeDepthRangeMax = treeDepthRangeMax,
                               treeDepthRangeLevels = treeDepthRangeLevels,
@@ -568,10 +567,7 @@ roc_curve
 
 ```{r}
 names(models_list)
-```
-
-```{r}
-model_name = "LogisticR_glmnet" # 원하는 모델의 이름 입력받기
+model_name = "Decision Tree_rpart" # 원하는 모델의 이름 입력받기
 ```
 
 ```{r, fig.width = 7, fig.height = 6}
@@ -579,7 +575,6 @@ cm <- goophi::confusionMatrix(modelName = model_name,
                               modelsList = models_list,
                               targetVar = targetVar)
 cm
-
 ```
 
 ### 3) Evaluation metrics
