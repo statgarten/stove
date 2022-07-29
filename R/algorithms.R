@@ -25,14 +25,13 @@ logisticRegression <- function(algo = "logistic Regression",
                                formula = NULL,
                                rec = NULL,
                                v = "5",
-                               penaltyRangeMin = "0.0",
-                               penaltyRangeMax = "20.0",
+                               penaltyRangeMin = "0.001",
+                               penaltyRangeMax = "1.0",
                                penaltyRangeLevels = "5",
                                mixtureRangeMin = "0.0",
                                mixtureRangeMax = "1.0",
                                mixtureRangeLevels = "5",
-                               metric = NULL){
-
+                               metric = NULL) {
   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
   mixtureRange <- c(as.numeric(mixtureRangeMin), as.numeric(mixtureRangeMax))
 
@@ -40,52 +39,59 @@ logisticRegression <- function(algo = "logistic Regression",
     parameterGrid <- dials::grid_regular(
       dials::penalty(range = penaltyRange),
       dials::mixture(range = mixtureRange),
-      levels = c(penalty = as.numeric(penaltyRangeLevels),
-                 mixture = as.numeric(mixtureRangeLevels)
+      levels = c(
+        penalty = as.numeric(penaltyRangeLevels),
+        mixture = as.numeric(mixtureRangeLevels)
       )
     )
-    model <- parsnip::logistic_reg(penalty = tune(),
-                                    mixture = tune()) %>%
+    model <- parsnip::logistic_reg(
+      penalty = tune(),
+      mixture = tune()
+    ) %>%
       parsnip::set_engine(engine = engine) %>%
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                               model = model,
-                                               v = as.numeric(v),
-                                               data = trainingData,
-                                               parameterGrid = parameterGrid
-                                               )
+    gridSearchResult <- goophi::gridSearchCV(
+      rec = rec,
+      model = model,
+      v = as.numeric(v),
+      data = trainingData,
+      parameterGrid = parameterGrid
+    )
 
-    finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                      metric = metric,
-                                      model = model,
-                                      formula = formula,
-                                      trainingData = trainingData,
-                                      splitedData = splitedData,
-                                      algo = paste0(algo,"_",engine))
-
+    finalized <- goophi::fitBestModel(
+      gridSearchResult = gridSearchResult,
+      metric = metric,
+      model = model,
+      formula = formula,
+      trainingData = trainingData,
+      splitedData = splitedData,
+      algo = paste0(algo, "_", engine)
+    )
   } else {
     model <- parsnip::logistic_reg() %>%
       parsnip::set_engine(engine = engine) %>%
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                               model = model,
-                                               v = as.numeric(v),
-                                               data = trainingData,
-                                               parameterGrid = 10 # default value of param 'grid' in tune::tune_grid
-                                               )
+    gridSearchResult <- goophi::gridSearchCV(
+      rec = rec,
+      model = model,
+      v = as.numeric(v),
+      data = trainingData,
+      parameterGrid = 10 # default value of param 'grid' in tune::tune_grid
+    )
 
-    finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                      metric = metric,
-                                      model = model,
-                                      formula = formula,
-                                      trainingData = trainingData,
-                                      splitedData = splitedData,
-                                      algo = paste0(algo,"_",engine)
-                                      )
+    finalized <- goophi::fitBestModel(
+      gridSearchResult = gridSearchResult,
+      metric = metric,
+      model = model,
+      formula = formula,
+      trainingData = trainingData,
+      splitedData = splitedData,
+      algo = paste0(algo, "_", engine)
+    )
   }
 
   return(finalized)
@@ -129,14 +135,13 @@ linearRegression <- function(algo = "linear Regression",
                              formula = NULL,
                              rec = NULL,
                              v = "5",
-                             penaltyRangeMin = "0.0",
-                             penaltyRangeMax = "20.0",
+                             penaltyRangeMin = "0.001",
+                             penaltyRangeMax = "1.0",
                              penaltyRangeLevels = "5",
                              mixtureRangeMin = "0.0",
                              mixtureRangeMax = "1.0",
                              mixtureRangeLevels = "5",
-                             metric = NULL){
-
+                             metric = NULL) {
   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
   mixtureRange <- c(as.numeric(mixtureRangeMin), as.numeric(mixtureRangeMax))
 
@@ -144,54 +149,60 @@ linearRegression <- function(algo = "linear Regression",
     parameterGrid <- dials::grid_regular(
       dials::penalty(range = penaltyRange),
       dials::mixture(range = mixtureRange),
-      levels = c(penalty = as.numeric(penaltyRangeLevels),
-                 mixture = as.numeric(mixtureRangeLevels)
+      levels = c(
+        penalty = as.numeric(penaltyRangeLevels),
+        mixture = as.numeric(mixtureRangeLevels)
       )
     )
 
-    model <- parsnip::linear_reg(penalty = tune(),
-                                 mixture = tune()) %>%
+    model <- parsnip::linear_reg(
+      penalty = tune(),
+      mixture = tune()
+    ) %>%
       parsnip::set_engine(engine = engine) %>%
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                               model = model,
-                                               v = as.numeric(v),
-                                               data = trainingData,
-                                               parameterGrid = parameterGrid
+    gridSearchResult <- goophi::gridSearchCV(
+      rec = rec,
+      model = model,
+      v = as.numeric(v),
+      data = trainingData,
+      parameterGrid = parameterGrid
     )
 
-    finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                      metric = metric,
-                                      model = model,
-                                      formula = formula,
-                                      trainingData = trainingData,
-                                      splitedData = splitedData,
-                                      algo = paste0(algo,"_",engine))
-
-
+    finalized <- goophi::fitBestModel(
+      gridSearchResult = gridSearchResult,
+      metric = metric,
+      model = model,
+      formula = formula,
+      trainingData = trainingData,
+      splitedData = splitedData,
+      algo = paste0(algo, "_", engine)
+    )
   } else {
     model <- parsnip::linear_reg() %>%
       parsnip::set_engine(engine = engine) %>%
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                               model = model,
-                                               v = as.numeric(v),
-                                               data = trainingData,
-                                               parameterGrid = 10 # default value of param 'grid' in tune::tune_grid
+    gridSearchResult <- goophi::gridSearchCV(
+      rec = rec,
+      model = model,
+      v = as.numeric(v),
+      data = trainingData,
+      parameterGrid = 10 # default value of param 'grid' in tune::tune_grid
     )
 
-    finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                      metric = metric,
-                                      model = model,
-                                      formula = formula,
-                                      trainingData = trainingData,
-                                      splitedData = splitedData,
-                                      algo = paste0(algo,"_",engine))
-
+    finalized <- goophi::fitBestModel(
+      gridSearchResult = gridSearchResult,
+      metric = metric,
+      model = model,
+      formula = formula,
+      trainingData = trainingData,
+      splitedData = splitedData,
+      algo = paste0(algo, "_", engine)
+    )
   }
 
   return(finalized)
@@ -235,18 +246,16 @@ KNN <- function(algo = "KNN",
                 formula = NULL,
                 rec = NULL,
                 v = "5",
-                neighborsRangeMin = "2",
-                neighborsRangeMax = "20",
+                neighborsRangeMin = "1",
+                neighborsRangeMax = "10",
                 neighborsRangeLevels = "10",
-                metric = NULL){
-
+                metric = NULL) {
   neighborsRange <- c(as.numeric(neighborsRangeMin), as.numeric(neighborsRangeMax))
 
 
   parameterGrid <- dials::grid_regular(
     dials::neighbors(range = neighborsRange),
-    levels = c(neighbors = as.numeric(neighborsRangeLevels)
-    )
+    levels = c(neighbors = as.numeric(neighborsRangeLevels))
   )
 
   model <- parsnip::nearest_neighbor(neighbors = tune()) %>%
@@ -254,20 +263,23 @@ KNN <- function(algo = "KNN",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                             model = model,
-                                             v = as.numeric(v),
-                                             data = trainingData,
-                                             parameterGrid = parameterGrid
+  gridSearchResult <- goophi::gridSearchCV(
+    rec = rec,
+    model = model,
+    v = as.numeric(v),
+    data = trainingData,
+    parameterGrid = parameterGrid
   )
 
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric,
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = trainingData,
-                                    splitedData = splitedData,
-                                    algo = paste0(algo,"_",engine))
+  finalized <- goophi::fitBestModel(
+    gridSearchResult = gridSearchResult,
+    metric = metric,
+    model = model,
+    formula = formula,
+    trainingData = trainingData,
+    splitedData = splitedData,
+    algo = paste0(algo, "_", engine)
+  )
 
   return(finalized)
 }
@@ -310,48 +322,52 @@ naiveBayes <- function(algo = "Naive Bayes",
                        formula = NULL,
                        rec = NULL,
                        v = "5",
-                       smoothnessRangeMin = "0.001",
-                       smoothnessRangeMax = "10",
-                       smoothnessRangeLevels = "5",
-                       LaplaceRangeMin = "0",
-                       LaplaceRangeMax = "50",
-                       LaplaceRangeLevels = "6",
-                       metric = NULL){
-
+                       smoothnessRangeMin = "0.5",
+                       smoothnessRangeMax = "1.5",
+                       smoothnessRangeLevels = "3",
+                       LaplaceRangeMin = "0.0",
+                       LaplaceRangeMax = "3.0",
+                       LaplaceRangeLevels = "4",
+                       metric = NULL) {
   smoothnessRange <- c(as.numeric(smoothnessRangeMin), as.numeric(smoothnessRangeMax))
   LaplaceRange <- c(as.numeric(LaplaceRangeMin), as.numeric(LaplaceRangeMax))
 
   parameterGrid <- dials::grid_regular(
     discrim::smoothness(range = smoothnessRange),
     dials::Laplace(range = LaplaceRange),
-    levels = c(smoothness = as.numeric(smoothnessRangeLevels),
-               Laplace = as.numeric(LaplaceRangeLevels)
+    levels = c(
+      smoothness = as.numeric(smoothnessRangeLevels),
+      Laplace = as.numeric(LaplaceRangeLevels)
     )
   )
 
-  model <- parsnip::naive_Bayes(smoothness = tune(),
-                                Laplace = tune()) %>%
+  model <- parsnip::naive_Bayes(
+    smoothness = tune(),
+    Laplace = tune()
+  ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                             model = model,
-                                             v = as.numeric(v),
-                                             data = trainingData,
-                                             parameterGrid = parameterGrid
+  gridSearchResult <- goophi::gridSearchCV(
+    rec = rec,
+    model = model,
+    v = as.numeric(v),
+    data = trainingData,
+    parameterGrid = parameterGrid
   )
 
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric,
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = trainingData,
-                                    splitedData = splitedData,
-                                    algo = paste0(algo,"_",engine))
+  finalized <- goophi::fitBestModel(
+    gridSearchResult = gridSearchResult,
+    metric = metric,
+    model = model,
+    formula = formula,
+    trainingData = trainingData,
+    splitedData = splitedData,
+    algo = paste0(algo, "_", engine)
+  )
 
   return(finalized)
-
 }
 
 #' Decision Tree
@@ -397,17 +413,16 @@ decisionTree <- function(algo = "Decision Tree",
                          formula = NULL,
                          rec = NULL,
                          v = "5",
-                         treeDepthRangeMin = "10",
-                         treeDepthRangeMax = "30",
+                         treeDepthRangeMin = "1",
+                         treeDepthRangeMax = "15",
                          treeDepthRangeLevels = "3",
                          minNRangeMin = "2",
-                         minNRangeMax = "500",
+                         minNRangeMax = "40",
                          minNRangeLevels = "3",
-                         costComplexityRangeMin = "0",
-                         costComplexityRangeMax = "1",
-                         costComplexityRangeLevels = "3",
-                         metric = NULL){
-
+                         costComplexityRangeMin = "-2.0",
+                         costComplexityRangeMax = "-1.0",
+                         costComplexityRangeLevels = "2",
+                         metric = NULL) {
   treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
   minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
   costComplexityRange <- c(as.numeric(costComplexityRangeMin), as.numeric(costComplexityRangeMax))
@@ -416,33 +431,39 @@ decisionTree <- function(algo = "Decision Tree",
     dials::tree_depth(range = treeDepthRange),
     dials::min_n(range = minNRange),
     dials::cost_complexity(range = costComplexityRange),
-    levels = c(tree_depth = as.numeric(treeDepthRangeLevels),
-               min_n = as.numeric(minNRangeLevels),
-               cost_complexity = as.numeric(costComplexityRangeLevels)
+    levels = c(
+      tree_depth = as.numeric(treeDepthRangeLevels),
+      min_n = as.numeric(minNRangeLevels),
+      cost_complexity = as.numeric(costComplexityRangeLevels)
     )
   )
 
-  model <- parsnip::decision_tree(cost_complexity = tune(),
-                                  tree_depth = tune(),
-                                  min_n = tune()) %>%
+  model <- parsnip::decision_tree(
+    cost_complexity = tune(),
+    tree_depth = tune(),
+    min_n = tune()
+  ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                             model = model,
-                                             v = as.numeric(v),
-                                             data = trainingData,
-                                             parameterGrid = parameterGrid
+  gridSearchResult <- goophi::gridSearchCV(
+    rec = rec,
+    model = model,
+    v = as.numeric(v),
+    data = trainingData,
+    parameterGrid = parameterGrid
   )
 
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric,
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = trainingData,
-                                    splitedData = splitedData,
-                                    algo = paste0(algo,"_",engine))
+  finalized <- goophi::fitBestModel(
+    gridSearchResult = gridSearchResult,
+    metric = metric,
+    model = model,
+    formula = formula,
+    trainingData = trainingData,
+    splitedData = splitedData,
+    algo = paste0(algo, "_", engine)
+  )
 
   return(finalized)
 }
@@ -497,13 +518,12 @@ randomForest <- function(algo = "Random Forest",
                          mtryRangeMax = "20",
                          mtryRangeLevels = "3",
                          treesRangeMin = "100",
-                         treesRangeMax = "2000",
+                         treesRangeMax = "1000",
                          treesRangeLevels = "3",
                          minNRangeMin = "2",
-                         minNRangeMax = "500",
+                         minNRangeMax = "40",
                          minNRangeLevels = "3",
-                         metric = NULL){
-
+                         metric = NULL) {
   mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
   treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
   minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
@@ -512,33 +532,39 @@ randomForest <- function(algo = "Random Forest",
     dials::mtry(range = mtryRange),
     dials::trees(range = treesRange),
     dials::min_n(range = minNRange),
-    levels = c(mtry = as.numeric(mtryRangeLevels),
-               trees = as.numeric(treesRangeLevels),
-               min_n = as.numeric(minNRangeLevels)
+    levels = c(
+      mtry = as.numeric(mtryRangeLevels),
+      trees = as.numeric(treesRangeLevels),
+      min_n = as.numeric(minNRangeLevels)
     )
   )
 
-  model <- parsnip::rand_forest(trees = tune(),
-                                min_n = tune(),
-                                mtry = tune()) %>%
+  model <- parsnip::rand_forest(
+    trees = tune(),
+    min_n = tune(),
+    mtry = tune()
+  ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                             model = model,
-                                             v = as.numeric(v),
-                                             data = trainingData,
-                                             parameterGrid = parameterGrid
+  gridSearchResult <- goophi::gridSearchCV(
+    rec = rec,
+    model = model,
+    v = as.numeric(v),
+    data = trainingData,
+    parameterGrid = parameterGrid
   )
 
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric,
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = trainingData,
-                                    splitedData = splitedData,
-                                    algo = paste0(algo,"_",engine))
+  finalized <- goophi::fitBestModel(
+    gridSearchResult = gridSearchResult,
+    metric = metric,
+    model = model,
+    formula = formula,
+    trainingData = trainingData,
+    splitedData = splitedData,
+    algo = paste0(algo, "_", engine)
+  )
 
   return(finalized)
 }
@@ -578,30 +604,29 @@ xgboost <- function(algo = "Random Forest",
                     formula = NULL,
                     rec = NULL,
                     v = "5",
-                    treeDepthRangeMin = "2",
-                    treeDepthRangeMax = "50",
+                    treeDepthRangeMin = "1",
+                    treeDepthRangeMax = "15",
                     treeDepthRangeLevels = "3",
                     treesRangeMin = "10",
-                    treesRangeMax = "50",
-                    treesRangeLevels = "2",
-                    learnRateRangeMin = "0.01",
-                    learnRateRangeMax = "0.3",
+                    treesRangeMax = "500",
+                    treesRangeLevels = "5",
+                    learnRateRangeMin = "-2.0",
+                    learnRateRangeMax = "-1.0",
                     learnRateRangeLevels = "2",
                     mtryRangeMin = "1",
                     mtryRangeMax = "20",
                     mtryRangeLevels = "3",
-                    minNRangeMin = "1",
-                    minNRangeMax = "500",
+                    minNRangeMin = "2",
+                    minNRangeMax = "40",
                     minNRangeLevels = "3",
-                    lossReductionRangeMin = "0",
-                    lossReductionRangeMax = "1",
+                    lossReductionRangeMin = "-1.0",
+                    lossReductionRangeMax = "1.0",
                     lossReductionRangeLevels = "3",
-                    sampleSizeRangeMin = "0",
-                    sampleSizeRangeMax = "1",
+                    sampleSizeRangeMin = "0.0",
+                    sampleSizeRangeMax = "1.0",
                     sampleSizeRangeLevels = "3",
                     stopIter = "30",
-                    metric = NULL){
-
+                    metric = NULL) {
   treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
   treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
   learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
@@ -620,14 +645,15 @@ xgboost <- function(algo = "Random Forest",
     dials::loss_reduction(range = lossReductionRange),
     dials::sample_size(range = sampleSizeRange),
     dials::stop_iter(range = stopIterRange),
-    levels = c(tree_depth = as.numeric(treeDepthRangeLevels),
-               trees = as.numeric(treesRangeLevels),
-               learn_rate = as.numeric(learnRateRangeLevels),
-               mtry = as.numeric(mtryRangeLevels),
-               min_n = as.numeric(minNRangeLevels),
-               loss_reduction = as.numeric(lossReductionRangeLevels),
-               sample_size = as.numeric(sampleSizeRangeLevels),
-               stop_iter = 1
+    levels = c(
+      tree_depth = as.numeric(treeDepthRangeLevels),
+      trees = as.numeric(treesRangeLevels),
+      learn_rate = as.numeric(learnRateRangeLevels),
+      mtry = as.numeric(mtryRangeLevels),
+      min_n = as.numeric(minNRangeLevels),
+      loss_reduction = as.numeric(lossReductionRangeLevels),
+      sample_size = as.numeric(sampleSizeRangeLevels),
+      stop_iter = 1
     )
   )
 
@@ -640,25 +666,28 @@ xgboost <- function(algo = "Random Forest",
     loss_reduction = tune(),
     sample_size = tune(),
     stop_iter = tune()
-    ) %>%
+  ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                             model = model,
-                                             v = as.numeric(v),
-                                             data = trainingData,
-                                             parameterGrid = parameterGrid
+  gridSearchResult <- goophi::gridSearchCV(
+    rec = rec,
+    model = model,
+    v = as.numeric(v),
+    data = trainingData,
+    parameterGrid = parameterGrid
   )
 
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric,
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = trainingData,
-                                    splitedData = splitedData,
-                                    algo = paste0(algo,"_",engine))
+  finalized <- goophi::fitBestModel(
+    gridSearchResult = gridSearchResult,
+    metric = metric,
+    model = model,
+    formula = formula,
+    trainingData = trainingData,
+    splitedData = splitedData,
+    algo = paste0(algo, "_", engine)
+  )
 
   return(finalized)
 }
@@ -690,26 +719,25 @@ lightGbm <- function(algo = "Random Forest",
                      formula = NULL,
                      rec = NULL,
                      v = "5",
-                     treeDepthRangeMin = "2",
-                     treeDepthRangeMax = "30",
+                     treeDepthRangeMin = "5",
+                     treeDepthRangeMax = "15",
                      treeDepthRangeLevels = "3",
                      treesRangeMin = "10",
-                     treesRangeMax = "50",
+                     treesRangeMax = "100",
                      treesRangeLevels = "2",
-                     learnRateRangeMin = "0.01",
-                     learnRateRangeMax = "0.3",
+                     learnRateRangeMin = "-2.0",
+                     learnRateRangeMax = "-1.0",
                      learnRateRangeLevels = "2",
                      mtryRangeMin = "1",
                      mtryRangeMax = "20",
                      mtryRangeLevels = "3",
-                     minNRangeMin = "1",
-                     minNRangeMax = "500",
+                     minNRangeMin = "2",
+                     minNRangeMax = "40",
                      minNRangeLevels = "3",
-                     lossReductionRangeMin = "0",
-                     lossReductionRangeMax = "1",
+                     lossReductionRangeMin = "-1.0",
+                     lossReductionRangeMax = "1.0",
                      lossReductionRangeLevels = "3",
-                     metric = NULL){
-
+                     metric = NULL) {
   treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
   treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
   learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
@@ -724,12 +752,13 @@ lightGbm <- function(algo = "Random Forest",
     dials::mtry(range = mtryRange),
     dials::min_n(range = minNRange),
     dials::loss_reduction(range = lossReductionRange),
-    levels = c(tree_depth = as.numeric(treeDepthRangeLevels),
-               trees = as.numeric(treesRangeLevels),
-               learn_rate = as.numeric(learnRateRangeLevels),
-               mtry = as.numeric(mtryRangeLevels),
-               min_n = as.numeric(minNRangeLevels),
-               loss_reduction = as.numeric(lossReductionRangeLevels)
+    levels = c(
+      tree_depth = as.numeric(treeDepthRangeLevels),
+      trees = as.numeric(treesRangeLevels),
+      learn_rate = as.numeric(learnRateRangeLevels),
+      mtry = as.numeric(mtryRangeLevels),
+      min_n = as.numeric(minNRangeLevels),
+      loss_reduction = as.numeric(lossReductionRangeLevels)
     )
   )
 
@@ -745,20 +774,23 @@ lightGbm <- function(algo = "Random Forest",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                             model = model,
-                                             v = as.numeric(v),
-                                             data = trainingData,
-                                             parameterGrid = parameterGrid
+  gridSearchResult <- goophi::gridSearchCV(
+    rec = rec,
+    model = model,
+    v = as.numeric(v),
+    data = trainingData,
+    parameterGrid = parameterGrid
   )
 
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric,
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = trainingData,
-                                    splitedData = splitedData,
-                                    algo = paste0(algo,"_",engine))
+  finalized <- goophi::fitBestModel(
+    gridSearchResult = gridSearchResult,
+    metric = metric,
+    model = model,
+    formula = formula,
+    trainingData = trainingData,
+    splitedData = splitedData,
+    algo = paste0(algo, "_", engine)
+  )
 
   return(finalized)
 }
@@ -816,8 +848,8 @@ MLP <- function(algo = "MLP",
                 hiddenUnitsRangeMin = "1",
                 hiddenUnitsRangeMax = "10",
                 hiddenUnitsRangeLevels = "3",
-                penaltyRangeMin = "0.01",
-                penaltyRangeMax = "0.5",
+                penaltyRangeMin = "0.001",
+                penaltyRangeMax = "1.0",
                 penaltyRangeLevels = "3",
                 epochsRangeMin = "10",
                 epochsRangeMax = "100",
@@ -829,9 +861,7 @@ MLP <- function(algo = "MLP",
                 # learnRateRangeMin = "0",
                 # learnRateRangeMax = "1",
                 # learnRateRangeLevels = "2",
-                metric = NULL
-){
-
+                metric = NULL) {
   hiddenUnitsRange <- c(as.numeric(hiddenUnitsRangeMin), as.numeric(hiddenUnitsRangeMax))
   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
   epochsRange <- c(as.numeric(epochsRangeMin), as.numeric(epochsRangeMax))
@@ -845,40 +875,45 @@ MLP <- function(algo = "MLP",
     # dials::dropout(range = dropoutRange),
     # dials::learn_rate(range = learnRateRange),
     # dials::activation(values = activation),
-    levels = c(hidden_units = as.numeric(hiddenUnitsRangeLevels),
-               penalty = as.numeric(penaltyRangeLevels),
-               epochs = as.numeric(epochsRangeLevels)
-               # dropout = as.numeric(dropoutRangeLevels),
-               # learn_rate = as.numeric(learnRateRangeLevels),
-               # activation = 1
+    levels = c(
+      hidden_units = as.numeric(hiddenUnitsRangeLevels),
+      penalty = as.numeric(penaltyRangeLevels),
+      epochs = as.numeric(epochsRangeLevels)
+      # dropout = as.numeric(dropoutRangeLevels),
+      # learn_rate = as.numeric(learnRateRangeLevels),
+      # activation = 1
     )
   )
 
-  model <- parsnip::mlp(hidden_units = tune(),
-                        penalty = tune(),
-                        epochs = tune(),
-                        # dropout = tune(),
-                        # activation = tune(),
-                        # learn_rate = tune()
+  model <- parsnip::mlp(
+    hidden_units = tune(),
+    penalty = tune(),
+    epochs = tune(),
+    # dropout = tune(),
+    # activation = tune(),
+    # learn_rate = tune()
   ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  grid_search_result <- goophi::gridSearchCV(rec = rec,
-                                             model = model,
-                                             v = as.numeric(v),
-                                             data = trainingData,
-                                             parameterGrid = parameterGrid
+  gridSearchResult <- goophi::gridSearchCV(
+    rec = rec,
+    model = model,
+    v = as.numeric(v),
+    data = trainingData,
+    parameterGrid = parameterGrid
   )
 
-  finalized <- goophi::fitBestModel(gridSearchResult = grid_search_result,
-                                    metric = metric,
-                                    model = model,
-                                    formula = formula,
-                                    trainingData = trainingData,
-                                    splitedData = splitedData,
-                                    algo = paste0(algo,"_",engine))
+  finalized <- goophi::fitBestModel(
+    gridSearchResult = gridSearchResult,
+    metric = metric,
+    model = model,
+    formula = formula,
+    trainingData = trainingData,
+    splitedData = splitedData,
+    algo = paste0(algo, "_", engine)
+  )
 
   return(finalized)
 }
@@ -913,42 +948,44 @@ kMeansClustering <- function(data,
                              maxK = "15",
                              nStart = "25",
                              iterMax = "10",
-                             nBoot = '100',
+                             nBoot = "100",
                              algorithm = "Hartigan-Wong", ## "Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"
                              selectOptimal = "silhouette", # silhouette, gap_stat
-                             seedNum = "6471"){
-
+                             seedNum = "6471") {
   set.seed(as.numeric(seedNum))
 
-  if(selectOptimal == "silhouette"){
-    tmp_result <- factoextra::fviz_nbclust(x = data,
-                                           FUNcluster = stats::kmeans,
-                                           method = selectOptimal,
-                                           k.max = as.numeric(maxK)
+  if (selectOptimal == "silhouette") {
+    tmp_result <- factoextra::fviz_nbclust(
+      x = data,
+      FUNcluster = stats::kmeans,
+      method = selectOptimal,
+      k.max = as.numeric(maxK)
     )
-    result_clust<-tmp_result$data
+    result_clust <- tmp_result$data
 
     optimalK <- as.numeric(result_clust$clusters[which.max(result_clust$y)])
-  } else if (selectOptimal == "gap_stat"){
-    tmp_result <- factoextra::fviz_nbclust(x = data,
-                                           FUNcluster = stats::kmeans,
-                                           method = selectOptimal,
-                                           k.max = as.numeric(maxK),
-                                           nboot = as.numeric(nBoot)
+  } else if (selectOptimal == "gap_stat") {
+    tmp_result <- factoextra::fviz_nbclust(
+      x = data,
+      FUNcluster = stats::kmeans,
+      method = selectOptimal,
+      k.max = as.numeric(maxK),
+      nboot = as.numeric(nBoot)
     )
 
-    result_clust<-tmp_result$data
+    result_clust <- tmp_result$data
 
     optimalK <- as.numeric(result_clust$clusters[which.max(result_clust$gap)])
   } else {
     stop("selectOptimal must be 'silhouette' or 'gap_stat'.")
   }
 
-  result <- stats::kmeans(x = data,
-                          centers = optimalK,
-                          iter.max = iterMax,
-                          nstart = as.numeric(nStart),
-                          algorithm = algorithm
+  result <- stats::kmeans(
+    x = data,
+    centers = optimalK,
+    iter.max = iterMax,
+    nstart = as.numeric(nStart),
+    algorithm = algorithm
   )
 
   return(result)

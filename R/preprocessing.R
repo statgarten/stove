@@ -16,11 +16,11 @@
 trainTestSplit <- function(data = data,
                            target = NULL,
                            prop,
-                           seed = "4814"){
+                           seed = "4814") {
   set.seed(seed = as.numeric(seed))
   dataSplit <- rsample::initial_split(data, strata = tidyselect::all_of(target), prop = as.numeric(prop))
   train <- rsample::training(dataSplit)
-  test  <- rsample::testing(dataSplit)
+  test <- rsample::testing(dataSplit)
 
   return(list(train = train, test = test, dataSplit = dataSplit))
 }
@@ -51,12 +51,12 @@ trainTestSplit <- function(data = data,
 ## todo: make user to choose predictors
 
 prepForCV <- function(data,
-                     formula,
-                     imputationType = "mean",
-                     normalizationType = "range", # min-max normalization as default
-                     imputation = FALSE,
-                     normalization = FALSE,
-                     seed = "4814"){
+                      formula,
+                      imputationType = "mean",
+                      normalizationType = "range", # min-max normalization as default
+                      imputation = FALSE,
+                      normalization = FALSE,
+                      seed = "4814") {
   set.seed(seed = as.numeric(seed))
   result <- recipes::recipe(eval(parse(text = formula)), data = data) %>%
     recipes::step_dummy(recipes::all_nominal_predictors())
@@ -65,15 +65,15 @@ prepForCV <- function(data,
   if (imputation == TRUE) {
     if (imputationType == "bag") {
       result <- result %>% recipes::step_impute_bag(all_predictors())
-    } else if (imputationType == "knn"){
-      result <-result %>% recipes::step_impute_knn(all_predictors())
-    } else if (imputationType == "linear"){
+    } else if (imputationType == "knn") {
+      result <- result %>% recipes::step_impute_knn(all_predictors())
+    } else if (imputationType == "linear") {
       result <- result %>% recipes::step_impute_linear(all_predictors())
-    } else if (imputationType == "lower"){
+    } else if (imputationType == "lower") {
       result <- result %>% recipes::step_impute_lower(all_predictors())
-    } else if (imputationType == "mean"){
+    } else if (imputationType == "mean") {
       result <- result %>% recipes::step_impute_mean(all_predictors())
-    } else if (imputationType == "median"){
+    } else if (imputationType == "median") {
       result <- result %>% recipes::step_impute_median(all_predictors())
     } else {
       # pass

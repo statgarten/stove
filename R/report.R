@@ -14,25 +14,29 @@
 #'
 #' @export
 
-rocCurve <- function(modelsList, targetVar){
-  colors = grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
+rocCurve <- function(modelsList, targetVar) {
+  colors <- grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
 
   plot <- do.call(rbind, modelsList)[[5]] %>% ## rbind here does nothing
     do.call(rbind, .) %>%
     dplyr::group_by(model) %>%
-    yardstick::roc_curve(truth = eval(parse(text = targetVar)),
-                         .pred_1,
-                         event_level = 'second') %>%
+    yardstick::roc_curve(
+      truth = eval(parse(text = targetVar)),
+      .pred_1,
+      event_level = "second"
+    ) %>%
     ggplot(
       aes(
-        x = 1-specificity,
+        x = 1 - specificity,
         y = sensitivity,
         color = model
       )
     ) +
-    labs(title = "ROC curve",
-         x = "False Positive Rate (1-Specificity)",
-         y = "True Positive Rate (Sensitivity)") +
+    labs(
+      title = "ROC curve",
+      x = "False Positive Rate (1-Specificity)",
+      y = "True Positive Rate (Sensitivity)"
+    ) +
     geom_line(size = 1.1) +
     geom_abline(slope = 1, intercept = 0, size = 0.5) +
     scale_color_manual(values = colors(length(modelsList))) +
@@ -59,14 +63,13 @@ rocCurve <- function(modelsList, targetVar){
 #'
 #' @export
 
-confusionMatrix <- function(modelName, modelsList, targetVar){
-
-  tmpDf<- models_list[[modelName]] %>%
+confusionMatrix <- function(modelName, modelsList, targetVar) {
+  tmpDf <- models_list[[modelName]] %>%
     tune::collect_predictions() %>%
     as.data.frame() %>%
     dplyr::select(targetVar, .pred_class)
 
-  confDf <- stats::xtabs(~tmpDf$.pred_class + tmpDf[[targetVar]])
+  confDf <- stats::xtabs(~ tmpDf$.pred_class + tmpDf[[targetVar]])
 
   input.matrix <- data.matrix(confDf)
   confusion <- as.data.frame(as.table(input.matrix))
@@ -76,14 +79,13 @@ confusionMatrix <- function(modelName, modelsList, targetVar){
 
   plot <- ggplot(confusion, aes(x = actual_y, y = y_pred, fill = Frequency)) +
     geom_tile() +
-    geom_text(aes(label=Frequency)) +
-    scale_x_discrete(name="Actual Class") +
-    scale_y_discrete(name="Predicted Class") +
-    geom_text(aes(label = Frequency),colour = "black") +
+    geom_text(aes(label = Frequency)) +
+    scale_x_discrete(name = "Actual Class") +
+    scale_y_discrete(name = "Predicted Class") +
+    geom_text(aes(label = Frequency), colour = "black") +
     scale_fill_continuous(high = "#E9BC09", low = "#F3E5AC")
 
   return(plot)
-
 }
 
 #' Regression plot
@@ -102,21 +104,24 @@ confusionMatrix <- function(modelName, modelsList, targetVar){
 #'
 #' @export
 
-regressionPlot <- function(modelName, modelsList, targetVar){
-
-  tmpDf <-  modelsList[[modelName]] %>%
+regressionPlot <- function(modelName, modelsList, targetVar) {
+  tmpDf <- modelsList[[modelName]] %>%
     tune::collect_predictions()
 
-  lims <- c(min(tmpDf[[targetVar]]),max(tmpDf[[targetVar]]))
+  lims <- c(min(tmpDf[[targetVar]]), max(tmpDf[[targetVar]]))
 
   plot <- modelsList[[modelName]] %>%
     tune::collect_predictions() %>%
     ggplot(aes(x = eval(parse(text = targetVar)), y = modelsList[[modelName]]$.predictions[[1]][1]$.pred)) +
-    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-          panel.background = element_blank(), axis.line = element_line(colour = "#C70A80")) +
-    labs(title = "Regression Plot (Actual vs Prediced)",
-                  x = "Actual Value",
-                  y = "Predicted Value") +
+    theme(
+      panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+      panel.background = element_blank(), axis.line = element_line(colour = "#C70A80")
+    ) +
+    labs(
+      title = "Regression Plot (Actual vs Prediced)",
+      x = "Actual Value",
+      y = "Predicted Value"
+    ) +
     geom_abline(color = "black", lty = 2) +
     geom_point(alpha = 0.8, colour = "#C70A80") +
     scale_x_continuous(limits = lims) +
@@ -142,23 +147,24 @@ regressionPlot <- function(modelName, modelsList, targetVar){
 #'
 #' @export
 
-evalMetricsC <- function(modelsList, targetVar){
-
+evalMetricsC <- function(modelsList, targetVar) {
   table <- data.frame()
-  custom_metrics <- yardstick::metric_set(yardstick::accuracy,
-                                          yardstick::sens,
-                                          yardstick::spec,
-                                          yardstick::precision,
-                                          yardstick::f_meas,
-                                          yardstick::kap,
-                                          yardstick::mcc
+  custom_metrics <- yardstick::metric_set(
+    yardstick::accuracy,
+    yardstick::sens,
+    yardstick::spec,
+    yardstick::precision,
+    yardstick::f_meas,
+    yardstick::kap,
+    yardstick::mcc
   )
 
   for (i in 1:length(modelsList)) {
     tmp <- custom_metrics(models_list[[as.numeric(i)]] %>%
-                          tune::collect_predictions(),
-                        truth = eval(parse(text = targetVar)),
-                        estimate = .pred_class) %>%
+      tune::collect_predictions(),
+    truth = eval(parse(text = targetVar)),
+    estimate = .pred_class
+    ) %>%
       dplyr::select(.estimate) %>%
       data.table::transpose() %>%
       dplyr::mutate(across(where(is.numeric), ~ round(., 3)))
@@ -190,22 +196,23 @@ evalMetricsC <- function(modelsList, targetVar){
 #'
 #' @export
 
-evalMetricsR <- function(modelsList, targetVar){
-
+evalMetricsR <- function(modelsList, targetVar) {
   table <- data.frame()
 
-  custom_metrics <- yardstick::metric_set(yardstick::rmse,
-                                          yardstick::rsq,
-                                          yardstick::mae,
-                                          yardstick::mase,
-                                          yardstick::rpd
+  custom_metrics <- yardstick::metric_set(
+    yardstick::rmse,
+    yardstick::rsq,
+    yardstick::mae,
+    yardstick::mase,
+    yardstick::rpd
   )
 
   for (i in 1:length(models_list)) {
     tmp <- custom_metrics(modelsList[[as.numeric(i)]] %>%
-                            tune::collect_predictions(),
-                          truth = eval(parse(text = targetVar)),
-                          estimate = .pred) %>%
+      tune::collect_predictions(),
+    truth = eval(parse(text = targetVar)),
+    estimate = .pred
+    ) %>%
       dplyr::select(.estimate) %>%
       data.table::transpose() %>%
       dplyr::mutate(across(where(is.numeric), ~ round(., 3)))
@@ -236,43 +243,47 @@ clusteringVis <- function(data = NULL,
                           maxK = NULL,
                           nStart = NULL,
                           nBoot = 100,
-                          selectOptimal = NULL
-                          ){
-  colors = grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
+                          selectOptimal = NULL) {
+  colors <- grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
 
-  elbowPlot <- factoextra::fviz_nbclust(x = data,
-                                        FUNcluster  = stats::kmeans,
-                                        method = "wss")
+  elbowPlot <- factoextra::fviz_nbclust(
+    x = data,
+    FUNcluster = stats::kmeans,
+    method = "wss"
+  )
 
-  if(selectOptimal == "silhouette"){
-    optimalK <- factoextra::fviz_nbclust(x = data,
-                                         FUNcluster = stats::kmeans,
-                                         method = selectOptimal,
-                                         k.max = as.numeric(maxK),
-                                         barfill = "slateblue",
-                                         barcolor = "slateblue",
-                                         linecolor = "slateblue"
+  if (selectOptimal == "silhouette") {
+    optimalK <- factoextra::fviz_nbclust(
+      x = data,
+      FUNcluster = stats::kmeans,
+      method = selectOptimal,
+      k.max = as.numeric(maxK),
+      barfill = "slateblue",
+      barcolor = "slateblue",
+      linecolor = "slateblue"
     )
     cols <- colors(optimalK$data$clusters[which.max(optimalK$data$y)])
-  } else if (selectOptimal == "gap_stat"){
-    optimalK <- factoextra::fviz_nbclust(x = data,
-                                         FUNcluster = stats::kmeans,
-                                         method = selectOptimal,
-                                         k.max = as.numeric(maxK),
-                                         nboot = as.numeric(nBoot),
-                                         barfill = "slateblue",
-                                         barcolor = "slateblue",
-                                         linecolor = "slateblue"
-                                         )
+  } else if (selectOptimal == "gap_stat") {
+    optimalK <- factoextra::fviz_nbclust(
+      x = data,
+      FUNcluster = stats::kmeans,
+      method = selectOptimal,
+      k.max = as.numeric(maxK),
+      nboot = as.numeric(nBoot),
+      barfill = "slateblue",
+      barcolor = "slateblue",
+      linecolor = "slateblue"
+    )
     cols <- colors(optimalK$data$clusters[which.max(optimalK$data$gap)])
   }
 
-  clustVis <- factoextra::fviz_cluster(object = model,
-                                       data = data,
-                                       palette = cols,
-                                       geom = "point",
-                                       ellipse.type = "convex",
-                                       ggtheme = theme_bw()
+  clustVis <- factoextra::fviz_cluster(
+    object = model,
+    data = data,
+    palette = cols,
+    geom = "point",
+    ellipse.type = "convex",
+    ggtheme = theme_bw()
   )
 
   return(list(elbowPlot = elbowPlot, optimalK = optimalK, clustVis = clustVis))

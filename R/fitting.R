@@ -21,15 +21,16 @@ gridSearchCV <- function(rec,
                          v = "5", # 5-fold CV as default
                          data,
                          parameterGrid = 10,
-                         seed = "4814"){
+                         seed = "4814") {
   set.seed(seed = as.numeric(seed))
   tunedWorkflow <- workflows::workflow() %>%
     workflows::add_recipe(rec) %>%
     workflows::add_model(model)
 
   result <- tune::tune_grid(tunedWorkflow,
-                            resamples = rsample::vfold_cv(data, v = as.numeric(v)),
-                            grid = parameterGrid) # warnings
+    resamples = rsample::vfold_cv(data, v = as.numeric(v)),
+    grid = parameterGrid
+  ) # warnings
 
   return(list(tunedWorkflow = tunedWorkflow, result = result))
 }
@@ -61,7 +62,7 @@ fitBestModel <- function(gridSearchResult,
                          formula,
                          trainingData,
                          splitedData,
-                         algo){
+                         algo) {
   bestParams <- tune::select_best(gridSearchResult[[2]], metric) ## metric 목록 print 되도록
   finalSpec <- tune::finalize_model(model, bestParams)
 
