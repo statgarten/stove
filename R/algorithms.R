@@ -31,7 +31,7 @@ logisticRegression <- function(algo = "logistic Regression",
                                mixtureRangeMin = "0.0",
                                mixtureRangeMax = "1.0",
                                mixtureRangeLevels = "5",
-                               metric = NULL) {
+                               metric = "roc_auc") {
   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
   mixtureRange <- c(as.numeric(mixtureRangeMin), as.numeric(mixtureRangeMax))
 
@@ -141,7 +141,7 @@ linearRegression <- function(algo = "linear Regression",
                              mixtureRangeMin = "0.0",
                              mixtureRangeMax = "1.0",
                              mixtureRangeLevels = "5",
-                             metric = NULL) {
+                             metric = "rmse") {
   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
   mixtureRange <- c(as.numeric(mixtureRangeMin), as.numeric(mixtureRangeMax))
 
@@ -249,9 +249,8 @@ KNN <- function(algo = "KNN",
                 neighborsRangeMin = "1",
                 neighborsRangeMax = "10",
                 neighborsRangeLevels = "10",
-                metric = NULL) {
+                metric = "roc_auc") {
   neighborsRange <- c(as.numeric(neighborsRangeMin), as.numeric(neighborsRangeMax))
-
 
   parameterGrid <- dials::grid_regular(
     dials::neighbors(range = neighborsRange),
@@ -311,6 +310,7 @@ KNN <- function(algo = "KNN",
 #' @rdname pipe
 #' @import parsnip
 #' @import klaR
+#' @import naivebayes
 #'
 #' @export
 
@@ -328,7 +328,7 @@ naiveBayes <- function(algo = "Naive Bayes",
                        LaplaceRangeMin = "0.0",
                        LaplaceRangeMax = "3.0",
                        LaplaceRangeLevels = "4",
-                       metric = NULL) {
+                       metric = "roc_auc") {
   smoothnessRange <- c(as.numeric(smoothnessRangeMin), as.numeric(smoothnessRangeMax))
   LaplaceRange <- c(as.numeric(LaplaceRangeMin), as.numeric(LaplaceRangeMax))
 
@@ -422,7 +422,7 @@ decisionTree <- function(algo = "Decision Tree",
                          costComplexityRangeMin = "-2.0",
                          costComplexityRangeMax = "-1.0",
                          costComplexityRangeLevels = "2",
-                         metric = NULL) {
+                         metric = "roc_auc") {
   treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
   minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
   costComplexityRange <- c(as.numeric(costComplexityRangeMin), as.numeric(costComplexityRangeMax))
@@ -523,7 +523,7 @@ randomForest <- function(algo = "Random Forest",
                          minNRangeMin = "2",
                          minNRangeMax = "40",
                          minNRangeLevels = "3",
-                         metric = NULL) {
+                         metric = "roc_auc") {
   mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
   treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
   minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
@@ -574,15 +574,6 @@ randomForest <- function(algo = "Random Forest",
 #'
 #' @details
 #' XGBoost
-#' hyperparameters:
-#' tree_depth: 최종 예측값에 다다르기까지 몇 번 트리를 분할할지 설정합니다.
-#' trees:
-#' learn_rate,
-#' mtry,
-#' min_n,
-#' loss_reduction,
-#' sample_size
-#' stop_iter
 #'
 #' @param engine engine
 #' @param mode mode
@@ -626,7 +617,7 @@ xgboost <- function(algo = "Random Forest",
                     sampleSizeRangeMax = "1.0",
                     sampleSizeRangeLevels = "3",
                     stopIter = "30",
-                    metric = NULL) {
+                    metric = "roc_auc") {
   treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
   treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
   learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
@@ -667,7 +658,7 @@ xgboost <- function(algo = "Random Forest",
     sample_size = tune(),
     stop_iter = tune()
   ) %>%
-    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_engine(engine = engine, counts = FALSE) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
@@ -737,7 +728,7 @@ lightGbm <- function(algo = "Random Forest",
                      lossReductionRangeMin = "-1.0",
                      lossReductionRangeMax = "1.0",
                      lossReductionRangeLevels = "3",
-                     metric = NULL) {
+                     metric = "roc_auc") {
   treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
   treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
   learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
@@ -770,7 +761,7 @@ lightGbm <- function(algo = "Random Forest",
     min_n = tune(),
     loss_reduction = tune()
   ) %>%
-    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_engine(engine = engine, counts = FALSE) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
@@ -861,7 +852,7 @@ MLP <- function(algo = "MLP",
                 # learnRateRangeMin = "0",
                 # learnRateRangeMax = "1",
                 # learnRateRangeLevels = "2",
-                metric = NULL) {
+                metric = "roc_auc") {
   hiddenUnitsRange <- c(as.numeric(hiddenUnitsRangeMin), as.numeric(hiddenUnitsRangeMax))
   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
   epochsRange <- c(as.numeric(epochsRangeMin), as.numeric(epochsRangeMax))

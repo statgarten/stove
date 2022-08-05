@@ -133,7 +133,7 @@ models_list <- list()
 
 mode <- "classification"
 algo <- "LogisticR"
-engine <- "glmnet"
+engine <- "stan" # glm, glmnet, liblinear, stan
 
 penaltyRangeMin <- "0.001"
 penaltyRangeMax <- "1.0"
@@ -178,7 +178,7 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 
 mode <- "classification"
 algo <- "KNN"
-engine <- "kknn"
+engine <- "kknn" # kknn
 
 neighborsRangeMin <- "1" 
 neighborsRangeMax <- "10" 
@@ -240,7 +240,7 @@ grid_search_result <- goophi::gridSearchCV(
 
 mode <- "classification"
 algo <- "Naive Bayes"
-engine <- "klaR"
+engine <- "naivebayes"
 
 smoothnessRangeMin <- "0.5"
 smoothnessRangeMax <- "1.5" 
@@ -451,17 +451,17 @@ mode <- "classification"
 algo <- "XGBoost"
 engine <- "xgboost"
 
-treeDepthRangeMin <- "1" 
+treeDepthRangeMin <- "5" 
 treeDepthRangeMax <- "15" 
 treeDepthRangeLevels <- "3" 
-treesRangeMin <- "10" 
-treesRangeMax <- "500" 
-treesRangeLevels <- "5" 
+treesRangeMin <- "8"
+treesRangeMax <- "100" 
+treesRangeLevels <- "3" 
 learnRateRangeMin <- "-2" 
 learnRateRangeMax <- "-1" 
 learnRateRangeLevels <- "2" 
-mtryRangeMin <- "1" 
-mtryRangeMax <- "20" 
+mtryRangeMin <- "0" 
+mtryRangeMax <- "1" 
 mtryRangeLevels <- "3" 
 minNRangeMin <- "2" 
 minNRangeMax <- "40" 
@@ -529,11 +529,11 @@ algo <- "light GBM"
 engine <- "lightgbm"
 
 treeDepthRangeMin <- "5" 
-treeDepthRangeMax <- "15" 
-treeDepthRangeLevels <- "3" 
+treeDepthRangeMax <- "10" 
+treeDepthRangeLevels <- "2" 
 treesRangeMin <- "10" 
-treesRangeMax <- "100" 
-treesRangeLevels <- "2" 
+treesRangeMax <- "500" 
+treesRangeLevels <- "3" 
 learnRateRangeMin <- "-2" 
 learnRateRangeMax <- "-1" 
 learnRateRangeLevels <- "2" 

@@ -371,28 +371,28 @@ mode <- "regression"
 algo <- "XGBoost"
 engine <- "xgboost"
 
-treeDepthRangeMin <- "1" 
-treeDepthRangeMax <- "15" 
-treeDepthRangeLevels <- "3" 
-treesRangeMin <- "10" 
-treesRangeMax <- "500" 
-treesRangeLevels <- "5" 
-learnRateRangeMin <- "-2" 
-learnRateRangeMax <- "-1" 
-learnRateRangeLevels <- "2" 
-mtryRangeMin <- "1" 
-mtryRangeMax <- "20" 
-mtryRangeLevels <- "3" 
-minNRangeMin <- "2" 
-minNRangeMax <- "40" 
-minNRangeLevels <- "3" 
-lossReductionRangeMin <- "-1" 
-lossReductionRangeMax <- "1" 
-lossReductionRangeLevels <- "3" 
-sampleSizeRangeMin <- "0.0" 
-sampleSizeRangeMax <- "1.0" 
-sampleSizeRangeLevels <- "3" 
-stopIter <- "30" 
+treeDepthRangeMin <- "1"
+treeDepthRangeMax <- "15"
+treeDepthRangeLevels <- "3"
+treesRangeMin <- "10"
+treesRangeMax <- "500"
+treesRangeLevels <- "5"
+learnRateRangeMin <- "-2"
+learnRateRangeMax <- "-1"
+learnRateRangeLevels <- "2"
+mtryRangeMin <- "1"
+mtryRangeMax <- "20"
+mtryRangeLevels <- "3"
+minNRangeMin <- "2"
+minNRangeMax <- "40"
+minNRangeLevels <- "3"
+lossReductionRangeMin <- "-1"
+lossReductionRangeMax <- "1"
+lossReductionRangeLevels <- "3"
+sampleSizeRangeMin <- "0.0"
+sampleSizeRangeMax <- "1.0"
+sampleSizeRangeLevels <- "3"
+stopIter <- "30"
 
 v <- "2"
 
@@ -449,9 +449,9 @@ engine <- "lightgbm"
 treeDepthRangeMin <- "5" 
 treeDepthRangeMax <- "15" 
 treeDepthRangeLevels <- "3" 
-treesRangeMin <- "10" 
-treesRangeMax <- "100" 
-treesRangeLevels <- "2" 
+treesRangeMin <- "8" 
+treesRangeMax <- "32" 
+treesRangeLevels <- "4" 
 learnRateRangeMin <- "-2" 
 learnRateRangeMax <- "-1" 
 learnRateRangeLevels <- "2" 
@@ -511,7 +511,7 @@ models_list[[paste0(algo,"_",engine)]] <- finalized$finalFittedModel
 ## user input
 names(models_list)
 
-modelName <- "Decision Tree_rpart"
+modelName <- "light GBM_lightgbm"
 ```
 
 ### 1) Regression plot
@@ -529,4 +529,5 @@ rp
 ## evaluation index
 evalMet <- goophi::evalMetricsR(models_list, targetVar)
 knitr::kable(evalMet)
+#################################
 ```

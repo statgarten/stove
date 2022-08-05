@@ -75,3 +75,6 @@ vis_result$clustVis
 ```
 
 
+```{r}
+parsnip::show_model_info("logistic_reg")
+```
