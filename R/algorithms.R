@@ -574,15 +574,6 @@ randomForest <- function(algo = "Random Forest",
 #'
 #' @details
 #' XGBoost
-#' hyperparameters:
-#' tree_depth: 최종 예측값에 다다르기까지 몇 번 트리를 분할할지 설정합니다.
-#' trees:
-#' learn_rate,
-#' mtry,
-#' min_n,
-#' loss_reduction,
-#' sample_size
-#' stop_iter
 #'
 #' @param engine engine
 #' @param mode mode
@@ -667,7 +658,7 @@ xgboost <- function(algo = "Random Forest",
     sample_size = tune(),
     stop_iter = tune()
   ) %>%
-    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_engine(engine = engine, counts = FALSE) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
@@ -696,8 +687,6 @@ xgboost <- function(algo = "Random Forest",
 #'
 #' @details
 #' Light GBM
-#' install treesnip package by: remotes::install_github("curso-r/treesnip")
-#' hyperparameters: mtry, min_n, tree_depth, loss_reduction, learn_rate, sample_size
 #'
 #' @param engine engine
 #' @param mode mode

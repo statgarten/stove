@@ -30,8 +30,8 @@ logisticRegression(
   formula = NULL,
   rec = NULL,
   v = "5",
-  penaltyRangeMin = "0.0",
-  penaltyRangeMax = "20.0",
+  penaltyRangeMin = "0.001",
+  penaltyRangeMax = "1.0",
   penaltyRangeLevels = "5",
   mixtureRangeMin = "0.0",
   mixtureRangeMax = "1.0",
@@ -48,8 +48,8 @@ linearRegression(
   formula = NULL,
   rec = NULL,
   v = "5",
-  penaltyRangeMin = "0.0",
-  penaltyRangeMax = "20.0",
+  penaltyRangeMin = "0.001",
+  penaltyRangeMax = "1.0",
   penaltyRangeLevels = "5",
   mixtureRangeMin = "0.0",
   mixtureRangeMax = "1.0",
@@ -66,8 +66,8 @@ KNN(
   formula = NULL,
   rec = NULL,
   v = "5",
-  neighborsRangeMin = "2",
-  neighborsRangeMax = "20",
+  neighborsRangeMin = "1",
+  neighborsRangeMax = "10",
   neighborsRangeLevels = "10",
   metric = NULL
 )
@@ -81,12 +81,12 @@ naiveBayes(
   formula = NULL,
   rec = NULL,
   v = "5",
-  smoothnessRangeMin = "0.001",
-  smoothnessRangeMax = "10",
-  smoothnessRangeLevels = "5",
-  LaplaceRangeMin = "0",
-  LaplaceRangeMax = "50",
-  LaplaceRangeLevels = "6",
+  smoothnessRangeMin = "0.5",
+  smoothnessRangeMax = "1.5",
+  smoothnessRangeLevels = "3",
+  LaplaceRangeMin = "0.0",
+  LaplaceRangeMax = "3.0",
+  LaplaceRangeLevels = "4",
   metric = NULL
 )
 
@@ -99,15 +99,15 @@ decisionTree(
   formula = NULL,
   rec = NULL,
   v = "5",
-  treeDepthRangeMin = "10",
-  treeDepthRangeMax = "30",
+  treeDepthRangeMin = "1",
+  treeDepthRangeMax = "15",
   treeDepthRangeLevels = "3",
   minNRangeMin = "2",
-  minNRangeMax = "500",
+  minNRangeMax = "40",
   minNRangeLevels = "3",
-  costComplexityRangeMin = "0",
-  costComplexityRangeMax = "1",
-  costComplexityRangeLevels = "3",
+  costComplexityRangeMin = "-2.0",
+  costComplexityRangeMax = "-1.0",
+  costComplexityRangeLevels = "2",
   metric = NULL
 )
 
@@ -124,10 +124,10 @@ randomForest(
   mtryRangeMax = "20",
   mtryRangeLevels = "3",
   treesRangeMin = "100",
-  treesRangeMax = "2000",
+  treesRangeMax = "1000",
   treesRangeLevels = "3",
   minNRangeMin = "2",
-  minNRangeMax = "500",
+  minNRangeMax = "40",
   minNRangeLevels = "3",
   metric = NULL
 )
@@ -141,26 +141,26 @@ xgboost(
   formula = NULL,
   rec = NULL,
   v = "5",
-  treeDepthRangeMin = "2",
-  treeDepthRangeMax = "50",
+  treeDepthRangeMin = "1",
+  treeDepthRangeMax = "15",
   treeDepthRangeLevels = "3",
   treesRangeMin = "10",
-  treesRangeMax = "50",
-  treesRangeLevels = "2",
-  learnRateRangeMin = "0.01",
-  learnRateRangeMax = "0.3",
+  treesRangeMax = "500",
+  treesRangeLevels = "5",
+  learnRateRangeMin = "-2.0",
+  learnRateRangeMax = "-1.0",
   learnRateRangeLevels = "2",
   mtryRangeMin = "1",
   mtryRangeMax = "20",
   mtryRangeLevels = "3",
-  minNRangeMin = "1",
-  minNRangeMax = "500",
+  minNRangeMin = "2",
+  minNRangeMax = "40",
   minNRangeLevels = "3",
-  lossReductionRangeMin = "0",
-  lossReductionRangeMax = "1",
+  lossReductionRangeMin = "-1.0",
+  lossReductionRangeMax = "1.0",
   lossReductionRangeLevels = "3",
-  sampleSizeRangeMin = "0",
-  sampleSizeRangeMax = "1",
+  sampleSizeRangeMin = "0.0",
+  sampleSizeRangeMax = "1.0",
   sampleSizeRangeLevels = "3",
   stopIter = "30",
   metric = NULL
@@ -175,23 +175,23 @@ lightGbm(
   formula = NULL,
   rec = NULL,
   v = "5",
-  treeDepthRangeMin = "2",
-  treeDepthRangeMax = "30",
+  treeDepthRangeMin = "5",
+  treeDepthRangeMax = "15",
   treeDepthRangeLevels = "3",
   treesRangeMin = "10",
-  treesRangeMax = "50",
+  treesRangeMax = "100",
   treesRangeLevels = "2",
-  learnRateRangeMin = "0.01",
-  learnRateRangeMax = "0.3",
+  learnRateRangeMin = "-2.0",
+  learnRateRangeMax = "-1.0",
   learnRateRangeLevels = "2",
   mtryRangeMin = "1",
   mtryRangeMax = "20",
   mtryRangeLevels = "3",
-  minNRangeMin = "1",
-  minNRangeMax = "500",
+  minNRangeMin = "2",
+  minNRangeMax = "40",
   minNRangeLevels = "3",
-  lossReductionRangeMin = "0",
-  lossReductionRangeMax = "1",
+  lossReductionRangeMin = "-1.0",
+  lossReductionRangeMax = "1.0",
   lossReductionRangeLevels = "3",
   metric = NULL
 )
@@ -208,8 +208,8 @@ MLP(
   hiddenUnitsRangeMin = "1",
   hiddenUnitsRangeMax = "10",
   hiddenUnitsRangeLevels = "3",
-  penaltyRangeMin = "0.01",
-  penaltyRangeMax = "0.5",
+  penaltyRangeMin = "0.001",
+  penaltyRangeMax = "1.0",
   penaltyRangeLevels = "3",
   epochsRangeMin = "10",
   epochsRangeMax = "100",
@@ -451,19 +451,8 @@ min_n: 트리를 분할하기 위해 필요한 관측값의 최소 개수를 설
 mtry: 트리를 분할하기 위해 필요한 feature의 수를 설정합니다.
 
 XGBoost
-hyperparameters:
-tree_depth: 최종 예측값에 다다르기까지 몇 번 트리를 분할할지 설정합니다.
-trees:
-learn_rate,
-mtry,
-min_n,
-loss_reduction,
-sample_size
-stop_iter
 
 Light GBM
-install treesnip package by: remotes::install_github("curso-r/treesnip")
-hyperparameters: mtry, min_n, tree_depth, loss_reduction, learn_rate, sample_size
 
 neural network 알고리즘 함수.
 neural network 모델은 생물학적인 뉴런을 수학적으로 모델링한 것.
