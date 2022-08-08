@@ -13,7 +13,7 @@ if (! ("knitr" %in% rownames(installed.packages()))) { install.packages("knitr")
 base::require("knitr")
 
 # DESCRIPTION 파일에 패키지 추가
-usethis::use_package("recipes", type = "Imports")
+usethis::use_package("LiblineaR", type = "Imports")
 usethis::use_package("readr", type = "Suggests")
 usethis::use_dev_package("treesnip", remote = "https://github.com/curso-r/treesnip.git") # remotes
 

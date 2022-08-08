@@ -63,11 +63,11 @@ prepForCV <- function(data = NULL,
   if (imputation == TRUE) {
     if (!is.null(nomialImputationType)) {
       cmd <- paste0("result <- result %>% recipes::step_impute_", nomialImputationType, "(recipes::all_nominal_predictors())")
-      eval(parse(text=cmd))
+      eval(parse(text = cmd))
     }
     if (!is.null(numericImputationType)) {
       cmd <- paste0("result <- result %>% recipes::step_impute_", numericImputationType, "(recipes::all_numeric_predictors())")
-      eval(parse(text=cmd))
+      eval(parse(text = cmd))
     }
   }
 
@@ -75,14 +75,14 @@ prepForCV <- function(data = NULL,
   if (normalization == TRUE) {
     if (!is.null(normalizationType)) {
       cmd <- paste0("result <- result %>% recipes::step_", normalizationType, "(recipes::all_numeric_predictors())")
-      eval(parse(text=cmd))
+      eval(parse(text = cmd))
     }
   }
 
   # # PCA
   # if (pca == TRUE) {
   #   result <- result %>%
-  #     recipes::step_pca(all_numeric(),
+  #     recipes::step_pca(all_numeric_predictors(),
   #                       threshold = eval(parse(text = pcaThres))) ## todo: make users to perform PCA for numeric var only or numeric except for binary
   # } else {
   #   # pass

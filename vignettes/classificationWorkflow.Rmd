@@ -401,7 +401,7 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 
 mode <- "classification"
 algo <- "Random Forest"
-engine <- "ranger"
+engine <- "partykit"
 
 mtryRangeMin <- "1" 
 mtryRangeMax <- "20" 

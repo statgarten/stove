@@ -454,7 +454,7 @@ XGBoost
 
 Light GBM
 install treesnip package by: remotes::install_github("curso-r/treesnip")
-hyperparameters: mtry, min_n, tree_depth, loss_reduction, learn_rate, sample_size
+hyperparameters:
 
 neural network 알고리즘 함수.
 neural network 모델은 생물학적인 뉴런을 수학적으로 모델링한 것.

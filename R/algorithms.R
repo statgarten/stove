@@ -12,8 +12,9 @@
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import dials
+#' @importFrom dials penalty mixture
 #' @import parsnip
+#' @import stats glmnet LiblineaR rstanarm
 #'
 #' @export
 
@@ -122,8 +123,9 @@ logisticRegression <- function(algo = "logistic Regression",
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import dials
+#' @importFrom dials penalty mixture
 #' @import parsnip
+#' @import stats glmnet rstanarm
 #'
 #' @export
 
@@ -232,7 +234,7 @@ linearRegression <- function(algo = "linear Regression",
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import dials
+#' @importFrom dials neighbors
 #' @import parsnip
 #' @import kknn
 #'
@@ -309,8 +311,9 @@ KNN <- function(algo = "KNN",
 #' @name %>%
 #' @rdname pipe
 #' @import parsnip
-#' @import klaR
-#' @import naivebayes
+#' @importFrom dials Laplace
+#' @importFrom discrim smoothness
+#' @import klaR naivebayes
 #'
 #' @export
 
@@ -400,8 +403,9 @@ naiveBayes <- function(algo = "Naive Bayes",
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import dials
+#' @importFrom dials tree_depth min_n cost_complexity
 #' @import parsnip
+#' @import rpart C50 partykit
 #'
 #' @export
 
@@ -501,8 +505,10 @@ decisionTree <- function(algo = "Decision Tree",
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import dials
+#' @importFrom dials mtry trees min_n
 #' @import parsnip
+#' @import ranger partykit
+#' @rawNamespace import(randomForest, except = c(margin, importance))
 #'
 #' @export
 
@@ -581,9 +587,8 @@ randomForest <- function(algo = "Random Forest",
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import dials
-#' @import parsnip
-#' @import xgboost
+#' @importFrom dials tree_depth trees learn_rate mtry min_n loss_reduction sample_size stop_iter
+#' @import parsnip treesnip
 #'
 #' @export
 
@@ -688,7 +693,7 @@ xgBoost <- function(algo = "XGBoost",
 #' @details
 #' Light GBM
 #' install treesnip package by: remotes::install_github("curso-r/treesnip")
-#' hyperparameters: mtry, min_n, tree_depth, loss_reduction, learn_rate, sample_size
+#' hyperparameters:
 #'
 #' @param engine engine
 #' @param mode mode
@@ -696,9 +701,8 @@ xgBoost <- function(algo = "XGBoost",
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import dials
-#' @import parsnip
-#' @import treesnip
+#' @importFrom dials tree_depth trees learn_rate mtry min_n loss_reduction
+#' @import parsnip treesnip
 #'
 #' @export
 
@@ -823,7 +827,7 @@ lightGbm <- function(algo = "lightGBM",
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import dials
+#' @importFrom dials hidden_units penalty epochs
 #' @import parsnip
 #'
 #' @export
@@ -928,7 +932,6 @@ MLP <- function(algo = "MLP",
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
-#' @import dials
 #' @import stats
 #' @import factoextra
 #'
