@@ -64,6 +64,7 @@ split_tmp <- goophi::trainTestSplit(
   prop = trainSetRatio,
   seed = as.numeric(seed)
 )
+
 data_train <- split_tmp[[1]] # train data
 data_test <- split_tmp[[2]] # test data
 data_split <- split_tmp[[3]] # whole data with split information
@@ -89,23 +90,24 @@ formula <- paste0(targetVar, " ~ .") # user 입력 x (1에서 user가 targetVar�
 
 imputation <- TRUE
 normalization <- TRUE
-imputationType <- "mode" # bag, knn, linear, lower, mean, median
-normalizationType <- "scale" # center, normalization, range, scale
+nomialImputationType <- "knn" # mode(default), bag, knn
+numericImputationType <- "knn" # mean(default), bag, knn, linear, lower, median, roll
+normalizationType <- "range" # range(default), center, normalization, scale
 seed <- "1234"
 ```
 
 ### 2) train set에 적용할 전처리 정보를 담은 recipe를 생성합니다
 
 ```{r}
-rec <- goophi::prepForCV(
-  data = data_train,
-  formula = formula,
-  imputationType = imputationType,
-  normalizationType = normalizationType,
-  imputation = imputation,
-  normalization = normalization,
-  seed = seed
-)
+rec <- goophi::prepForCV(data = data_train,
+                         formula = formula,
+                         imputation = imputation,
+                         normalization = normalization,
+                         nomialImputationType = nomialImputationType, 
+                         numericImputationType = numericImputationType, 
+                         normalizationType = normalizationType,
+                         seed = seed
+                         )
 ```
 
 ## 3. Modeling with CV Tab
@@ -604,7 +606,7 @@ roc_curve
 
 ```{r}
 names(models_list)
-model_name <- "Decision Tree_rpart" # 원하는 모델의 이름 입력받기
+model_name <- "LogisticR_stan" # 원하는 모델의 이름 입력받기
 ```
 
 ```{r, fig.width = 7, fig.height = 6}

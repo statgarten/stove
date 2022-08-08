@@ -5,12 +5,13 @@
 \title{Preprocessing for cross validation}
 \usage{
 prepForCV(
-  data,
-  formula,
-  imputationType = "mean",
-  normalizationType = "range",
+  data = NULL,
+  formula = NULL,
   imputation = FALSE,
   normalization = FALSE,
+  nomialImputationType = NULL,
+  numericImputationType = NULL,
+  normalizationType = NULL,
   seed = "4814"
 )
 }
@@ -19,19 +20,15 @@ prepForCV(
 
 \item{formula}{formula}
 
-\item{imputationType}{imputationType}
-
-\item{normalizationType}{normalizationType}
-
 \item{imputation}{imputation}
 
 \item{normalization}{normalization}
 
+\item{normalizationType}{normalizationType}
+
 \item{seed}{seed}
 
-\item{pcaThres}{pcaThres}
-
-\item{pca}{pca}
+\item{imputationType}{imputationType}
 }
 \description{
 Preprocessing for cross validation

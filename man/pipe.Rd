@@ -8,7 +8,7 @@
 \alias{naiveBayes}
 \alias{decisionTree}
 \alias{randomForest}
-\alias{xgboost}
+\alias{xgBoost}
 \alias{lightGbm}
 \alias{MLP}
 \alias{kMeansClustering}
@@ -36,7 +36,7 @@ logisticRegression(
   mixtureRangeMin = "0.0",
   mixtureRangeMax = "1.0",
   mixtureRangeLevels = "5",
-  metric = NULL
+  metric = "roc_auc"
 )
 
 linearRegression(
@@ -54,7 +54,7 @@ linearRegression(
   mixtureRangeMin = "0.0",
   mixtureRangeMax = "1.0",
   mixtureRangeLevels = "5",
-  metric = NULL
+  metric = "rmse"
 )
 
 KNN(
@@ -69,7 +69,7 @@ KNN(
   neighborsRangeMin = "1",
   neighborsRangeMax = "10",
   neighborsRangeLevels = "10",
-  metric = NULL
+  metric = "roc_auc"
 )
 
 naiveBayes(
@@ -87,7 +87,7 @@ naiveBayes(
   LaplaceRangeMin = "0.0",
   LaplaceRangeMax = "3.0",
   LaplaceRangeLevels = "4",
-  metric = NULL
+  metric = "roc_auc"
 )
 
 decisionTree(
@@ -108,7 +108,7 @@ decisionTree(
   costComplexityRangeMin = "-2.0",
   costComplexityRangeMax = "-1.0",
   costComplexityRangeLevels = "2",
-  metric = NULL
+  metric = "roc_auc"
 )
 
 randomForest(
@@ -129,11 +129,11 @@ randomForest(
   minNRangeMin = "2",
   minNRangeMax = "40",
   minNRangeLevels = "3",
-  metric = NULL
+  metric = "roc_auc"
 )
 
-xgboost(
-  algo = "Random Forest",
+xgBoost(
+  algo = "XGBoost",
   engine = "xgboost",
   mode = "classification",
   trainingData = NULL,
@@ -163,11 +163,11 @@ xgboost(
   sampleSizeRangeMax = "1.0",
   sampleSizeRangeLevels = "3",
   stopIter = "30",
-  metric = NULL
+  metric = "roc_auc"
 )
 
 lightGbm(
-  algo = "Random Forest",
+  algo = "lightGBM",
   engine = "lightgbm",
   mode = "classification",
   trainingData = NULL,
@@ -193,7 +193,7 @@ lightGbm(
   lossReductionRangeMin = "-1.0",
   lossReductionRangeMax = "1.0",
   lossReductionRangeLevels = "3",
-  metric = NULL
+  metric = "roc_auc"
 )
 
 MLP(
@@ -214,7 +214,7 @@ MLP(
   epochsRangeMin = "10",
   epochsRangeMax = "100",
   epochsRangeLevels = "2",
-  metric = NULL
+  metric = "roc_auc"
 )
 
 kMeansClustering(

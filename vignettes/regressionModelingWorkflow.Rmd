@@ -79,28 +79,31 @@ DT::datatable(data_train, options = list(scrollX = TRUE))
 |    imputationType |                                         imputation 방식 |
 | normalizationType |                                      normalization 방식 |
 
-### User input
+### 1) User input
 
 ```{r}
-formula <- paste0(targetVar, " ~ .") # user 입력 x (1에서 user가 targetVar를 입력했을 때 함께 생성) 
+formula <- paste0(targetVar, " ~ .") # user 입력 x (1에서 user가 targetVar를 입력했을 때 함께 생성)
 
 imputation <- TRUE
 normalization <- TRUE
-imputationType = "mean" 
-normalizationType = "range" 
-seed = "1234"
+nomialImputationType <- "knn" # mode(default), bag, knn
+numericImputationType <- "knn" # mean(default), bag, knn, linear, lower, median, roll
+normalizationType <- "range" # range(default), center, normalization, scale
+seed <- "1234"
 ```
 
-### train set에 적용할 전처리 정보를 담은 recipe를 생성합니다
+### 2) train set에 적용할 전처리 정보를 담은 recipe를 생성합니다
 
 ```{r}
 rec <- goophi::prepForCV(data = data_train,
                          formula = formula,
-                         imputationType = imputationType,
-                         normalizationType = normalizationType,
                          imputation = imputation,
                          normalization = normalization,
-                         seed = seed)
+                         nomialImputationType = nomialImputationType, 
+                         numericImputationType = numericImputationType, 
+                         normalizationType = normalizationType,
+                         seed = seed
+                         )
 ```
 
 ## 3. Modeling with CV Tab

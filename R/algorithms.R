@@ -587,7 +587,7 @@ randomForest <- function(algo = "Random Forest",
 #'
 #' @export
 
-xgboost <- function(algo = "Random Forest",
+xgBoost <- function(algo = "XGBoost",
                     engine = "xgboost",
                     mode = "classification",
                     trainingData = NULL,
@@ -702,7 +702,7 @@ xgboost <- function(algo = "Random Forest",
 #'
 #' @export
 
-lightGbm <- function(algo = "Random Forest",
+lightGbm <- function(algo = "lightGBM",
                      engine = "lightgbm",
                      mode = "classification",
                      trainingData = NULL,
