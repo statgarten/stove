@@ -453,8 +453,7 @@ mtry: 트리를 분할하기 위해 필요한 feature의 수를 설정합니다.
 XGBoost
 
 Light GBM
-install treesnip package by: remotes::install_github("curso-r/treesnip")
-hyperparameters:
+
 
 neural network 알고리즘 함수.
 neural network 모델은 생물학적인 뉴런을 수학적으로 모델링한 것.

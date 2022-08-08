@@ -130,7 +130,7 @@ models_list <- list()
 
 ### 1) logistic regression model
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 ## User input
 
 mode <- "classification"
@@ -175,7 +175,7 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 
 ### 2) K Nearest Neighbor
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 ## User input
 
 mode <- "classification"
@@ -237,7 +237,7 @@ grid_search_result <- goophi::gridSearchCV(
 
 ### 3) Naive Bayes
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 ## User input
 
 mode <- "classification"
@@ -279,74 +279,9 @@ finalized <- goophi::naiveBayes(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
-### 4) MLP
+### 4) Decision Tree
 
-```{r}
-## User input
-# 주석 처리한 hyperparameters는 추후 업데이트 할 engine을 위해 남겨두었습니다.
-
-mode <- "classification"
-algo <- "MLP"
-engine <- "nnet"
-
-hiddenUnitsRangeMin <- "1" 
-hiddenUnitsRangeMax <- "10" 
-hiddenUnitsRangeLevels <- "3" 
-penaltyRangeMin <- "0.001" 
-penaltyRangeMax <- "1.0" 
-penaltyRangeLevels <- "3" 
-epochsRangeMin <- "10" 
-epochsRangeMax <- "100" 
-epochsRangeLevels <- "2" 
-# dropoutRangeMin = "0"
-# dropoutRangeMax = "1"
-# dropoutRangeLevels = "2"
-# activation = "relu" #"linear", "softmax", "relu", "elu"
-# learnRateRangeMin = "0"
-# learnRateRangeMax = "1"
-# learnRateRangeLevels = "2"
-
-v <- "2"
-
-metric <- "roc_auc"
-
-## grid search + cross validation + modeling
-
-finalized <- goophi::MLP(
-  algo = algo,
-  engine = engine,
-  mode = mode,
-  trainingData = data_train,
-  splitedData = data_split,
-  formula = formula,
-  rec = rec,
-  v = v,
-  hiddenUnitsRangeMin = hiddenUnitsRangeMin,
-  hiddenUnitsRangeMax = hiddenUnitsRangeMax,
-  hiddenUnitsRangeLevels = hiddenUnitsRangeLevels,
-  penaltyRangeMin = penaltyRangeMin,
-  penaltyRangeMax = penaltyRangeMax,
-  penaltyRangeLevels = penaltyRangeLevels,
-  epochsRangeMin = epochsRangeMin,
-  epochsRangeMax = epochsRangeMax,
-  epochsRangeLevels = epochsRangeLevels,
-  # dropoutRangeMin = dropoutRangeMin,
-  # dropoutRangeMax = dropoutRangeMax,
-  # dropoutRangeLevels = dropoutRangeLevels,
-  # activation = activation, #"linear", "softmax", "relu", "elu"
-  # learnRateRangeMin = learnRateRangeMin,
-  # learnRateRangeMax = learnRateRangeMax,
-  # learnRateRangeLevels = learnRateRangeLevels,
-  metric = metric
-)
-
-## models_list에 모델을 추가합니다.
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
-```
-
-### 5) Decision Tree
-
-```{r}
+```{r, message=FALSE, warning=FALSE}
 ## User input
 
 mode <- "classification"
@@ -394,9 +329,9 @@ finalized <- goophi::decisionTree(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
-### 6) Random Forest
+### 5) Random Forest
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 ## User input
 
 mode <- "classification"
@@ -444,9 +379,9 @@ finalized <- goophi::randomForest(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
-### 7) XGBoost
+### 6) XGBoost
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 ## User input
 
 mode <- "classification"
@@ -456,20 +391,20 @@ engine <- "xgboost"
 treeDepthRangeMin <- "5" 
 treeDepthRangeMax <- "15" 
 treeDepthRangeLevels <- "3" 
-treesRangeMin <- "8"
-treesRangeMax <- "100" 
+treesRangeMin <- "8" 
+treesRangeMax <- "32" 
 treesRangeLevels <- "3" 
 learnRateRangeMin <- "-2" 
 learnRateRangeMax <- "-1" 
 learnRateRangeLevels <- "2" 
-mtryRangeMin <- "0" 
-mtryRangeMax <- "1" 
+mtryRangeMin <- "0.0" 
+mtryRangeMax <- "1.0" 
 mtryRangeLevels <- "3" 
 minNRangeMin <- "2" 
 minNRangeMax <- "40" 
 minNRangeLevels <- "3" 
-lossReductionRangeMin <- "-1" 
-lossReductionRangeMax <- "1" 
+lossReductionRangeMin <- "-1.0" 
+lossReductionRangeMax <- "1.0" 
 lossReductionRangeLevels <- "3" 
 sampleSizeRangeMin <- "0.0" 
 sampleSizeRangeMax <- "1.0" 
@@ -521,9 +456,9 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
 
-### 8) lightGBM
+### 7) lightGBM
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 ## User input
 
 mode <- "classification"
@@ -588,9 +523,76 @@ finalized <- goophi::lightGbm(
 ## models_list에 모델을 추가합니다.
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
+### 8) MLP
+
+```{r, message=FALSE, warning=FALSE}
+## User input
+# 주석 처리한 hyperparameters는 추후 업데이트 할 engine을 위해 남겨두었습니다.
+
+mode <- "classification"
+algo <- "MLP"
+engine <- "nnet"
+
+hiddenUnitsRangeMin <- "1" 
+hiddenUnitsRangeMax <- "10" 
+hiddenUnitsRangeLevels <- "3" 
+penaltyRangeMin <- "0.001" 
+penaltyRangeMax <- "1.0" 
+penaltyRangeLevels <- "3" 
+epochsRangeMin <- "10" 
+epochsRangeMax <- "100" 
+epochsRangeLevels <- "2" 
+# dropoutRangeMin = "0"
+# dropoutRangeMax = "1"
+# dropoutRangeLevels = "2"
+# activation = "relu" #"linear", "softmax", "relu", "elu"
+# learnRateRangeMin = "0"
+# learnRateRangeMax = "1"
+# learnRateRangeLevels = "2"
+
+v <- "2"
+
+metric <- "roc_auc"
+
+## grid search + cross validation + modeling
+
+finalized <- goophi::MLP(
+  algo = algo,
+  engine = engine,
+  mode = mode,
+  trainingData = data_train,
+  splitedData = data_split,
+  formula = formula,
+  rec = rec,
+  v = v,
+  hiddenUnitsRangeMin = hiddenUnitsRangeMin,
+  hiddenUnitsRangeMax = hiddenUnitsRangeMax,
+  hiddenUnitsRangeLevels = hiddenUnitsRangeLevels,
+  penaltyRangeMin = penaltyRangeMin,
+  penaltyRangeMax = penaltyRangeMax,
+  penaltyRangeLevels = penaltyRangeLevels,
+  epochsRangeMin = epochsRangeMin,
+  epochsRangeMax = epochsRangeMax,
+  epochsRangeLevels = epochsRangeLevels,
+  # dropoutRangeMin = dropoutRangeMin,
+  # dropoutRangeMax = dropoutRangeMax,
+  # dropoutRangeLevels = dropoutRangeLevels,
+  # activation = activation, #"linear", "softmax", "relu", "elu"
+  # learnRateRangeMin = learnRateRangeMin,
+  # learnRateRangeMax = learnRateRangeMax,
+  # learnRateRangeLevels = learnRateRangeLevels,
+  metric = metric
+)
+
+## models_list에 모델을 추가합니다.
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+```
+
 ## 4. Report Tab
 
 ### 1) ROC Curve
+
+#### 유저가 선택한 모델의 ROC curve 출력
 
 ```{r, fig.width = 7, fig.height = 7}
 roc_curve <- goophi::rocCurve(
@@ -601,6 +603,8 @@ roc_curve
 ```
 
 ### 2) Confusion Matrix
+
+#### 유저가 선택한 모델의 confusion matrix 출력
 
 ### User input
 
@@ -619,6 +623,8 @@ cm
 ```
 
 ### 3) Evaluation metrics
+
+#### 모델 성능 평가를 위한 표 출력
 
 ```{r}
 options(yardstick.event_level = "second") # 오름차순으로 factor의 level 설정된다고 가정

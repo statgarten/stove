@@ -692,8 +692,6 @@ xgBoost <- function(algo = "XGBoost",
 #'
 #' @details
 #' Light GBM
-#' install treesnip package by: remotes::install_github("curso-r/treesnip")
-#' hyperparameters:
 #'
 #' @param engine engine
 #' @param mode mode
