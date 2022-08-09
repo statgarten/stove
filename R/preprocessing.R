@@ -49,9 +49,9 @@ prepForCV <- function(data = NULL,
                       formula = NULL,
                       imputation = FALSE,
                       normalization = FALSE,
-                      nomialImputationType = NULL, # mode(default), bag, knn
-                      numericImputationType = NULL, # mean(default), bag, knn, linear, lower, median, roll
-                      normalizationType = NULL, # range(default), center, normalization, scale
+                      nominalImputationType = "mode", # mode(default), bag, knn
+                      numericImputationType = "mean", # mean(default), bag, knn, linear, lower, median, roll
+                      normalizationType = "range", # range(default), center, normalization, scale
                       seed = "4814") {
   set.seed(seed = as.numeric(seed))
 

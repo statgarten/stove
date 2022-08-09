@@ -9,9 +9,9 @@ prepForCV(
   formula = NULL,
   imputation = FALSE,
   normalization = FALSE,
-  nomialImputationType = NULL,
-  numericImputationType = NULL,
-  normalizationType = NULL,
+  nominalImputationType = "mode",
+  numericImputationType = "mean",
+  normalizationType = "range",
   seed = "4814"
 )
 }
