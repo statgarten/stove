@@ -86,7 +86,7 @@ formula <- paste0(targetVar, " ~ .") # user 입력 x (1에서 user가 targetVar�
 
 imputation <- TRUE
 normalization <- TRUE
-nomialImputationType <- "mode" # mode(default), bag, knn
+nominalImputationType <- "mode" # mode(default), bag, knn
 numericImputationType <- "mean" # mean(default), bag, knn, linear, lower, median, roll
 normalizationType <- "range" # range(default), center, normalization, scale
 seed <- "1234"
@@ -99,7 +99,7 @@ rec <- goophi::prepForCV(data = data_train,
                          formula = formula,
                          imputation = imputation,
                          normalization = normalization,
-                         nomialImputationType = nomialImputationType, 
+                         nominalImputationType = nomianlImputationType, 
                          numericImputationType = numericImputationType, 
                          normalizationType = normalizationType,
                          seed = seed
