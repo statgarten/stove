@@ -22,7 +22,7 @@ trainTestSplit <- function(data = data,
   train <- rsample::training(dataSplit)
   test <- rsample::testing(dataSplit)
 
-  return(list(train = train, test = test, dataSplit = dataSplit))
+  return(list(train = train, test = test, dataSplit = dataSplit, target = target))
 }
 
 
