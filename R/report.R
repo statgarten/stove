@@ -160,7 +160,7 @@ evalMetricsC <- function(modelsList, targetVar) {
   )
 
   for (i in 1:length(modelsList)) {
-    tmp <- custom_metrics(models_list[[as.numeric(i)]] %>%
+    tmp <- custom_metrics(modelsList[[as.numeric(i)]] %>%
       tune::collect_predictions(),
     truth = eval(parse(text = targetVar)),
     estimate = .pred_class
@@ -207,7 +207,7 @@ evalMetricsR <- function(modelsList, targetVar) {
     yardstick::rpd
   )
 
-  for (i in 1:length(models_list)) {
+  for (i in 1:length(modelsList)) {
     tmp <- custom_metrics(modelsList[[as.numeric(i)]] %>%
       tune::collect_predictions(),
     truth = eval(parse(text = targetVar)),
