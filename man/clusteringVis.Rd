@@ -26,5 +26,5 @@ clusteringVis(
 clusteringVis
 }
 \details{
-clusteringVis // cluster factoextra stats ggplot2
+clusteringVis
 }

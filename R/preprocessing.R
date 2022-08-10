@@ -61,8 +61,8 @@ prepForCV <- function(data = NULL,
 
   # Imputation
   if (imputation == TRUE) {
-    if (!is.null(nomialImputationType)) {
-      cmd <- paste0("result <- result %>% recipes::step_impute_", nomialImputationType, "(recipes::all_nominal_predictors())")
+    if (!is.null(nominalImputationType)) {
+      cmd <- paste0("result <- result %>% recipes::step_impute_", nominalImputationType, "(recipes::all_nominal_predictors())")
       eval(parse(text = cmd))
     }
     if (!is.null(numericImputationType)) {

@@ -16,10 +16,10 @@
 #'
 #' @export
 
-gridSearchCV <- function(rec,
-                         model,
+gridSearchCV <- function(rec = NULL,
+                         model = NULL,
                          v = "5", # 5-fold CV as default
-                         data,
+                         data = NULL,
                          parameterGrid = 10,
                          seed = "4814") {
   set.seed(seed = as.numeric(seed))

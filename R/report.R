@@ -1,12 +1,12 @@
 #' AUC-ROC Curve
 #'
 #' @details
-#' AUC-ROC Curve // RColorBrewer cowplot ggplot2 yardstick
+#' AUC-ROC Curve
 #'
-#' @param models_list  models_list
+#' @param modelsList  modelsList
 #' @param targetVar  targetVar
 #'
-#' @import ggplot2
+#' @import RColorBrewer cowplot ggplot2 yardstick
 #' @importFrom dplyr group_by
 #' @importFrom magrittr %>%
 #' @name %>%
@@ -50,13 +50,13 @@ rocCurve <- function(modelsList, targetVar) {
 #' Confusion matrix
 #'
 #' @details
-#' Confusion matrix // yardstick tune ggplot2
+#' Confusion matrix
 #'
 #' @param modelName  modelName
 #' @param modelsList  modelsList
 #' @param targetVar  targetVar
 #'
-#' @import ggplot2
+#' @import ggplot2 yardstick tune
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
@@ -64,7 +64,7 @@ rocCurve <- function(modelsList, targetVar) {
 #' @export
 
 confusionMatrix <- function(modelName, modelsList, targetVar) {
-  tmpDf <- models_list[[modelName]] %>%
+  tmpDf <- modelsList[[modelName]] %>%
     tune::collect_predictions() %>%
     as.data.frame() %>%
     dplyr::select(targetVar, .pred_class)
@@ -91,13 +91,13 @@ confusionMatrix <- function(modelName, modelsList, targetVar) {
 #' Regression plot
 #'
 #' @details
-#' Regression plot // yardstick tune ggplot2 ggrepel
+#' Regression plot
 #'
 #' @param modelName  modelName
 #' @param modelsList  modelsList
 #' @param targetVar  targetVar
 #'
-#' @import ggplot2
+#' @import yardstick tune ggplot2 ggrepel
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
@@ -134,12 +134,13 @@ regressionPlot <- function(modelName, modelsList, targetVar) {
 #' Evaluation metrics for Classification
 #'
 #' @details
-#' Evaluation metrics for Classification // yardstick tune ggplot2 data.table
+#' Evaluation metrics for Classification
 #'
 #' @param modelsList  modelsList
 #' @param targetVar  targetVar
 #'
-#' @import ggplot2
+#' @import yardstick tune ggplot2
+#' @importFrom data.table transpose
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @rdname pipe
@@ -160,7 +161,7 @@ evalMetricsC <- function(modelsList, targetVar) {
   )
 
   for (i in 1:length(modelsList)) {
-    tmp <- custom_metrics(models_list[[as.numeric(i)]] %>%
+    tmp <- custom_metrics(modelsList[[as.numeric(i)]] %>%
       tune::collect_predictions(),
     truth = eval(parse(text = targetVar)),
     estimate = .pred_class
@@ -207,7 +208,7 @@ evalMetricsR <- function(modelsList, targetVar) {
     yardstick::rpd
   )
 
-  for (i in 1:length(models_list)) {
+  for (i in 1:length(modelsList)) {
     tmp <- custom_metrics(modelsList[[as.numeric(i)]] %>%
       tune::collect_predictions(),
     truth = eval(parse(text = targetVar)),
@@ -229,7 +230,9 @@ evalMetricsR <- function(modelsList, targetVar) {
 #' clusteringVis
 #'
 #' @details
-#' clusteringVis // cluster factoextra stats ggplot2
+#' clusteringVis
+#'
+#' @import cluster factoextra stats ggplot2
 #'
 #' @param data  data
 #' @param model  model
