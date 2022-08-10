@@ -1,10 +1,10 @@
 #' Train-Test Split
 #'
 #' @details
-#' Train-Test Split
+#' Data를 Train set과 Test set으로 분리합니다.
 #'
 #' @param data  data
-#' @param target  target
+#' @param target
 #' @param prop  prop
 #' @param seed  seed
 #'
