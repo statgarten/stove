@@ -64,7 +64,7 @@ rocCurve <- function(modelsList, targetVar) {
 #' @export
 
 confusionMatrix <- function(modelName, modelsList, targetVar) {
-  tmpDf <- modelslist[[modelName]] %>%
+  tmpDf <- modelsList[[modelName]] %>%
     tune::collect_predictions() %>%
     as.data.frame() %>%
     dplyr::select(targetVar, .pred_class)
