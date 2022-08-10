@@ -19,5 +19,5 @@ trainTestSplit(data = data, target = NULL, prop, seed = "4814")
 Train-Test Split
 }
 \details{
-Train-Test Split
+Data를 Train set과 Test set으로 분리합니다.
 }

@@ -63,7 +63,7 @@ fitBestModel <- function(gridSearchResult,
                          trainingData,
                          splitedData,
                          algo) {
-  bestParams <- tune::select_best(gridSearchResult[[2]], metric) ## metric 목록 print 되도록
+  bestParams <- tune::select_best(gridSearchResult[[2]], metric)
   finalSpec <- tune::finalize_model(model, bestParams)
 
   finalModel <- finalSpec %>% fit(eval(parse(text = formula)), trainingData)

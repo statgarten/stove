@@ -8,7 +8,6 @@ clusteringVis(
   data = NULL,
   model = NULL,
   maxK = NULL,
-  nStart = NULL,
   nBoot = 100,
   selectOptimal = NULL
 )

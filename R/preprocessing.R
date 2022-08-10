@@ -4,7 +4,7 @@
 #' Data를 Train set과 Test set으로 분리합니다.
 #'
 #' @param data  data
-#' @param target
+#' @param target target
 #' @param prop  prop
 #' @param seed  seed
 #'

@@ -228,7 +228,14 @@ kMeansClustering(
   seedNum = "6471"
 )
 
-gridSearchCV(rec, model, v = "5", data, parameterGrid = 10, seed = "4814")
+gridSearchCV(
+  rec = NULL,
+  model = NULL,
+  v = "5",
+  data = NULL,
+  parameterGrid = 10,
+  seed = "4814"
+)
 
 fitBestModel(
   gridSearchResult,

@@ -66,7 +66,6 @@ km_model
 vis_result <- goophi::clusteringVis(data = data_cleaned,
                           model = km_model,
                           maxK = maxK,
-                          nStart = nStart,
                           nBoot = nBoot,
                           selectOptimal = selectOptimal)
 vis_result$elbowPlot

@@ -244,7 +244,6 @@ evalMetricsR <- function(modelsList, targetVar) {
 clusteringVis <- function(data = NULL,
                           model = NULL,
                           maxK = NULL,
-                          nStart = NULL,
                           nBoot = 100,
                           selectOptimal = NULL) {
   colors <- grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
