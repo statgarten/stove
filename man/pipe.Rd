@@ -382,8 +382,6 @@ evalMetricsR(modelsList, targetVar)
 \item{iter.max}{iter.max}
 
 \item{parameter_grid}{parameter_grid}
-
-\item{models_list}{models_list}
 }
 \description{
 Logistic Regression
@@ -468,13 +466,13 @@ Grid Search with cross validation // workflows rsample tune
 
 fitting in best model // tune workflows
 
-AUC-ROC Curve // RColorBrewer cowplot ggplot2 yardstick
+AUC-ROC Curve
 
-Confusion matrix // yardstick tune ggplot2
+Confusion matrix
 
-Regression plot // yardstick tune ggplot2 ggrepel
+Regression plot
 
-Evaluation metrics for Classification // yardstick tune ggplot2 data.table
+Evaluation metrics for Classification
 
 Evaluation metrics for Regression // yardstick tune ggplot2 data.table
 }
