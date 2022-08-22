@@ -1,0 +1,37 @@
+---
+title: "goophi"
+date: 2022.08.22.
+format:
+  pdf:
+    toc: true
+    number-sections: true
+    number-depth: 2
+    colorlinks: true
+    highlight-style: github
+mainfont: Gulim
+---
+
+```{r setup, message = FALSE}
+library(goophi)
+```
+
+# Introduction
+
+1) 본 문서는 goophi 패키지를 Shiny app에서 사용하는 것을 상정해 작성했습니다.
+
+2) 본 문서의 케이스 스타일은 Camel case와 Snake case가 혼용되어 있습니다.
+- Camel case : goophi의 함수명 및 파라미터명
+- Snake case: 유저로부터 받는 입력, Shiny app의 server에서 사용(될 것이라고 예상)하는 Object명, snake case로 작성된 dependencies의 함수명 등
+
+# Import sample data
+
+전처리가 완료된 샘플데이터를 불러옵니다. 
+ - NA가 없어야 함
+ - string value가 있는 열은 factor로 변환
+ - 한 열이 모두 같은 값으로 채워져 있을 경우 제외해야 함
+ - Date type column이 없어야 함
+
+```{r}
+cleaned_data <- read.csv(file = "~/git/goophi/data/boston_c.csv", stringsAsFactors = TRUE)
+str(cleaned_data)
+```

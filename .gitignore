@@ -1,5 +1,7 @@
 .Rproj.user
-inst/doc
-/data
 .Rhistory
+.Renviron
+.Rbuildignore
+/data
 /etc
+
