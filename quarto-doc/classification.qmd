@@ -35,3 +35,54 @@ library(goophi)
 cleaned_data <- read.csv(file = "~/git/goophi/data/boston_c.csv", stringsAsFactors = TRUE)
 str(cleaned_data)
 ```
+
+# Data Setup Tab
+
+|    User Input |                                    description |
+|--------------:|-----------------------------------------------:|
+|     targetVar |                       목적 변수(target, label) |
+| trainSetRatio | 전체 데이터 중 train set의 비율 (range: 0 - 1) |
+
+1) User input을 다음과 같이 받습니다
+
+```{r}
+target_var <- "Pcrime"
+train_set_ratio <- "0.7"
+seed <- "1234"
+formula <- paste0(target_var, " ~ .") # user 입력 x (1에서 user가 targetVar를 입력했을 때 함께 생성)
+```
+
+2) Train-test split 작업이 완료된 Object를 저장하고, Train set을 보여줍니다.
+
+```{r}
+split_tmp <- goophi::trainTestSplit(data = cleaned_data,
+                                    target = target_var,
+                                    prop = train_set_ratio,
+                                    seed = seed
+                                    )
+
+data_train <- split_tmp[[1]] # train data
+data_test <- split_tmp[[2]] # test data
+data_split <- split_tmp[[3]] # whole data with split information
+```
+
+3) train set에 적용할 전처리 정보를 담은 recipe를 생성합니다
+
+```{r}
+rec <- goophi::prepForCV(data = data_train,
+                         formula = formula,
+                         seed = seed
+                         )
+```
+                         
+# Modeling with CV Tab
+
+grid search, cross validation을 통해 유저가 선택한 모델을 fitting합니다.
+
+| User Input |                                             description |
+|-----------:|--------------------------------------------------------:|
+|       algo |                                            ML 모델 선택 |
+|     engine |                                             engine 선택 |
+|       mode |                                               mode 선택 |
+|     metric |                   Best performance에 대한 평가지표 선택 |
+|          v | Cross validation시 train set을 몇 번 분할할 것인지 입력 |
