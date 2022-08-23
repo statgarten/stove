@@ -208,30 +208,6 @@ finalized <- goophi::KNN(
 
 ## models_list에 모델을 추가합니다.
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
-
-
-neighborsRange <- c(as.numeric(neighborsRangeMin), as.numeric(neighborsRangeMax))
-
-
-parameterGrid <- dials::grid_regular(
-  dials::neighbors(range = neighborsRange),
-  levels = c(neighbors = as.numeric(neighborsRangeLevels))
-)
-
-
-
-model <- parsnip::nearest_neighbor(neighbors = tune()) %>%
-  parsnip::set_engine(engine = engine) %>%
-  parsnip::set_mode(mode = mode) %>%
-  parsnip::translate()
-
-grid_search_result <- goophi::gridSearchCV(
-  rec = rec,
-  model = model,
-  v = as.numeric(v),
-  data = data_train,
-  parameterGrid = parameterGrid
-)
 ```
 
 ### 3) Naive Bayes

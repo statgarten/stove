@@ -36,7 +36,7 @@ logisticRegression <- function(algo = "logistic Regression",
   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
   mixtureRange <- c(as.numeric(mixtureRangeMin), as.numeric(mixtureRangeMax))
 
-  if (engine == "glmnet" || engine == "liblinear" || engine == "brulee") {
+  if (engine == "glmnet" || engine == "brulee") {
     parameterGrid <- dials::grid_regular(
       dials::penalty(range = penaltyRange),
       dials::mixture(range = mixtureRange),
@@ -70,6 +70,45 @@ logisticRegression <- function(algo = "logistic Regression",
       splitedData = splitedData,
       algo = paste0(algo, "_", engine)
     )
+  } else if (engine == "liblinear") {
+
+    indx <- sapply(trainingData, is.factor)
+    trainingData[indx] <- lapply(trainingData[indx], function(x) as.numeric(x))
+
+    parameterGrid <- dials::grid_regular(
+      dials::penalty(range = penaltyRange),
+      dials::mixture(range = mixtureRange),
+      levels = c(
+        penalty = as.numeric(penaltyRangeLevels),
+        mixture = as.numeric(mixtureRangeLevels)
+      )
+    )
+    model <- parsnip::logistic_reg(
+      penalty = tune(),
+      mixture = tune()
+    ) %>%
+      parsnip::set_engine(engine = engine) %>%
+      parsnip::set_mode(mode = mode) %>%
+      parsnip::translate()
+
+    gridSearchResult <- goophi::gridSearchCV(
+      rec = rec,
+      model = model,
+      v = as.numeric(v),
+      data = trainingData,
+      parameterGrid = parameterGrid
+    )
+
+    finalized <- goophi::fitBestModel(
+      gridSearchResult = gridSearchResult,
+      metric = metric,
+      model = model,
+      formula = formula,
+      trainingData = trainingData,
+      splitedData = splitedData,
+      algo = paste0(algo, "_", engine)
+    )
+
   } else {
     model <- parsnip::logistic_reg() %>%
       parsnip::set_engine(engine = engine) %>%
