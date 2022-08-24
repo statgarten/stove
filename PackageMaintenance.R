@@ -12,6 +12,9 @@ base::require("testthat")
 if (! ("knitr" %in% rownames(installed.packages()))) { install.packages("knitr") }
 base::require("knitr")
 
+if (! ("quarto" %in% rownames(installed.packages()))) { install.packages("quarto") }
+base::require("quarto")
+
 # DESCRIPTION 파일에 패키지 추가
 usethis::use_package("LiblineaR", type = "Imports")
 usethis::use_package("readr", type = "Suggests")
@@ -31,3 +34,7 @@ usethis::use_test()
 
 # 함수 추가 시 roxygen 주석을 포함시켜 작성하고, 아래 코드로 주석을 .Rd 파일로 전환 및 NAMESPACE에 추가
 devtools::document()
+
+# quarto 문서 관리
+quarto::quarto_preview("document.qmd")
+quarto::quarto_render("document.qmd")

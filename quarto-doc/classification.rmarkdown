@@ -15,6 +15,7 @@ mainfont: Gulim
 library(goophi)
 ```
 
+
 # Introduction
 
 1) 본 문서는 goophi 패키지를 Shiny app에서 사용하는 것을 상정해 작성했습니다.
@@ -32,6 +33,7 @@ library(goophi)
 - Date type column이 없어야 함
 - Outcome 변수는 classification의 경우 factor, regression의 경우 numeric이어야 함 (clustering은 outcome변수를 사용하지 않음)
 
+
 ```{r}
 cleaned_data <- read.csv(file = "~/git/goophi/data/boston_c.csv", 
                          stringsAsFactors = TRUE
@@ -39,6 +41,7 @@ cleaned_data <- read.csv(file = "~/git/goophi/data/boston_c.csv",
 cleaned_data$Pcrime <- as.factor(cleaned_data$Pcrime)
 str(cleaned_data)
 ```
+
 
 # Data Setup Tab
 
@@ -50,6 +53,7 @@ str(cleaned_data)
 1) User input을 다음과 같이 받습니다.
 - formula는 user가 target_var를 입력할 때 함께 생성되도록 함
 
+
 ```{r}
 target_var <- "Pcrime"
 train_set_ratio <- "0.7"
@@ -57,7 +61,9 @@ seed <- "1234"
 formula <- paste0(target_var, " ~ .")
 ```
 
+
 2) Train-test split 작업이 완료된 Object를 저장하고, Train set을 보여줍니다.
+
 
 ```{r}
 split_tmp <- goophi::trainTestSplit(data = cleaned_data,
@@ -71,7 +77,9 @@ data_test <- split_tmp[[2]] # test data
 data_split <- split_tmp[[3]] # whole data with split information
 ```
 
+
 3) train set에 적용할 전처리 정보를 담은 recipe를 생성합니다
+
 
 ```{r}
 rec <- goophi::prepForCV(data = data_train,
@@ -79,6 +87,7 @@ rec <- goophi::prepForCV(data = data_train,
                          seed = seed
                          )
 ```
+
                          
 # Modeling Tab
 
@@ -92,11 +101,14 @@ rec <- goophi::prepForCV(data = data_train,
 
 0) 모델 object를 저장할 빈 리스트를 생성합니다.
 
+
 ```{r}
 models_list <- list()
 ```
 
+
 1) logistic regression model
+
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
@@ -140,7 +152,9 @@ finalized <- goophi::logisticRegression(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
+
 2) K Nearest Neighbor
+
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
@@ -178,7 +192,9 @@ finalized <- goophi::KNN(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
+
 ### 3) Naive Bayes
+
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
@@ -222,7 +238,9 @@ finalized <- goophi::naiveBayes(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
+
 ### 4) Decision Tree
+
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
@@ -272,7 +290,9 @@ finalized <- goophi::decisionTree(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
+
 ### 5) Random Forest
+
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
@@ -322,7 +342,9 @@ finalized <- goophi::randomForest(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
+
 ### 6) XGBoost
+
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
@@ -399,7 +421,9 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
 
+
 ### 7) lightGBM
+
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
@@ -466,7 +490,9 @@ finalized <- goophi::lightGbm(
 # Add the model to models_list
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
+
 ### 8) MLP
+
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
@@ -517,11 +543,13 @@ finalized <- goophi::MLP(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
+
 ## 4. Report Tab
 
 ### 1) ROC Curve
 
 #### 유저가 선택한 모델의 ROC curve 출력
+
 
 ```{r, fig.width = 7, fig.height = 7}
 roc_curve <- goophi::rocCurve(
@@ -531,11 +559,13 @@ roc_curve <- goophi::rocCurve(
 roc_curve
 ```
 
+
 ### 2) Confusion Matrix
 
 #### 유저가 선택한 모델의 confusion matrix 출력
 
 ## User input
+
 
 ```{r}
 names(models_list)
@@ -551,12 +581,15 @@ cm <- goophi::confusionMatrix(
 cm
 ```
 
+
 ### 3) Evaluation metrics
 
 #### 모델 성능 평가를 위한 표 출력
+
 
 ```{r}
 options(yardstick.event_level = "second") # 오름차순으로 factor의 level 설정된다고 가정
 evalMet <- goophi::evalMetricsC(models_list, target_var)
 knitr::kable(evalMet)
 ```
+

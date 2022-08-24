@@ -19,7 +19,7 @@
 #' @export
 
 logisticRegression <- function(algo = "logistic Regression",
-                               engine = "glm",
+                               engine = "glmnet",
                                mode = "classification",
                                trainingData = NULL,
                                splitedData = NULL,
@@ -36,7 +36,7 @@ logisticRegression <- function(algo = "logistic Regression",
   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
   mixtureRange <- c(as.numeric(mixtureRangeMin), as.numeric(mixtureRangeMax))
 
-  if (engine == "glmnet" || engine == "brulee") {
+  if (engine == "glmnet") {
     parameterGrid <- dials::grid_regular(
       dials::penalty(range = penaltyRange),
       dials::mixture(range = mixtureRange),
@@ -70,45 +70,6 @@ logisticRegression <- function(algo = "logistic Regression",
       splitedData = splitedData,
       algo = paste0(algo, "_", engine)
     )
-  } else if (engine == "liblinear") {
-
-    indx <- sapply(trainingData, is.factor)
-    trainingData[indx] <- lapply(trainingData[indx], function(x) as.numeric(x))
-
-    parameterGrid <- dials::grid_regular(
-      dials::penalty(range = penaltyRange),
-      dials::mixture(range = mixtureRange),
-      levels = c(
-        penalty = as.numeric(penaltyRangeLevels),
-        mixture = as.numeric(mixtureRangeLevels)
-      )
-    )
-    model <- parsnip::logistic_reg(
-      penalty = tune(),
-      mixture = tune()
-    ) %>%
-      parsnip::set_engine(engine = engine) %>%
-      parsnip::set_mode(mode = mode) %>%
-      parsnip::translate()
-
-    gridSearchResult <- goophi::gridSearchCV(
-      rec = rec,
-      model = model,
-      v = as.numeric(v),
-      data = trainingData,
-      parameterGrid = parameterGrid
-    )
-
-    finalized <- goophi::fitBestModel(
-      gridSearchResult = gridSearchResult,
-      metric = metric,
-      model = model,
-      formula = formula,
-      trainingData = trainingData,
-      splitedData = splitedData,
-      algo = paste0(algo, "_", engine)
-    )
-
   } else {
     model <- parsnip::logistic_reg() %>%
       parsnip::set_engine(engine = engine) %>%
@@ -466,47 +427,122 @@ decisionTree <- function(algo = "Decision Tree",
                          costComplexityRangeMax = "-1.0",
                          costComplexityRangeLevels = "2",
                          metric = "roc_auc") {
-  treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
-  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-  costComplexityRange <- c(as.numeric(costComplexityRangeMin), as.numeric(costComplexityRangeMax))
 
-  parameterGrid <- dials::grid_regular(
-    dials::tree_depth(range = treeDepthRange),
-    dials::min_n(range = minNRange),
-    dials::cost_complexity(range = costComplexityRange),
-    levels = c(
-      tree_depth = as.numeric(treeDepthRangeLevels),
-      min_n = as.numeric(minNRangeLevels),
-      cost_complexity = as.numeric(costComplexityRangeLevels)
+  if (engine == "rpart"){
+    treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
+    minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
+    costComplexityRange <- c(as.numeric(costComplexityRangeMin), as.numeric(costComplexityRangeMax))
+
+    parameterGrid <- dials::grid_regular(
+      dials::tree_depth(range = treeDepthRange),
+      dials::min_n(range = minNRange),
+      dials::cost_complexity(range = costComplexityRange),
+      levels = c(
+        tree_depth = as.numeric(treeDepthRangeLevels),
+        min_n = as.numeric(minNRangeLevels),
+        cost_complexity = as.numeric(costComplexityRangeLevels)
+      )
     )
-  )
 
-  model <- parsnip::decision_tree(
-    cost_complexity = tune(),
-    tree_depth = tune(),
-    min_n = tune()
-  ) %>%
-    parsnip::set_engine(engine = engine) %>%
-    parsnip::set_mode(mode = mode) %>%
-    parsnip::translate()
+    model <- parsnip::decision_tree(
+      cost_complexity = tune(),
+      tree_depth = tune(),
+      min_n = tune()
+    ) %>%
+      parsnip::set_engine(engine = engine) %>%
+      parsnip::set_mode(mode = mode) %>%
+      parsnip::translate()
 
-  gridSearchResult <- goophi::gridSearchCV(
-    rec = rec,
-    model = model,
-    v = as.numeric(v),
-    data = trainingData,
-    parameterGrid = parameterGrid
-  )
+    gridSearchResult <- goophi::gridSearchCV(
+      rec = rec,
+      model = model,
+      v = as.numeric(v),
+      data = trainingData,
+      parameterGrid = parameterGrid
+    )
 
-  finalized <- goophi::fitBestModel(
-    gridSearchResult = gridSearchResult,
-    metric = metric,
-    model = model,
-    formula = formula,
-    trainingData = trainingData,
-    splitedData = splitedData,
-    algo = paste0(algo, "_", engine)
-  )
+    finalized <- goophi::fitBestModel(
+      gridSearchResult = gridSearchResult,
+      metric = metric,
+      model = model,
+      formula = formula,
+      trainingData = trainingData,
+      splitedData = splitedData,
+      algo = paste0(algo, "_", engine)
+    )
+  } else if (engine == "C5.0") {
+    minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
+
+    parameterGrid <- dials::grid_regular(
+      dials::min_n(range = minNRange),
+      levels = c(
+        min_n = as.numeric(minNRangeLevels)
+      )
+    )
+
+    model <- parsnip::decision_tree(
+      min_n = tune()
+    ) %>%
+      parsnip::set_engine(engine = engine) %>%
+      parsnip::set_mode(mode = mode) %>%
+      parsnip::translate()
+
+    gridSearchResult <- goophi::gridSearchCV(
+      rec = rec,
+      model = model,
+      v = as.numeric(v),
+      data = trainingData,
+      parameterGrid = parameterGrid
+    )
+
+    finalized <- goophi::fitBestModel(
+      gridSearchResult = gridSearchResult,
+      metric = metric,
+      model = model,
+      formula = formula,
+      trainingData = trainingData,
+      splitedData = splitedData,
+      algo = paste0(algo, "_", engine)
+    )
+  } else { # partykit
+    treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
+    minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
+
+    parameterGrid <- dials::grid_regular(
+      dials::tree_depth(range = treeDepthRange),
+      dials::min_n(range = minNRange),
+      levels = c(
+        tree_depth = as.numeric(treeDepthRangeLevels),
+        min_n = as.numeric(minNRangeLevels)
+      )
+    )
+
+    model <- parsnip::decision_tree(
+      tree_depth = tune(),
+      min_n = tune()
+    ) %>%
+      parsnip::set_engine(engine = engine) %>%
+      parsnip::set_mode(mode = mode) %>%
+      parsnip::translate()
+
+    gridSearchResult <- goophi::gridSearchCV(
+      rec = rec,
+      model = model,
+      v = as.numeric(v),
+      data = trainingData,
+      parameterGrid = parameterGrid
+    )
+
+    finalized <- goophi::fitBestModel(
+      gridSearchResult = gridSearchResult,
+      metric = metric,
+      model = model,
+      formula = formula,
+      trainingData = trainingData,
+      splitedData = splitedData,
+      algo = paste0(algo, "_", engine)
+    )
+  }
 
   return(finalized)
 }
@@ -569,6 +605,7 @@ randomForest <- function(algo = "Random Forest",
                          minNRangeMax = "40",
                          minNRangeLevels = "3",
                          metric = "roc_auc") {
+
   mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
   treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
   minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))

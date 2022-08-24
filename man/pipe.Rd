@@ -23,7 +23,7 @@
 \usage{
 logisticRegression(
   algo = "logistic Regression",
-  engine = "glm",
+  engine = "glmnet",
   mode = "classification",
   trainingData = NULL,
   splitedData = NULL,
