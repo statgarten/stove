@@ -7,9 +7,10 @@
 clusteringVis(
   data = NULL,
   model = NULL,
-  maxK = NULL,
-  nBoot = 100,
-  selectOptimal = NULL
+  maxK = "15",
+  nBoot = "100",
+  selectOptimal = "silhouette",
+  seedNum = "6471"
 )
 }
 \arguments{

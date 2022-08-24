@@ -36,7 +36,7 @@ logisticRegression(
   mixtureRangeMin = "0.0",
   mixtureRangeMax = "1.0",
   mixtureRangeLevels = "5",
-  metric = "roc_auc"
+  metric = NULL
 )
 
 linearRegression(
@@ -69,7 +69,7 @@ KNN(
   neighborsRangeMin = "1",
   neighborsRangeMax = "10",
   neighborsRangeLevels = "10",
-  metric = "roc_auc"
+  metric = NULL
 )
 
 naiveBayes(
@@ -87,7 +87,7 @@ naiveBayes(
   LaplaceRangeMin = "0.0",
   LaplaceRangeMax = "3.0",
   LaplaceRangeLevels = "4",
-  metric = "roc_auc"
+  metric = NULL
 )
 
 decisionTree(
@@ -108,7 +108,7 @@ decisionTree(
   costComplexityRangeMin = "-2.0",
   costComplexityRangeMax = "-1.0",
   costComplexityRangeLevels = "2",
-  metric = "roc_auc"
+  metric = NULL
 )
 
 randomForest(
@@ -129,7 +129,7 @@ randomForest(
   minNRangeMin = "2",
   minNRangeMax = "40",
   minNRangeLevels = "3",
-  metric = "roc_auc"
+  metric = NULL
 )
 
 xgBoost(
@@ -141,17 +141,17 @@ xgBoost(
   formula = NULL,
   rec = NULL,
   v = "5",
-  treeDepthRangeMin = "1",
+  treeDepthRangeMin = "5",
   treeDepthRangeMax = "15",
   treeDepthRangeLevels = "3",
-  treesRangeMin = "10",
-  treesRangeMax = "500",
-  treesRangeLevels = "5",
+  treesRangeMin = "8",
+  treesRangeMax = "32",
+  treesRangeLevels = "3",
   learnRateRangeMin = "-2.0",
   learnRateRangeMax = "-1.0",
   learnRateRangeLevels = "2",
-  mtryRangeMin = "1",
-  mtryRangeMax = "20",
+  mtryRangeMin = "0.0",
+  mtryRangeMax = "1.0",
   mtryRangeLevels = "3",
   minNRangeMin = "2",
   minNRangeMax = "40",
@@ -163,7 +163,7 @@ xgBoost(
   sampleSizeRangeMax = "1.0",
   sampleSizeRangeLevels = "3",
   stopIter = "30",
-  metric = "roc_auc"
+  metric = NULL
 )
 
 lightGbm(
@@ -193,7 +193,7 @@ lightGbm(
   lossReductionRangeMin = "-1.0",
   lossReductionRangeMax = "1.0",
   lossReductionRangeLevels = "3",
-  metric = "roc_auc"
+  metric = NULL
 )
 
 MLP(
@@ -214,7 +214,7 @@ MLP(
   epochsRangeMin = "10",
   epochsRangeMax = "100",
   epochsRangeLevels = "2",
-  metric = "roc_auc"
+  metric = NULL
 )
 
 kMeansClustering(

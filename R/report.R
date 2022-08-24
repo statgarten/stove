@@ -179,8 +179,6 @@ evalMetricsC <- function(modelsList, targetVar) {
 }
 
 
-
-
 #' Evaluation metrics for Regression
 #'
 #' @details
@@ -243,10 +241,12 @@ evalMetricsR <- function(modelsList, targetVar) {
 
 clusteringVis <- function(data = NULL,
                           model = NULL,
-                          maxK = NULL,
-                          nBoot = 100,
-                          selectOptimal = NULL) {
+                          maxK = "15",
+                          nBoot = "100",
+                          selectOptimal = "silhouette",
+                          seedNum = "6471") {
   colors <- grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
+  set.seed(as.numeric(seedNum))
 
   elbowPlot <- factoextra::fviz_nbclust(
     x = data,
@@ -288,5 +288,5 @@ clusteringVis <- function(data = NULL,
     ggtheme = theme_bw()
   )
 
-  return(list(elbowPlot = elbowPlot, optimalK = optimalK, clustVis = clustVis))
+  return(list(elbowPlot = elbowPlot, silhouettePlot = optimalK, clustVis = clustVis))
 }

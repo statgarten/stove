@@ -1,6 +1,6 @@
 ---
-title: "goophi"
-date: 2022.08.22.
+title: "goophi - regression"
+date: 2022.08.24.
 format:
   pdf:
     toc: true
@@ -10,11 +10,6 @@ format:
     highlight-style: github-dark
 mainfont: Gulim
 ---
-
-```{r setup, message = FALSE}
-library(goophi)
-```
-
 
 # Introduction
 
@@ -33,15 +28,14 @@ library(goophi)
 - Date type column이 없어야 함
 - Outcome 변수는 classification의 경우 factor, regression의 경우 numeric이어야 함 (clustering은 outcome변수를 사용하지 않음)
 
-
 ```{r}
-cleaned_data <- read.csv(file = "~/git/goophi/data/boston_c.csv", 
+library(goophi)
+
+cleaned_data <- read.csv(file = "~/git/goophi/data/boston_r.csv", 
                          stringsAsFactors = TRUE
                          )
-cleaned_data$Pcrime <- as.factor(cleaned_data$Pcrime)
 str(cleaned_data)
 ```
-
 
 # Data Setup Tab
 
@@ -53,17 +47,14 @@ str(cleaned_data)
 1) User input을 다음과 같이 받습니다.
 - formula는 user가 target_var를 입력할 때 함께 생성되도록 함
 
-
 ```{r}
-target_var <- "Pcrime"
+target_var <- "crim"
 train_set_ratio <- "0.7"
 seed <- "1234"
 formula <- paste0(target_var, " ~ .")
 ```
 
-
 2) Train-test split 작업이 완료된 Object를 저장하고, Train set을 보여줍니다.
-
 
 ```{r}
 split_tmp <- goophi::trainTestSplit(data = cleaned_data,
@@ -77,9 +68,7 @@ data_test <- split_tmp[[2]] # test data
 data_split <- split_tmp[[3]] # whole data with split information
 ```
 
-
 3) train set에 적용할 전처리 정보를 담은 recipe를 생성합니다
-
 
 ```{r}
 rec <- goophi::prepForCV(data = data_train,
@@ -87,34 +76,31 @@ rec <- goophi::prepForCV(data = data_train,
                          seed = seed
                          )
 ```
-
                          
 # Modeling Tab
 
 | User Input |                                             description |
 |:----------:|:-------------------------------------------------------:|
-|       algo |                                            ML 모델 선택 |
+|       algo |                                        ML 알고리즘 선택 |
 |     engine |                                             engine 선택 |
 |       mode |                                               mode 선택 |
 |     metric |                   Best performance에 대한 평가지표 선택 |
 |          v | Cross validation시 train set을 몇 번 분할할 것인지 입력 |
+|        ... | 각 모델의 hyperparameter의 최소/최대값(Min, Max), 몇 단계로 나눌지(Levels)|
 
-0) 모델 object를 저장할 빈 리스트를 생성합니다.
-
+모델 object를 저장할 빈 리스트를 생성합니다.
 
 ```{r}
 models_list <- list()
 ```
 
-
-1) logistic regression model
-
+## Linear Regression
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
 
-mode <- "classification"
-algo <- "Logistic"
+mode <- "regression"
+algo <- "linearRegression"
 engine <- "glmnet" # glmnet (default), glm, stan
 
 penalty_range_min <- "0.001"
@@ -126,11 +112,11 @@ mixture_range_levels <- "5"
 
 v <- "2"
 
-metric <- "roc_auc"
+metric <- "rmse" # rmse (default), rsq
 
 # Modeling
 
-finalized <- goophi::logisticRegression(
+finalized <- goophi::linearRegression(
   algo = algo,
   engine = engine,
   mode = mode,
@@ -153,13 +139,12 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
 
-2) K Nearest Neighbor
-
+## K Nearest Neighbor
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
 
-mode <- "classification"
+mode <- "regression"
 algo <- "KNN"
 engine <- "kknn" # kknn (defualt)
 
@@ -169,7 +154,7 @@ neighbors_range_levels <- "10"
 
 v <- "2"
 
-metric <- "roc_auc"
+metric <- "rmse" # rmse (default), rsq
 
 # Modeling
 
@@ -192,62 +177,14 @@ finalized <- goophi::KNN(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
-
-### 3) Naive Bayes
-
+## Decision Tree
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
 
-mode <- "classification"
-algo <- "Naive Bayes"
-engine <- "naivebayes" # klaR (default), naivebayes
-
-smoothness_range_min <- "0.5"
-smoothness_range_max <- "1.5" 
-smoothness_range_levels <- "3" 
-laplace_range_min <- "0.0" 
-laplace_range_max <- "3.0"
-laplace_range_levels <- "4"
-
-v <- "2"
-
-metric <- "roc_auc"
-
-# Modeling
-
-finalized <- goophi::naiveBayes(
-  algo = algo,
-  engine = engine,
-  mode = mode,
-  trainingData = data_train,
-  splitedData = data_split,
-  formula = formula,
-  rec = rec,
-  v = v,
-  smoothnessRangeMin = smoothness_range_min,
-  smoothnessRangeMax = smoothness_range_max,
-  smoothnessRangeLevels = smoothness_range_levels,
-  LaplaceRangeMin = laplace_range_min,
-  LaplaceRangeMax = laplace_range_max,
-  LaplaceRangeLevels = laplace_range_levels,
-  metric = metric
-)
-
-# Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
-```
-
-
-### 4) Decision Tree
-
-
-```{r, message=FALSE, warning=FALSE}
-# User input
-
-mode <- "classification"
-algo <- "Decision Tree"
-engine <- "rpart" # rpart (default), C50, partykit
+mode <- "regression"
+algo <- "decisionTree"
+engine <- "rpart" # rpart (default), partykit
 
 tree_depth_range_min <- "1" 
 tree_depth_range_max <- "15" 
@@ -261,7 +198,7 @@ cost_complexity_range_levels <- "2"
 
 v <- "2"
 
-metric <- "roc_auc"
+metric <- "rmse" # rmse (default), rsq
 
 # Modeling
 
@@ -290,16 +227,14 @@ finalized <- goophi::decisionTree(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
-
-### 5) Random Forest
-
+## Random Forest
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
 
-mode <- "classification"
-algo <- "Random Forest"
-engine <- "partykit" # ranger (default), randomForest, partykit
+mode <- "regression"
+algo <- "randomForest"
+engine <- "ranger" # ranger (default), randomForest, partykit
 
 mtry_range_min <- "1" 
 mtry_range_max <- "20" 
@@ -313,7 +248,7 @@ min_n_range_levels <- "3"
 
 v <- "2"
 
-metric <- "roc_auc"
+metric <- "rmse" # rmse (default), rsq
 
 # Modeling
 
@@ -342,14 +277,12 @@ finalized <- goophi::randomForest(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
-
-### 6) XGBoost
-
+## XGBoost
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
 
-mode <- "classification"
+mode <- "regression"
 algo <- "XGBoost"
 engine <- "xgboost" # xgboost
 
@@ -378,7 +311,7 @@ stop_iter <- "30"
 
 v <- "2"
 
-metric <- "roc_auc"
+metric <- "rmse" # rmse (default), rsq
 
 # Modeling
 
@@ -421,15 +354,13 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
 
+## lightGBM
 
-### 7) lightGBM
-
-
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, include=FALSE}
 # User input
 
-mode <- "classification"
-algo <- "light GBM"
+mode <- "regression"
+algo <- "lightGBM"
 engine <- "lightgbm" # lightgbm
 
 tree_depth_range_min <- "5" 
@@ -453,7 +384,7 @@ loss_reduction_range_levels <- "3"
 
 v <- "2"
 
-metric <- "roc_auc"
+metric <- "rmse" # rmse (default), rsq
 
 # Modeling
 
@@ -491,14 +422,12 @@ finalized <- goophi::lightGbm(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
-### 8) MLP
-
+## MLP
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
-# 주석 처리한 hyperparameters는 추후 업데이트 할 engine을 위해 남겨두었습니다.
 
-mode <- "classification"
+mode <- "regression"
 algo <- "MLP"
 engine <- "nnet" # nnet
 
@@ -514,7 +443,7 @@ epochs_range_levels <- "2"
 
 v <- "2"
 
-metric <- "roc_auc"
+metric <- "rmse" # rmse (default), rsq
 
 # Modeling
 
@@ -543,53 +472,66 @@ finalized <- goophi::MLP(
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
+## Modeling without hyperparameter
 
-## 4. Report Tab
+함수 내에 기본값을 선언해 뒀기때문에, 유저로부터 입력을 받지 않아도 모델링이 가능합니다.
+아래처럼 hyperparameter 관련 파라미터, v를 따로 입력받지 않아도 됩니다.
 
-### 1) ROC Curve
+```{r, message=FALSE, warning=FALSE}
+# User input
 
-#### 유저가 선택한 모델의 ROC curve 출력
+mode <- "regression"
+algo <- "linearAuto"
+engine <- "glmnet" # glmnet (default), glm, stan
 
+metric <- "rmse" # rmse (default), rsq
+
+# Modeling
+
+finalized <- goophi::linearRegression(
+  algo = algo,
+  engine = engine,
+  mode = mode,
+  trainingData = data_train,
+  splitedData = data_split,
+  formula = formula,
+  rec = rec,
+  # v = v,
+  # penaltyRangeMin = penalty_range_min,
+  # penaltyRangeMax = penalty_range_max,
+  # penaltyRangeLevels = penalty_range_levels,
+  # mixtureRangeMin = mixture_range_min,
+  # mixtureRangeMax = mixture_range_max,
+  # mixtureRangeLevels = mixture_range_levels,
+  metric = metric
+)
+```
+
+# Sources for report
+
+## Regression plot (actual vs predicted)
+
+유저가 선택한 모델의 confusion matrix 출력
+리스트 내 모델의 이름은 {algo}_{engine}의 형태로 저장되어 있음
+
+```{r}
+# User input
+names(models_list)
+model_name <- "randomForest_ranger"
+```
 
 ```{r, fig.width = 7, fig.height = 7}
-roc_curve <- goophi::rocCurve(
-  modelsList = models_list,
-  targetVar = target_var
-)
-roc_curve
+rp <- goophi::regressionPlot(modelName = model_name, 
+                             modelsList = models_list, 
+                             targetVar = target_var)
+rp
 ```
 
+## Evaluation metrics
 
-### 2) Confusion Matrix
-
-#### 유저가 선택한 모델의 confusion matrix 출력
-
-## User input
-
+- 모델 성능 비교를 위한 표 출력
 
 ```{r}
-names(models_list)
-model_name <- "XGBoost_xgboost" # 원하는 모델의 이름 입력받기
-```
-
-```{r, fig.width = 7, fig.height = 6}
-cm <- goophi::confusionMatrix(
-  modelName = model_name,
-  modelsList = models_list,
-  targetVar = target_var
-)
-cm
-```
-
-
-### 3) Evaluation metrics
-
-#### 모델 성능 평가를 위한 표 출력
-
-
-```{r}
-options(yardstick.event_level = "second") # 오름차순으로 factor의 level 설정된다고 가정
-evalMet <- goophi::evalMetricsC(models_list, target_var)
+evalMet <- goophi::evalMetricsR(models_list, target_var)
 knitr::kable(evalMet)
 ```
-

@@ -32,7 +32,7 @@ logisticRegression <- function(algo = "logistic Regression",
                                mixtureRangeMin = "0.0",
                                mixtureRangeMax = "1.0",
                                mixtureRangeLevels = "5",
-                               metric = "roc_auc") {
+                               metric = NULL) {
   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
   mixtureRange <- c(as.numeric(mixtureRangeMin), as.numeric(mixtureRangeMax))
 
@@ -251,7 +251,7 @@ KNN <- function(algo = "KNN",
                 neighborsRangeMin = "1",
                 neighborsRangeMax = "10",
                 neighborsRangeLevels = "10",
-                metric = "roc_auc") {
+                metric = NULL) {
   neighborsRange <- c(as.numeric(neighborsRangeMin), as.numeric(neighborsRangeMax))
 
   parameterGrid <- dials::grid_regular(
@@ -331,7 +331,7 @@ naiveBayes <- function(algo = "Naive Bayes",
                        LaplaceRangeMin = "0.0",
                        LaplaceRangeMax = "3.0",
                        LaplaceRangeLevels = "4",
-                       metric = "roc_auc") {
+                       metric = NULL) {
   smoothnessRange <- c(as.numeric(smoothnessRangeMin), as.numeric(smoothnessRangeMax))
   LaplaceRange <- c(as.numeric(LaplaceRangeMin), as.numeric(LaplaceRangeMax))
 
@@ -426,7 +426,7 @@ decisionTree <- function(algo = "Decision Tree",
                          costComplexityRangeMin = "-2.0",
                          costComplexityRangeMax = "-1.0",
                          costComplexityRangeLevels = "2",
-                         metric = "roc_auc") {
+                         metric = NULL) {
 
   if (engine == "rpart"){
     treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
@@ -604,8 +604,7 @@ randomForest <- function(algo = "Random Forest",
                          minNRangeMin = "2",
                          minNRangeMax = "40",
                          minNRangeLevels = "3",
-                         metric = "roc_auc") {
-
+                         metric = NULL) {
   mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
   treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
   minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
@@ -676,17 +675,17 @@ xgBoost <- function(algo = "XGBoost",
                     formula = NULL,
                     rec = NULL,
                     v = "5",
-                    treeDepthRangeMin = "1",
+                    treeDepthRangeMin = "5",
                     treeDepthRangeMax = "15",
                     treeDepthRangeLevels = "3",
-                    treesRangeMin = "10",
-                    treesRangeMax = "500",
-                    treesRangeLevels = "5",
+                    treesRangeMin = "8",
+                    treesRangeMax = "32",
+                    treesRangeLevels = "3",
                     learnRateRangeMin = "-2.0",
                     learnRateRangeMax = "-1.0",
                     learnRateRangeLevels = "2",
-                    mtryRangeMin = "1",
-                    mtryRangeMax = "20",
+                    mtryRangeMin = "0.0",
+                    mtryRangeMax = "1.0",
                     mtryRangeLevels = "3",
                     minNRangeMin = "2",
                     minNRangeMax = "40",
@@ -698,7 +697,7 @@ xgBoost <- function(algo = "XGBoost",
                     sampleSizeRangeMax = "1.0",
                     sampleSizeRangeLevels = "3",
                     stopIter = "30",
-                    metric = "roc_auc") {
+                    metric = NULL) {
   treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
   treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
   learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
@@ -806,7 +805,7 @@ lightGbm <- function(algo = "lightGBM",
                      lossReductionRangeMin = "-1.0",
                      lossReductionRangeMax = "1.0",
                      lossReductionRangeLevels = "3",
-                     metric = "roc_auc") {
+                     metric = NULL) {
   treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
   treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
   learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
@@ -930,7 +929,7 @@ MLP <- function(algo = "MLP",
                 # learnRateRangeMin = "0",
                 # learnRateRangeMax = "1",
                 # learnRateRangeLevels = "2",
-                metric = "roc_auc") {
+                metric = NULL) {
   hiddenUnitsRange <- c(as.numeric(hiddenUnitsRangeMin), as.numeric(hiddenUnitsRangeMax))
   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
   epochsRange <- c(as.numeric(epochsRangeMin), as.numeric(epochsRangeMax))
@@ -987,7 +986,6 @@ MLP <- function(algo = "MLP",
   return(finalized)
 }
 
-
 #' K means clustering
 #'
 #' @details
@@ -1020,30 +1018,42 @@ kMeansClustering <- function(data,
                              algorithm = "Hartigan-Wong", ## "Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"
                              selectOptimal = "silhouette", # silhouette, gap_stat
                              seedNum = "6471") {
+  colors <- grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
   set.seed(as.numeric(seedNum))
 
-  if (selectOptimal == "silhouette") {
-    tmp_result <- factoextra::fviz_nbclust(
-      x = data,
-      FUNcluster = stats::kmeans,
-      method = selectOptimal,
-      k.max = as.numeric(maxK)
-    )
-    result_clust <- tmp_result$data
+  elbowPlot <- factoextra::fviz_nbclust(
+    x = data,
+    FUNcluster = stats::kmeans,
+    method = "wss"
+  )
 
-    optimalK <- as.numeric(result_clust$clusters[which.max(result_clust$y)])
-  } else if (selectOptimal == "gap_stat") {
-    tmp_result <- factoextra::fviz_nbclust(
+  if (selectOptimal == "silhouette") {
+    result_clust <- factoextra::fviz_nbclust(
       x = data,
       FUNcluster = stats::kmeans,
       method = selectOptimal,
       k.max = as.numeric(maxK),
-      nboot = as.numeric(nBoot)
+      barfill = "slateblue",
+      barcolor = "slateblue",
+      linecolor = "slateblue"
     )
+    cols <- colors(result_clust$data$clusters[which.max(result_clust$data$y)])
+    optimalK <- as.numeric(result_clust$data$clusters[which.max(result_clust$data$y)])
 
-    result_clust <- tmp_result$data
+  } else if (selectOptimal == "gap_stat") {
+    result_clust <- factoextra::fviz_nbclust(
+      x = data,
+      FUNcluster = stats::kmeans,
+      method = selectOptimal,
+      k.max = as.numeric(maxK),
+      nboot = as.numeric(nBoot),
+      barfill = "slateblue",
+      barcolor = "slateblue",
+      linecolor = "slateblue"
+    )
+    cols <- colors(result_clust$data$clusters[which.max(result_clust$data$gap)])
 
-    optimalK <- as.numeric(result_clust$clusters[which.max(result_clust$gap)])
+    optimalK <- as.numeric(result_clust$data$clusters[which.max(result_clust$data$gap)])
   } else {
     stop("selectOptimal must be 'silhouette' or 'gap_stat'.")
   }
@@ -1056,5 +1066,14 @@ kMeansClustering <- function(data,
     algorithm = algorithm
   )
 
-  return(result)
+  clustVis <- factoextra::fviz_cluster(
+    object = result,
+    data = data,
+    palette = cols,
+    geom = "point",
+    ellipse.type = "convex",
+    ggtheme = theme_bw()
+  )
+
+  return(list(result = result, elbowPlot = elbowPlot, optimalK = result_clust, clustVis = clustVis))
 }

@@ -1,0 +1,84 @@
+---
+title: "goophi - clustering"
+date: 2022.08.24.
+format:
+  pdf:
+    toc: true
+    number-sections: true
+    number-depth: 2
+    colorlinks: true
+    highlight-style: github-dark
+mainfont: Gulim
+---
+
+# Introduction
+
+1) 본 문서는 goophi 패키지를 Shiny app에서 사용하는 것을 상정해 작성했습니다.
+
+2) 본 문서의 케이스 스타일은 Camel case와 Snake case가 혼용되어 있습니다.
+- Camel case : goophi의 함수명 및 파라미터명
+- Snake case: 유저로부터 받는 입력, shiny app의 server에서 사용(될 것이라고 예상)하는 object명, snake case로 작성된 dependencies의 함수명 등
+
+# Import sample data
+
+1) 전처리가 완료된 샘플데이터를 불러옵니다. 
+- NA가 없어야 함
+- string value가 있는 열은 factor로 변환
+- 한 열이 모두 같은 값으로 채워져 있을 경우 제외해야 함
+- Date type column이 없어야 함
+- Outcome 변수는 classification의 경우 factor, regression의 경우 numeric이어야 함 (clustering은 outcome변수를 사용하지 않음)
+
+```{r}
+library(goophi)
+
+cleaned_data <- read.csv(file = "~/git/goophi/data/boston_c.csv", 
+                         stringsAsFactors = TRUE
+                         )
+cleaned_data$Pcrime <- NULL
+cleaned_data$chas <- as.numeric(cleaned_data$chas)
+
+str(cleaned_data)
+```
+
+# K-means clustering
+
+```{r}
+# user input
+max_k <- "15" # k = 2:max_k, <= number of columns
+n_start <- "25" # attempts 25 initial configurations, <= 175
+iter_max <- "10" # <= 5000
+n_boot <- "100" # Used only for determining the number of clusters using gap statistic
+algorithm = "Hartigan-Wong" ## "Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"
+select_optimal <- "silhouette" # "silhouette", "gap_stat" // there's no mathematical definition for selecting optimal k using elbow(wss) method.
+seed = "6471"
+
+# K-means clustering
+km_model <- goophi::kMeansClustering(data = cleaned_data,
+                                     maxK = max_k,
+                                     nStart = n_start,
+                                     iterMax = iter_max,
+                                     nBoot = n_boot,
+                                     algorithm = algorithm,
+                                     selectOptimal = select_optimal,
+                                     seedNum = seed
+                                     )
+
+km_model$result
+```
+
+# K-means clustering without hyperparameters
+
+```{r}
+# K-means clustering
+km_model <- goophi::kMeansClustering(data = cleaned_data)
+
+km_model$result
+```
+
+# Visualize
+
+```{r, fig.width = 7, fig.height = 7}
+km_model$elbowPlot
+km_model$optimalK
+km_model$clustVis
+```

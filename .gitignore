@@ -2,6 +2,5 @@
 .Rhistory
 .Renviron
 .Rbuildignore
-/data
 /etc
 
