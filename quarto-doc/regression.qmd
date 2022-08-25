@@ -510,16 +510,6 @@ finalized <- goophi::linearRegression(
 
 # Sources for report
 
-## RMSE comparing Plot
-
-모델들의 성능 비교를 위해 RMSE와 95% CI를 나타낸 plot 생성
-
-```{r, fig.width = 7, fig.height = 7}
-rmsePlot <- goophi::rmsePlot(modelsList = models_list,
-                       targetVar = target_var)
-rmsePlot
-```
-
 ## Regression plot (actual vs predicted)
 
 유저가 선택한 모델의 confusion matrix 출력
