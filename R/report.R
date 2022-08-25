@@ -6,7 +6,7 @@
 #' @param modelsList  modelsList
 #' @param targetVar  targetVar
 #'
-#' @import RColorBrewer cowplot ggplot2 yardstick
+#' @import RColorBrewer cowplot ggplot2 yardstick grDevices
 #' @importFrom dplyr group_by
 #' @importFrom magrittr %>%
 #' @name %>%
@@ -290,3 +290,82 @@ clusteringVis <- function(data = NULL,
 
   return(list(elbowPlot = elbowPlot, silhouettePlot = optimalK, clustVis = clustVis))
 }
+
+
+
+#' rmsePlot
+#'
+#' @details
+#' rmsePlot (CI 다시 구해야함)
+#'
+#' @import ggplot2 cowplot
+#' @import grDevices
+#' @importFrom dplyr select mutate group_by
+#' @importFrom tibble tibble
+#'
+#' @export
+
+rmsePlot <- function(modelsList = NULL,
+                     targetVar = NULL
+                     ) {
+
+  df <- do.call(rbind, modelsList)[[5]] %>% ## rbind here does nothing
+    do.call(rbind, .) %>%
+    dplyr::select(model, .pred, !!as.name(targetVar)) %>%
+    dplyr::mutate(errorSq = (!!as.name(targetVar) - .pred)**2) %>%
+    dplyr::group_by(model) %>%
+    dplyr::mutate(rmse = sqrt(mean(errorSq)))
+
+  plotDf<- df[!duplicated(df$model),] %>%
+    dplyr::select(model, rmse)
+
+  rmse_interval <- function(rmse, deg_free, p_lower = 0.025, p_upper = 0.975){
+    tibble(.pred_lower = sqrt(deg_free / qchisq(p_upper, df = deg_free)) * rmse,
+           .pred_upper = sqrt(deg_free / qchisq(p_lower, df = deg_free)) * rmse)
+  }
+
+  plotDf$lower <- rmse_interval(plotDf$rmse, nrow(data_train))$.pred_lower
+  plotDf$upper <- rmse_interval(plotDf$rmse, nrow(data_train))$.pred_upper
+
+  colors <- grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
+
+  rmsePlot <- ggplot(plotDf,aes(x = model)) +
+    geom_errorbar(aes(ymin = lower, ymax = upper), size = 1) +
+    geom_point(aes(y = rmse),size=3) +
+    coord_flip() +
+    theme_bw() +
+    xlab('') +
+    theme(legend.position='none') +
+    scale_color_manual(values = colors(length(modelsList))) +
+    cowplot::theme_cowplot()
+
+  return(rmsePlot)
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
