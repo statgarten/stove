@@ -33,6 +33,7 @@ logisticRegression <- function(algo = "logistic Regression",
                                mixtureRangeMax = "1.0",
                                mixtureRangeLevels = "5",
                                metric = NULL) {
+
   penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
   mixtureRange <- c(as.numeric(mixtureRangeMin), as.numeric(mixtureRangeMax))
 
