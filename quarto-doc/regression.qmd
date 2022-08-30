@@ -357,7 +357,7 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 
 ## lightGBM
 
-```{r, message=FALSE, warning=FALSE, include=FALSE}
+```{r, results=FALSE, message=FALSE, warning=FALSE}
 # User input
 
 mode <- "regression"
@@ -518,7 +518,7 @@ finalized <- goophi::linearRegression(
 ```{r}
 # User input
 names(models_list)
-model_name <- "KNN_kknn"
+model_name <- "lightGBM_lightgbm"
 ```
 
 ```{r, fig.width = 7, fig.height = 7}
