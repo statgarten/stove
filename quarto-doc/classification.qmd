@@ -401,7 +401,7 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 
 ## lightGBM
 
-```{r, message=FALSE, warning=FALSE, include=FALSE}
+```{r, results = FALSE, message=FALSE, warning=FALSE}
 # User input
 
 mode <- "classification"
