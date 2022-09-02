@@ -1,5 +1,5 @@
 ---
-title: "goophi - clustering"
+title: "stove - clustering"
 date: 2022.08.24.
 format:
   pdf:
@@ -13,10 +13,10 @@ mainfont: Gulim
 
 # Introduction
 
-1) 본 문서는 goophi 패키지를 Shiny app에서 사용하는 것을 상정해 작성했습니다.
+1) 본 문서는 stove 패키지를 Shiny app에서 사용하는 것을 상정해 작성했습니다.
 
 2) 본 문서의 케이스 스타일은 Camel case와 Snake case가 혼용되어 있습니다.
-- Camel case : goophi의 함수명 및 파라미터명
+- Camel case : stove의 함수명 및 파라미터명
 - Snake case: 유저로부터 받는 입력, shiny app의 server에서 사용(될 것이라고 예상)하는 object명, snake case로 작성된 dependencies의 함수명 등
 
 # Import sample data
@@ -29,9 +29,9 @@ mainfont: Gulim
 - Outcome 변수는 classification의 경우 factor, regression의 경우 numeric이어야 함 (clustering은 outcome변수를 사용하지 않음)
 
 ```{r}
-library(goophi)
+library(stove)
 
-cleaned_data <- read.csv(file = "~/git/goophi/data/boston_c.csv", 
+cleaned_data <- read.csv(file = "~/git/stove/data/boston_c.csv", 
                          stringsAsFactors = TRUE
                          )
 cleaned_data$Pcrime <- NULL
@@ -53,7 +53,7 @@ select_optimal <- "silhouette" # "silhouette", "gap_stat" // there's no mathemat
 seed = "6471"
 
 # K-means clustering
-km_model <- goophi::kMeansClustering(data = cleaned_data,
+km_model <- stove::kMeansClustering(data = cleaned_data,
                                      maxK = max_k,
                                      nStart = n_start,
                                      iterMax = iter_max,
@@ -70,7 +70,7 @@ km_model$result
 
 ```{r}
 # K-means clustering
-km_model <- goophi::kMeansClustering(data = cleaned_data)
+km_model <- stove::kMeansClustering(data = cleaned_data)
 
 km_model$result
 ```

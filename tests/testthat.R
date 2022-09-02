@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(goophi)
+library(stove)
 
-test_check("goophi")
+test_check("stove")

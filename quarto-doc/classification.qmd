@@ -1,5 +1,5 @@
 ---
-title: "goophi - classification"
+title: "stove - classification"
 date: 2022.08.24.
 format:
   pdf:
@@ -13,10 +13,10 @@ mainfont: Gulim
 
 # Introduction
 
-1) 본 문서는 goophi 패키지를 Shiny app에서 사용하는 것을 상정해 작성했습니다.
+1) 본 문서는 stove 패키지를 Shiny app에서 사용하는 것을 상정해 작성했습니다.
 
 2) 본 문서의 케이스 스타일은 Camel case와 Snake case가 혼용되어 있습니다.
-- Camel case : goophi의 함수명 및 파라미터명
+- Camel case : stove의 함수명 및 파라미터명
 - Snake case: 유저로부터 받는 입력, shiny app의 server에서 사용(될 것이라고 예상)하는 object명, snake case로 작성된 dependencies의 함수명 등
 
 # Import sample data
@@ -29,9 +29,9 @@ mainfont: Gulim
 - Outcome 변수는 classification의 경우 factor, regression의 경우 numeric이어야 함 (clustering은 outcome변수를 사용하지 않음)
 
 ```{r}
-library(goophi)
+library(stove)
 
-cleaned_data <- read.csv(file = "~/git/goophi/data/boston_c.csv", 
+cleaned_data <- read.csv(file = "~/git/stove/data/boston_c.csv", 
                          stringsAsFactors = TRUE
                          )
 cleaned_data$Pcrime <- as.factor(cleaned_data$Pcrime)
@@ -58,7 +58,7 @@ formula <- paste0(target_var, " ~ .")
 2) Train-test split 작업이 완료된 Object를 저장하고, Train set을 보여줍니다.
 
 ```{r}
-split_tmp <- goophi::trainTestSplit(data = cleaned_data,
+split_tmp <- stove::trainTestSplit(data = cleaned_data,
                                     target = target_var,
                                     prop = train_set_ratio,
                                     seed = seed
@@ -72,7 +72,7 @@ data_split <- split_tmp[[3]] # whole data with split information
 3) train set에 적용할 전처리 정보를 담은 recipe를 생성합니다
 
 ```{r}
-rec <- goophi::prepForCV(data = data_train,
+rec <- stove::prepForCV(data = data_train,
                          formula = formula,
                          seed = seed
                          )
@@ -117,7 +117,7 @@ metric <- "roc_auc" # roc_auc (default), accuracy
 
 # Modeling
 
-finalized <- goophi::logisticRegression(
+finalized <- stove::logisticRegression(
   algo = algo,
   engine = engine,
   mode = mode,
@@ -159,7 +159,7 @@ metric <- "roc_auc" # roc_auc (default), accuracy
 
 # Modeling
 
-finalized <- goophi::KNN(
+finalized <- stove::KNN(
   algo = algo,
   engine = engine,
   mode = mode,
@@ -200,7 +200,7 @@ metric <- "roc_auc" # roc_auc (default), accuracy
 
 # Modeling
 
-finalized <- goophi::naiveBayes(
+finalized <- stove::naiveBayes(
   algo = algo,
   engine = engine,
   mode = mode,
@@ -247,7 +247,7 @@ metric <- "roc_auc" # roc_auc (default), accuracy
 
 # Modeling
 
-finalized <- goophi::decisionTree(
+finalized <- stove::decisionTree(
   algo = algo,
   engine = engine,
   mode = mode,
@@ -297,7 +297,7 @@ metric <- "roc_auc" # roc_auc (default), accuracy
 
 # Modeling
 
-finalized <- goophi::randomForest(
+finalized <- stove::randomForest(
   algo = algo,
   engine = engine,
   mode = mode,
@@ -360,7 +360,7 @@ metric <- "roc_auc" # roc_auc (default), accuracy
 
 # Modeling
 
-finalized <- goophi::xgBoost(
+finalized <- stove::xgBoost(
   algo = algo,
   engine = engine,
   mode = mode,
@@ -433,7 +433,7 @@ metric <- "roc_auc" # roc_auc (default), accuracy
 
 # Modeling
 
-finalized <- goophi::lightGbm(
+finalized <- stove::lightGbm(
   algo = algo,
   engine = engine,
   mode = mode,
@@ -492,7 +492,7 @@ metric <- "roc_auc" # roc_auc (default), accuracy
 
 # Modeling
 
-finalized <- goophi::MLP(
+finalized <- stove::MLP(
   algo = algo,
   engine = engine,
   mode = mode,
@@ -533,7 +533,7 @@ metric <- "roc_auc" # roc_auc (default), accuracy
 
 # Modeling
 
-finalized <- goophi::logisticRegression(
+finalized <- stove::logisticRegression(
   algo = algo,
   engine = engine,
   mode = mode,
@@ -559,7 +559,7 @@ finalized <- goophi::logisticRegression(
 유저가 선택한 모델의 ROC curve 출력
 
 ```{r, fig.width = 7, fig.height = 7}
-roc_curve <- goophi::rocCurve(
+roc_curve <- stove::rocCurve(
   modelsList = models_list,
   targetVar = target_var
 )
@@ -578,7 +578,7 @@ model_name <- "randomForest_ranger"
 ```
 
 ```{r, fig.width = 7, fig.height = 6}
-cm <- goophi::confusionMatrix(
+cm <- stove::confusionMatrix(
   modelName = model_name,
   modelsList = models_list,
   targetVar = target_var
@@ -593,6 +593,6 @@ cm
 
 ```{r}
 options(yardstick.event_level = "second")
-evalMet <- goophi::evalMetricsC(models_list, target_var)
+evalMet <- stove::evalMetricsC(models_list, target_var)
 knitr::kable(evalMet)
 ```

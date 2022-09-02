@@ -54,7 +54,7 @@ logisticRegression <- function(algo = "logistic Regression",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- goophi::gridSearchCV(
+    gridSearchResult <- stove::gridSearchCV(
       rec = rec,
       model = model,
       v = as.numeric(v),
@@ -62,7 +62,7 @@ logisticRegression <- function(algo = "logistic Regression",
       parameterGrid = parameterGrid
     )
 
-    finalized <- goophi::fitBestModel(
+    finalized <- stove::fitBestModel(
       gridSearchResult = gridSearchResult,
       metric = metric,
       model = model,
@@ -77,7 +77,7 @@ logisticRegression <- function(algo = "logistic Regression",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- goophi::gridSearchCV(
+    gridSearchResult <- stove::gridSearchCV(
       rec = rec,
       model = model,
       v = as.numeric(v),
@@ -85,7 +85,7 @@ logisticRegression <- function(algo = "logistic Regression",
       parameterGrid = 10 # default value of param 'grid' in tune::tune_grid
     )
 
-    finalized <- goophi::fitBestModel(
+    finalized <- stove::fitBestModel(
       gridSearchResult = gridSearchResult,
       metric = metric,
       model = model,
@@ -166,7 +166,7 @@ linearRegression <- function(algo = "linear Regression",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- goophi::gridSearchCV(
+    gridSearchResult <- stove::gridSearchCV(
       rec = rec,
       model = model,
       v = as.numeric(v),
@@ -174,7 +174,7 @@ linearRegression <- function(algo = "linear Regression",
       parameterGrid = parameterGrid
     )
 
-    finalized <- goophi::fitBestModel(
+    finalized <- stove::fitBestModel(
       gridSearchResult = gridSearchResult,
       metric = metric,
       model = model,
@@ -189,7 +189,7 @@ linearRegression <- function(algo = "linear Regression",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- goophi::gridSearchCV(
+    gridSearchResult <- stove::gridSearchCV(
       rec = rec,
       model = model,
       v = as.numeric(v),
@@ -197,7 +197,7 @@ linearRegression <- function(algo = "linear Regression",
       parameterGrid = 10 # default value of param 'grid' in tune::tune_grid
     )
 
-    finalized <- goophi::fitBestModel(
+    finalized <- stove::fitBestModel(
       gridSearchResult = gridSearchResult,
       metric = metric,
       model = model,
@@ -265,7 +265,7 @@ KNN <- function(algo = "KNN",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  gridSearchResult <- goophi::gridSearchCV(
+  gridSearchResult <- stove::gridSearchCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -273,7 +273,7 @@ KNN <- function(algo = "KNN",
     parameterGrid = parameterGrid
   )
 
-  finalized <- goophi::fitBestModel(
+  finalized <- stove::fitBestModel(
     gridSearchResult = gridSearchResult,
     metric = metric,
     model = model,
@@ -353,7 +353,7 @@ naiveBayes <- function(algo = "Naive Bayes",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  gridSearchResult <- goophi::gridSearchCV(
+  gridSearchResult <- stove::gridSearchCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -361,7 +361,7 @@ naiveBayes <- function(algo = "Naive Bayes",
     parameterGrid = parameterGrid
   )
 
-  finalized <- goophi::fitBestModel(
+  finalized <- stove::fitBestModel(
     gridSearchResult = gridSearchResult,
     metric = metric,
     model = model,
@@ -454,7 +454,7 @@ decisionTree <- function(algo = "Decision Tree",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- goophi::gridSearchCV(
+    gridSearchResult <- stove::gridSearchCV(
       rec = rec,
       model = model,
       v = as.numeric(v),
@@ -462,7 +462,7 @@ decisionTree <- function(algo = "Decision Tree",
       parameterGrid = parameterGrid
     )
 
-    finalized <- goophi::fitBestModel(
+    finalized <- stove::fitBestModel(
       gridSearchResult = gridSearchResult,
       metric = metric,
       model = model,
@@ -488,7 +488,7 @@ decisionTree <- function(algo = "Decision Tree",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- goophi::gridSearchCV(
+    gridSearchResult <- stove::gridSearchCV(
       rec = rec,
       model = model,
       v = as.numeric(v),
@@ -496,7 +496,7 @@ decisionTree <- function(algo = "Decision Tree",
       parameterGrid = parameterGrid
     )
 
-    finalized <- goophi::fitBestModel(
+    finalized <- stove::fitBestModel(
       gridSearchResult = gridSearchResult,
       metric = metric,
       model = model,
@@ -526,7 +526,7 @@ decisionTree <- function(algo = "Decision Tree",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- goophi::gridSearchCV(
+    gridSearchResult <- stove::gridSearchCV(
       rec = rec,
       model = model,
       v = as.numeric(v),
@@ -534,7 +534,7 @@ decisionTree <- function(algo = "Decision Tree",
       parameterGrid = parameterGrid
     )
 
-    finalized <- goophi::fitBestModel(
+    finalized <- stove::fitBestModel(
       gridSearchResult = gridSearchResult,
       metric = metric,
       model = model,
@@ -630,7 +630,7 @@ randomForest <- function(algo = "Random Forest",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  gridSearchResult <- goophi::gridSearchCV(
+  gridSearchResult <- stove::gridSearchCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -638,7 +638,7 @@ randomForest <- function(algo = "Random Forest",
     parameterGrid = parameterGrid
   )
 
-  finalized <- goophi::fitBestModel(
+  finalized <- stove::fitBestModel(
     gridSearchResult = gridSearchResult,
     metric = metric,
     model = model,
@@ -743,7 +743,7 @@ xgBoost <- function(algo = "XGBoost",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  gridSearchResult <- goophi::gridSearchCV(
+  gridSearchResult <- stove::gridSearchCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -751,7 +751,7 @@ xgBoost <- function(algo = "XGBoost",
     parameterGrid = parameterGrid
   )
 
-  finalized <- goophi::fitBestModel(
+  finalized <- stove::fitBestModel(
     gridSearchResult = gridSearchResult,
     metric = metric,
     model = model,
@@ -843,7 +843,7 @@ lightGbm <- function(algo = "lightGBM",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  gridSearchResult <- goophi::gridSearchCV(
+  gridSearchResult <- stove::gridSearchCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -851,7 +851,7 @@ lightGbm <- function(algo = "lightGBM",
     parameterGrid = parameterGrid
   )
 
-  finalized <- goophi::fitBestModel(
+  finalized <- stove::fitBestModel(
     gridSearchResult = gridSearchResult,
     metric = metric,
     model = model,
@@ -966,7 +966,7 @@ MLP <- function(algo = "MLP",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  gridSearchResult <- goophi::gridSearchCV(
+  gridSearchResult <- stove::gridSearchCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -974,7 +974,7 @@ MLP <- function(algo = "MLP",
     parameterGrid = parameterGrid
   )
 
-  finalized <- goophi::fitBestModel(
+  finalized <- stove::fitBestModel(
     gridSearchResult = gridSearchResult,
     metric = metric,
     model = model,
