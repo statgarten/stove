@@ -28,13 +28,19 @@ mainfont: Gulim
 - Date type column이 없어야 함
 - Outcome 변수는 classification의 경우 factor, regression의 경우 numeric이어야 함 (clustering은 outcome변수를 사용하지 않음)
 
-```{r}
+```{r, message=FALSE}
+# remotes::install_github("statgarten/datatoys")
 library(stove)
+library(datatoys)
+library(dplyr)
 
-cleaned_data <- read.csv(file = "~/git/stove/data/boston_r.csv", 
-                         stringsAsFactors = TRUE
-                         )
-str(cleaned_data)
+set.seed(1234)
+
+cleaned_data <- datatoys::bloodTest
+
+cleaned_data <- cleaned_data %>%
+  mutate_at(vars(SEX, ANE, IHD, STK), factor) %>%
+  sample_n(1000)
 ```
 
 # Data Setup Tab
@@ -48,9 +54,9 @@ str(cleaned_data)
 - formula는 user가 target_var를 입력할 때 함께 생성되도록 함
 
 ```{r}
-target_var <- "crim"
-train_set_ratio <- "0.7"
-seed <- "1234"
+target_var <- "TG"
+train_set_ratio <- 0.7
+seed <- 1234
 formula <- paste0(target_var, " ~ .")
 ```
 
@@ -103,14 +109,14 @@ mode <- "regression"
 algo <- "linearRegression"
 engine <- "glmnet" # glmnet (default), glm, stan
 
-penalty_range_min <- "0.001"
-penalty_range_max <- "1.0"
-penalty_range_levels <- "5"
-mixture_range_min <- "0.0"
-mixture_range_max <- "1.0"
-mixture_range_levels <- "5" 
+penalty_range_min <- 0.001
+penalty_range_max <- 1.0
+penalty_range_levels <- 5
+mixture_range_min <- 0.0
+mixture_range_max <- 1.0
+mixture_range_levels <- 5
 
-v <- "2"
+v <- 2
 
 metric <- "rmse" # rmse (default), rsq
 
@@ -148,11 +154,11 @@ mode <- "regression"
 algo <- "KNN"
 engine <- "kknn" # kknn (defualt)
 
-neighbors_range_min <- "1" 
-neighbors_range_max <- "10" 
-neighbors_range_levels <- "10" 
+neighbors_range_min <- 1
+neighbors_range_max <- 10
+neighbors_range_levels <- 10
 
-v <- "2"
+v <- 2
 
 metric <- "rmse" # rmse (default), rsq
 
@@ -187,17 +193,17 @@ mode <- "regression"
 algo <- "decisionTree"
 engine <- "rpart" # rpart (default), partykit
 
-tree_depth_range_min <- "1" 
-tree_depth_range_max <- "15" 
-tree_depth_range_levels <- "3" 
-min_n_range_min <- "2" 
-min_n_range_max <- "40" 
-min_n_range_levels <- "3" 
-cost_complexity_range_min <- "-2.0"
-cost_complexity_range_max <- "-1.0" 
-cost_complexity_range_levels <- "2" 
+tree_depth_range_min <- 1
+tree_depth_range_max <- 15 
+tree_depth_range_levels <- 3 
+min_n_range_min <- 2 
+min_n_range_max <- 40
+min_n_range_levels <- 3
+cost_complexity_range_min <- -2.0
+cost_complexity_range_max <- -1.0 
+cost_complexity_range_levels <- 2 
 
-v <- "2"
+v <- 2
 
 metric <- "rmse" # rmse (default), rsq
 
@@ -237,17 +243,17 @@ mode <- "regression"
 algo <- "randomForest"
 engine <- "ranger" # ranger (default), randomForest, partykit
 
-mtry_range_min <- "1" 
-mtry_range_max <- "20" 
-mtry_range_levels <- "3" 
-trees_range_min <- "100" 
-trees_range_max <- "1000" 
-trees_range_levels <- "3" 
-min_n_range_min <- "2" 
-min_n_range_max <- "40" 
-min_n_range_levels <- "3" 
+mtry_range_min <- 1 
+mtry_range_max <- 20 
+mtry_range_levels <- 3 
+trees_range_min <- 100 
+trees_range_max <- 1000 
+trees_range_levels <- 3 
+min_n_range_min <- 2 
+min_n_range_max <- 40 
+min_n_range_levels <- 3 
 
-v <- "2"
+v <- 2
 
 metric <- "rmse" # rmse (default), rsq
 
@@ -287,30 +293,30 @@ mode <- "regression"
 algo <- "XGBoost"
 engine <- "xgboost" # xgboost
 
-tree_depth_range_min <- "5" 
-tree_depth_range_max <- "15" 
-tree_depth_range_levels <- "3" 
-trees_range_min <- "8" 
-trees_range_max <- "32" 
-trees_range_levels <- "3" 
-learn_rate_range_min <- "-2.0" 
-learn_rate_range_max <- "-1.0" 
-learn_rate_range_levels <- "2" 
-mtry_range_min <- "0.0" 
-mtry_range_max <- "1.0" 
-mtry_range_levels <- "3" 
-min_n_range_min <- "2" 
-min_n_range_max <- "40" 
-min_n_range_levels <- "3" 
-loss_reduction_range_min <- "-1.0" 
-loss_reduction_range_max <- "1.0" 
-loss_reduction_range_levels <- "3" 
-sample_size_range_min <- "0.0" 
-sample_size_range_max <- "1.0" 
-sample_size_range_levels <- "3" 
-stop_iter <- "30" 
+tree_depth_range_min <- 5 
+tree_depth_range_max <- 15 
+tree_depth_range_levels <- 3 
+trees_range_min <- 8
+trees_range_max <- 32 
+trees_range_levels <- 3 
+learn_rate_range_min <- -2.0
+learn_rate_range_max <- -1.0
+learn_rate_range_levels <- 2 
+mtry_range_min <- 0.0
+mtry_range_max <- 1.0 
+mtry_range_levels <- 3 
+min_n_range_min <- 2 
+min_n_range_max <- 40
+min_n_range_levels <- 3
+loss_reduction_range_min <- -1.0 
+loss_reduction_range_max <- 1.0 
+loss_reduction_range_levels <- 3 
+sample_size_range_min <- 0.0 
+sample_size_range_max <- 1.0
+sample_size_range_levels <- 3
+stop_iter <- 30
 
-v <- "2"
+v <- 2
 
 metric <- "rmse" # rmse (default), rsq
 
@@ -364,26 +370,26 @@ mode <- "regression"
 algo <- "lightGBM"
 engine <- "lightgbm" # lightgbm
 
-tree_depth_range_min <- "5" 
-tree_depth_range_max <- "15" 
-tree_depth_range_levels <- "3" 
-trees_range_min <- "10" 
-trees_range_max <- "100" 
-trees_range_levels <- "2" 
-learn_rate_range_min <- "-2.0" 
-learn_rate_range_max <- "-1.0" 
-learn_rate_range_levels <- "2" 
-mtry_range_min <- "1" 
-mtry_range_max <- "20" 
-mtry_range_levels <- "3" 
-min_n_range_min <- "2" 
-min_n_range_max <- "40" 
-min_n_range_levels <- "3" 
-loss_reduction_range_min <- "-1.0" 
-loss_reduction_range_max <- "1.0" 
-loss_reduction_range_levels <- "3" 
+tree_depth_range_min <- 5
+tree_depth_range_max <- 15 
+tree_depth_range_levels <- 3 
+trees_range_min <- 10
+trees_range_max <- 100
+trees_range_levels <- 2 
+learn_rate_range_min <- -2.0 
+learn_rate_range_max <- -1.0 
+learn_rate_range_levels <- 2 
+mtry_range_min <- 1 
+mtry_range_max <- 20
+mtry_range_levels <- 3
+min_n_range_min <- 2 
+min_n_range_max <- 40
+min_n_range_levels <- 3 
+loss_reduction_range_min <- -1.0 
+loss_reduction_range_max <- 1.0 
+loss_reduction_range_levels <- 3 
 
-v <- "2"
+v <- 2
 
 metric <- "rmse" # rmse (default), rsq
 
@@ -432,17 +438,17 @@ mode <- "regression"
 algo <- "MLP"
 engine <- "nnet" # nnet
 
-hidden_units_range_min <- "1" 
-hidden_units_range_max <- "10" 
-hidden_units_range_levels <- "3" 
-penalty_range_min <- "0.001" 
-penalty_range_max <- "1.0" 
-penalty_range_levels <- "3" 
-epochs_range_min <- "10" 
-epochs_range_max <- "100" 
-epochs_range_levels <- "2" 
+hidden_units_range_min <- 1 
+hidden_units_range_max <- 10 
+hidden_units_range_levels <- 3 
+penalty_range_min <- 0.001 
+penalty_range_max <- 1.0 
+penalty_range_levels <- 3 
+epochs_range_min <- 10 
+epochs_range_max <- 100 
+epochs_range_levels <- 2 
 
-v <- "2"
+v <- 2
 
 metric <- "rmse" # rmse (default), rsq
 
@@ -518,7 +524,7 @@ finalized <- stove::linearRegression(
 ```{r}
 # User input
 names(models_list)
-model_name <- "lightGBM_lightgbm"
+model_name <- "linearRegression_glmnet"
 ```
 
 ```{r, fig.width = 7, fig.height = 7}

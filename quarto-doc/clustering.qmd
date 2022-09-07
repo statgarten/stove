@@ -28,29 +28,33 @@ mainfont: Gulim
 - Date type column이 없어야 함
 - Outcome 변수는 classification의 경우 factor, regression의 경우 numeric이어야 함 (clustering은 outcome변수를 사용하지 않음)
 
-```{r}
+```{r, message=FALSE}
+# remotes::install_github("statgarten/datatoys")
 library(stove)
+library(datatoys)
+library(dplyr)
 
-cleaned_data <- read.csv(file = "~/git/stove/data/boston_c.csv", 
-                         stringsAsFactors = TRUE
-                         )
-cleaned_data$Pcrime <- NULL
-cleaned_data$chas <- as.numeric(cleaned_data$chas)
+set.seed(1234)
 
-str(cleaned_data)
+cleaned_data <- datatoys::bloodTest
+
+cleaned_data <- cleaned_data %>%
+  #mutate_at(vars(SEX, ANE, IHD, STK), factor) %>%
+  sample_n(1000) %>%
+  subset(select = -c(TG))
 ```
 
 # K-means clustering
 
 ```{r}
 # user input
-max_k <- "15" # k = 2:max_k, <= number of columns
-n_start <- "25" # attempts 25 initial configurations, <= 175
-iter_max <- "10" # <= 5000
-n_boot <- "100" # Used only for determining the number of clusters using gap statistic
+max_k <- 15 # k = 2:max_k, <= number of columns
+n_start <- 25 # attempts 25 initial configurations, <= 175
+iter_max <- 10 # <= 5000
+n_boot <- 100 # Used only for determining the number of clusters using gap statistic
 algorithm = "Hartigan-Wong" ## "Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"
 select_optimal <- "silhouette" # "silhouette", "gap_stat" // there's no mathematical definition for selecting optimal k using elbow(wss) method.
-seed = "6471"
+seed <- 6471
 
 # K-means clustering
 km_model <- stove::kMeansClustering(data = cleaned_data,
