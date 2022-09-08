@@ -3,23 +3,21 @@
 #' @details
 #' Grid Search with cross validation // workflows rsample tune
 #'
-#' @param rec  rec
-#' @param model  model
-#' @param v v-fold CV
-#' @param data data
-#' @param parameter_grid parameter_grid
-#' @param seed seed
+#' @param rec 데이터, 전처리 정보를 포함한 recipe object
+#' @param model  hyperparameters, ngine, mode 정보가 포함된 model object
+#' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
+#' @param trainingData 훈련데이터 셋
+#' @param parameter_grid grid search를 수행할 때 각 hyperparameter의 값을 담은 object
+#' @param seed seed값 설정
 #'
 #' @importFrom magrittr %>%
-#' @name %>%
-#' @rdname pipe
 #'
 #' @export
 
 gridSearchCV <- function(rec = NULL,
                          model = NULL,
                          v = "5", # 5-fold CV as default
-                         data = NULL,
+                         trainingData = NULL,
                          parameterGrid = 10,
                          seed = "4814") {
   set.seed(seed = as.numeric(seed))
@@ -28,7 +26,7 @@ gridSearchCV <- function(rec = NULL,
     workflows::add_model(model)
 
   result <- tune::tune_grid(tunedWorkflow,
-    resamples = rsample::vfold_cv(data, v = as.numeric(v)),
+    resamples = rsample::vfold_cv(trainingData, v = as.numeric(v)),
     grid = parameterGrid
   ) # warnings
 
@@ -41,17 +39,15 @@ gridSearchCV <- function(rec = NULL,
 #' @details
 #' fitting in best model // tune workflows
 #'
-#' @param gridSearchResult  gridSearchResult
-#' @param metric  metric
-#' @param model model
-#' @param formula formula
-#' @param trainingData trainingData
-#' @param splitedData splitedData
-#' @param algo algo
+#' @param gridSearchResult  gridSearchCV의 결과값
+#' @param metric  모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
+#' @param model hyperparameters, ngine, mode 정보가 포함된 model object
+#' @param formula 모델링을 위한 수식
+#' @param trainingData 훈련데이터 셋
+#' @param splitedData train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋
+#' @param algo 사용자가 임의로 지정할 알고리즘명 (default: "linear Regression")
 #'
 #' @importFrom magrittr %>%
-#' @name %>%
-#' @rdname pipe
 #' @importFrom dplyr mutate
 #'
 #' @export

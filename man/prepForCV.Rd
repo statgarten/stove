@@ -34,5 +34,5 @@ prepForCV(
 Preprocessing for cross validation
 }
 \details{
-Preprocessing for cross validation
+Deprecated
 }

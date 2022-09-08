@@ -4,16 +4,16 @@
 \alias{trainTestSplit}
 \title{Train-Test Split}
 \usage{
-trainTestSplit(data = data, target = NULL, prop, seed = "4814")
+trainTestSplit(data = NULL, target = NULL, prop, seed = "4814")
 }
 \arguments{
-\item{data}{data}
+\item{data}{전처리가 완료된 전체 data}
 
-\item{target}{target}
+\item{target}{타겟 변수}
 
-\item{prop}{prop}
+\item{prop}{전체 데이터 중 훈련 데이터로 사용할 비율}
 
-\item{seed}{seed}
+\item{seed}{seed값 설정정}
 }
 \description{
 Train-Test Split

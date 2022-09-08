@@ -3,17 +3,17 @@
 #' @details
 #' Data를 Train set과 Test set으로 분리합니다.
 #'
-#' @param data  data
-#' @param target target
-#' @param prop  prop
-#' @param seed  seed
+#' @param data  전처리가 완료된 전체 data
+#' @param target 타겟 변수
+#' @param prop  전체 데이터 중 훈련 데이터로 사용할 비율
+#' @param seed  seed값 설정정
 #'
 #' @import rsample
 #' @importFrom tidyselect all_of
 #'
 #' @export
 
-trainTestSplit <- function(data = data,
+trainTestSplit <- function(data = NULL,
                            target = NULL,
                            prop,
                            seed = "4814") {
@@ -29,10 +29,10 @@ trainTestSplit <- function(data = data,
 #' Preprocessing for cross validation
 #'
 #' @details
-#' Preprocessing for cross validation
+#' Deprecated
 #'
 #' @param data  data
-#' @param formula  formula
+#' @param formula formula
 #' @param imputationType imputationType
 #' @param normalizationType normalizationType
 #' @param imputation imputation

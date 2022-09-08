@@ -39,7 +39,6 @@ set.seed(1234)
 cleaned_data <- datatoys::bloodTest
 
 cleaned_data <- cleaned_data %>%
-  #mutate_at(vars(SEX, ANE, IHD, STK), factor) %>%
   sample_n(1000) %>%
   subset(select = -c(TG))
 ```

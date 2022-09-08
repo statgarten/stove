@@ -1,10 +1,10 @@
 #' AUC-ROC Curve
 #'
 #' @details
-#' AUC-ROC Curve
+#' ML 모델 리스트로부터 AUC-ROC Curve를 생성합니다.
 #'
-#' @param modelsList  modelsList
-#' @param targetVar  targetVar
+#' @param modelsList  ML 모델 리스트
+#' @param targetVar  타겟 변수
 #'
 #' @import RColorBrewer cowplot ggplot2 yardstick grDevices
 #' @importFrom dplyr group_by
@@ -46,15 +46,14 @@ rocCurve <- function(modelsList, targetVar) {
   return(plot)
 }
 
-
 #' Confusion matrix
 #'
 #' @details
-#' Confusion matrix
+#' ML 모델 리스트 내 특정 모델에 대해 Confusion matrix를 생성합니다.
 #'
-#' @param modelName  modelName
-#' @param modelsList  modelsList
-#' @param targetVar  targetVar
+#' @param modelName  모델명
+#' @param modelsList  ML 모델 리스트
+#' @param targetVar  타겟 변수
 #'
 #' @import ggplot2 yardstick tune
 #' @importFrom magrittr %>%
@@ -91,11 +90,11 @@ confusionMatrix <- function(modelName, modelsList, targetVar) {
 #' Regression plot
 #'
 #' @details
-#' Regression plot
+#' ML 모델 리스트 내 특정 모델에 대해 Regression plot를 생성합니다.
 #'
-#' @param modelName  modelName
-#' @param modelsList  modelsList
-#' @param targetVar  targetVar
+#' @param modelName  모델명
+#' @param modelsList  ML 모델 리스트
+#' @param targetVar  타겟 변수
 #'
 #' @import yardstick tune ggplot2 ggrepel
 #' @importFrom magrittr %>%
@@ -130,14 +129,13 @@ regressionPlot <- function(modelName, modelsList, targetVar) {
   return(plot)
 }
 
-
 #' Evaluation metrics for Classification
 #'
 #' @details
-#' Evaluation metrics for Classification
+#'  ML 모델 리스트로부터 Classification 모델들에 대한 Evaluation metrics를 생성합니다.
 #'
-#' @param modelsList  modelsList
-#' @param targetVar  targetVar
+#' @param modelsList  ML 모델 리스트
+#' @param targetVar  타겟 변수
 #'
 #' @import yardstick tune ggplot2
 #' @importFrom data.table transpose
@@ -178,19 +176,16 @@ evalMetricsC <- function(modelsList, targetVar) {
   return(table)
 }
 
-
 #' Evaluation metrics for Regression
 #'
 #' @details
-#' Evaluation metrics for Regression // yardstick tune ggplot2 data.table
+#' ML 모델 리스트로부터 Regression 모델들에 대한 Evaluation metrics를 생성합니다.
 #'
-#' @param modelsList  modelsList
-#' @param targetVar  targetVar
+#' @param modelsList  ML 모델 리스트
+#' @param targetVar  타겟 변수
 #'
 #' @import ggplot2
 #' @importFrom magrittr %>%
-#' @name %>%
-#' @rdname pipe
 #' @importFrom dplyr select mutate
 #'
 #' @export
@@ -228,7 +223,7 @@ evalMetricsR <- function(modelsList, targetVar) {
 #' clusteringVis
 #'
 #' @details
-#' clusteringVis
+#' Deprecated
 #'
 #' @import cluster factoextra stats ggplot2
 #'

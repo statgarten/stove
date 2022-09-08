@@ -26,5 +26,5 @@ clusteringVis(
 clusteringVis
 }
 \details{
-clusteringVis
+Deprecated
 }
