@@ -1,7 +1,7 @@
 #' Grid Search with cross validation
 #'
 #' @details
-#' Grid Search with cross validation // workflows rsample tune
+#' 하이퍼파라미터를 탐색하는 Grid Search와 데이터 셋을 나누어 평가하는 cross validation을 함께 수행합니다.
 #'
 #' @param rec 데이터, 전처리 정보를 포함한 recipe object
 #' @param model  hyperparameters, ngine, mode 정보가 포함된 model object
@@ -37,7 +37,7 @@ gridSearchCV <- function(rec = NULL,
 #' fitting in best model
 #'
 #' @details
-#' fitting in best model // tune workflows
+#' gridSearchCV 함수 리턴값을 받아 가장 성능이 좋은 모델을 fitting합니다.
 #'
 #' @param gridSearchResult  gridSearchCV의 결과값
 #' @param metric  모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")

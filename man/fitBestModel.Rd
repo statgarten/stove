@@ -33,5 +33,5 @@ fitBestModel(
 fitting in best model
 }
 \details{
-fitting in best model // tune workflows
+gridSearchCV 함수 리턴값을 받아 가장 성능이 좋은 모델을 fitting합니다.
 }

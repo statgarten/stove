@@ -30,5 +30,5 @@ gridSearchCV(
 Grid Search with cross validation
 }
 \details{
-Grid Search with cross validation // workflows rsample tune
+하이퍼파라미터를 탐색하는 Grid Search와 데이터 셋을 나누어 평가하는 cross validation을 함께 수행합니다.
 }
