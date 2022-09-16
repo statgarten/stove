@@ -6,7 +6,7 @@
 #' @param data  전처리가 완료된 전체 data
 #' @param target 타겟 변수
 #' @param prop  전체 데이터 중 훈련 데이터로 사용할 비율
-#' @param seed  seed값 설정정
+#' @param seed  seed값 설정
 #'
 #' @import rsample
 #' @importFrom tidyselect all_of
