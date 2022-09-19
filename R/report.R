@@ -292,6 +292,9 @@ clusteringVis <- function(data = NULL,
 #' #'
 #' #' @details
 #' #' rmsePlot
+#' #' https://www.tmwr.org/workflow-sets.html
+#' #' https://workflowsets.tidymodels.org/
+#' #' https://towardsdatascience.com/using-workflow-sets-to-screen-and-compare-model-recipe-combinations-for-bank-loan-classification-fcaad2853290
 #' #'
 #' #' @import ggplot2 cowplot
 #' #' @import grDevices
