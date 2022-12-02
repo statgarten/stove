@@ -482,39 +482,41 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 
 ```
 
-## Modeling without hyperparameter
-
-함수 내에 기본값을 선언해 뒀기때문에, 유저로부터 입력을 받지 않아도 모델링이 가능합니다.
-아래처럼 hyperparameter관련 파라미터, v를 따로 입력받지 않아도 됩니다.
+## SVM
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
 
-# mode <- "classification"
-# algo <- "LogisticAuto"
-# engine <- "glmnet" # glmnet (default), glm, stan
-# 
-# metric <- "roc_auc" # roc_auc (default), accuracy
-# 
-# # Modeling
-# 
-# finalized <- stove::logisticRegression(
-#   algo = algo,
-#   engine = engine,
-#   mode = mode,
-#   trainingData = data_train,
-#   splitedData = data_split,
-#   formula = formula,
-#   rec = rec,
-#   # v = v,
-#   # penaltyRangeMin = penalty_range_min,
-#   # penaltyRangeMax = penalty_range_max,
-#   # penaltyRangeLevels = penalty_range_levels,
-#   # mixtureRangeMin = mixture_range_min,
-#   # mixtureRangeMax = mixture_range_max,
-#   # mixtureRangeLevels = mixture_range_levels,
-#   metric = metric
-# )
+mode <- "classification"
+algo <- "SVM"
+engine <- "kernlab"
+kernel = "rbf" ## linear / poly / rbf
+
+v <- 2
+
+metric <- "roc_auc" # roc_auc (default), accuracy
+
+# Modeling
+
+finalized <- stove::SVM(
+  algo = algo,
+  engine = engine,
+  mode = mode,
+  kernel = kernel,
+  trainingData = data_train,
+  splitedData = data_split,
+  formula = formula,
+  rec = rec,
+  v = v,
+  gridNum = 5,
+  iter = 10,
+  metric = metric,
+  seed = 1234
+)
+
+# Add the model to models_list
+# SVM은 engine은 kernlab으로 고정이기 때문에, engine 대신 kennel로 명명
+models_list[[paste0(algo, "_", kernel)]] <- finalized$finalFittedModel
 ```
 
 # Sources for report
@@ -539,7 +541,7 @@ roc_curve
 ```{r}
 # User input
 names(models_list)
-model_name <- "naiveBayes_klaR"
+model_name <- "SVM_linear"
 ```
 
 ```{r, fig.width = 7, fig.height = 6}

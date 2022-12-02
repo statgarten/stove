@@ -700,6 +700,78 @@ lightGbm <- function(algo = "lightGBM",
   return(finalized)
 }
 
+#' SVM
+#'
+#' @details
+#' SVM
+#'
+#'
+#' @importFrom magrittr %>%
+#'
+#' @export
+
+SVM <- function(algo = "SVM",
+                engine = "kernlab",
+                mode = "classification",
+                kernel = "linear", ## linear / poly / rbf
+                trainingData = NULL,
+                splitedData = NULL,
+                formula = NULL,
+                rec = NULL,
+                v = 5,
+                gridNum = 5,
+                iter = 15,
+                metric = NULL,
+                seed = 1234) {
+
+  if (kernel == "linear") {
+    model <- parsnip::svm_linear(
+      cost = tune(),
+      margin = tune()
+    )
+  } else if (kernel == "poly") {
+    model <- parsnip::svm_poly(
+      cost = tune(),
+      degree = tune(),
+      scale_factor = tune(),
+      margin = tune()
+    )
+  } else {
+    model <- parsnip::svm_rbf(
+      cost = tune(),
+      rbf_sigma = tune(),
+      margin = tune()
+    )
+  }
+
+  model <- model %>%
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::translate()
+
+  bayesOptResult <- stove::bayesOptCV(
+    rec = rec,
+    model = model,
+    v = as.numeric(v), # 5-fold CV as default
+    trainingData = trainingData,
+    gridNum = gridNum,
+    iter = iter,
+    seed = seed
+  )
+
+  finalized <- stove::fitBestModel(
+    optResult = bayesOptResult,
+    metric = metric,
+    model = model,
+    formula = formula,
+    trainingData = trainingData,
+    splitedData = splitedData,
+    algo = paste0(algo, "_", kernel) ## engine -> kernel
+  )
+
+  return(finalized)
+}
+
 #' neural network
 #'
 #' @details
