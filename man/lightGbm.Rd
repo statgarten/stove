@@ -13,25 +13,10 @@ lightGbm(
   formula = NULL,
   rec = NULL,
   v = 5,
-  treeDepthRangeMin = 5,
-  treeDepthRangeMax = 15,
-  treeDepthRangeLevels = 3,
-  treesRangeMin = 10,
-  treesRangeMax = 100,
-  treesRangeLevels = 2,
-  learnRateRangeMin = -2,
-  learnRateRangeMax = -1,
-  learnRateRangeLevels = 2,
-  mtryRangeMin = 1,
-  mtryRangeMax = 20,
-  mtryRangeLevels = 3,
-  minNRangeMin = 2,
-  minNRangeMax = 40,
-  minNRangeLevels = 3,
-  lossReductionRangeMin = -1,
-  lossReductionRangeMax = 1,
-  lossReductionRangeLevels = 3,
-  metric = NULL
+  gridNum = 5,
+  iter = 15,
+  metric = NULL,
+  seed = 1234
 )
 }
 \arguments{

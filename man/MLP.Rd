@@ -13,16 +13,10 @@ MLP(
   formula = NULL,
   rec = NULL,
   v = 5,
-  hiddenUnitsRangeMin = 1,
-  hiddenUnitsRangeMax = 10,
-  hiddenUnitsRangeLevels = 3,
-  penaltyRangeMin = 0.001,
-  penaltyRangeMax = 1,
-  penaltyRangeLevels = 3,
-  epochsRangeMin = 10,
-  epochsRangeMax = 100,
-  epochsRangeLevels = 2,
-  metric = NULL
+  gridNum = 5,
+  iter = 10,
+  metric = NULL,
+  seed = 1234
 )
 }
 \arguments{

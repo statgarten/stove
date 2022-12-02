@@ -13,16 +13,10 @@ randomForest(
   formula = NULL,
   rec = NULL,
   v = 5,
-  mtryRangeMin = 1,
-  mtryRangeMax = 20,
-  mtryRangeLevels = 3,
-  treesRangeMin = 100,
-  treesRangeMax = 1000,
-  treesRangeLevels = 3,
-  minNRangeMin = 2,
-  minNRangeMax = 40,
-  minNRangeLevels = 3,
-  metric = NULL
+  gridNum = 5,
+  iter = 10,
+  metric = NULL,
+  seed = 1234
 )
 }
 \arguments{

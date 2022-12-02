@@ -13,7 +13,7 @@ trainTestSplit(data = NULL, target = NULL, prop, seed = "4814")
 
 \item{prop}{전체 데이터 중 훈련 데이터로 사용할 비율}
 
-\item{seed}{seed값 설정정}
+\item{seed}{seed값 설정}
 }
 \description{
 Train-Test Split

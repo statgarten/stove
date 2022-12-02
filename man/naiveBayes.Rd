@@ -13,13 +13,10 @@ naiveBayes(
   formula = NULL,
   rec = NULL,
   v = 5,
-  smoothnessRangeMin = 0.5,
-  smoothnessRangeMax = 1.5,
-  smoothnessRangeLevels = 3,
-  LaplaceRangeMin = 0,
-  LaplaceRangeMax = 3,
-  LaplaceRangeLevels = 4,
-  metric = NULL
+  gridNum = 5,
+  iter = 10,
+  metric = NULL,
+  seed = 1234
 )
 }
 \arguments{

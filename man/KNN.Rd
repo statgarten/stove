@@ -13,10 +13,10 @@ KNN(
   formula = NULL,
   rec = NULL,
   v = 5,
-  neighborsRangeMin = 1,
-  neighborsRangeMax = 10,
-  neighborsRangeLevels = 10,
-  metric = NULL
+  gridNum = 5,
+  iter = 10,
+  metric = NULL,
+  seed = 1234
 )
 }
 \arguments{

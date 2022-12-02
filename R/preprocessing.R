@@ -79,14 +79,5 @@ prepForCV <- function(data = NULL,
     }
   }
 
-  # # PCA
-  # if (pca == TRUE) {
-  #   result <- result %>%
-  #     recipes::step_pca(all_numeric_predictors(),
-  #                       threshold = eval(parse(text = pcaThres))) ## todo: make users to perform PCA for numeric var only or numeric except for binary
-  # } else {
-  #   # pass
-  # }
-
   return(result)
 }

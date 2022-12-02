@@ -13,13 +13,10 @@ logisticRegression(
   formula = NULL,
   rec = NULL,
   v = 5,
-  penaltyRangeMin = 0.001,
-  penaltyRangeMax = 1,
-  penaltyRangeLevels = 5,
-  mixtureRangeMin = 0,
-  mixtureRangeMax = 1,
-  mixtureRangeLevels = 5,
-  metric = NULL
+  gridNum = 5,
+  iter = 10,
+  metric = "roc_auc",
+  seed = 1234
 )
 }
 \arguments{

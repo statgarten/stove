@@ -13,29 +13,10 @@ xgBoost(
   formula = NULL,
   rec = NULL,
   v = 5,
-  treeDepthRangeMin = 5,
-  treeDepthRangeMax = 15,
-  treeDepthRangeLevels = 3,
-  treesRangeMin = 8,
-  treesRangeMax = 32,
-  treesRangeLevels = 3,
-  learnRateRangeMin = -2,
-  learnRateRangeMax = -1,
-  learnRateRangeLevels = 2,
-  mtryRangeMin = 0,
-  mtryRangeMax = 1,
-  mtryRangeLevels = 3,
-  minNRangeMin = 2,
-  minNRangeMax = 40,
-  minNRangeLevels = 3,
-  lossReductionRangeMin = -1,
-  lossReductionRangeMax = 1,
-  lossReductionRangeLevels = 3,
-  sampleSizeRangeMin = 0,
-  sampleSizeRangeMax = 1,
-  sampleSizeRangeLevels = 3,
-  stopIter = 30,
-  metric = NULL
+  gridNum = 5,
+  iter = 10,
+  metric = NULL,
+  seed = 1234
 )
 }
 \arguments{

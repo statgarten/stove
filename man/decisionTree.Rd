@@ -13,16 +13,10 @@ decisionTree(
   formula = NULL,
   rec = NULL,
   v = 5,
-  treeDepthRangeMin = 1,
-  treeDepthRangeMax = 15,
-  treeDepthRangeLevels = 3,
-  minNRangeMin = 2,
-  minNRangeMax = 40,
-  minNRangeLevels = 3,
-  costComplexityRangeMin = -2,
-  costComplexityRangeMax = -1,
-  costComplexityRangeLevels = 2,
-  metric = NULL
+  gridNum = 5,
+  iter = 10,
+  metric = NULL,
+  seed = 1234
 )
 }
 \arguments{

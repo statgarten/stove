@@ -94,9 +94,11 @@ data_split <- split_tmp[[3]] # whole data with split information
 
 ```{r}
 rec <- stove::prepForCV(data = data_train,
-                         formula = formula,
-                         seed = seed
-                         )
+                        formula = formula,
+                        imputation = T,
+                        normalization = T,
+                        seed = seed
+                        )
 ```
                          
 # Modeling Tab
@@ -125,12 +127,12 @@ mode <- "classification"
 algo <- "logisticRegression"
 engine <- "glmnet" # glmnet (default), glm, stan
 
-penalty_range_min <- 0.001
-penalty_range_max <- 1.0
-penalty_range_levels <- 5
-mixture_range_min <- 0.0
-mixture_range_max <- 1.0
-mixture_range_levels <- 5 
+# penalty_range_min <- 0.001
+# penalty_range_max <- 1.0
+# penalty_range_levels <- 5
+# mixture_range_min <- 0.0
+# mixture_range_max <- 1.0
+# mixture_range_levels <- 5 
 
 v <- 2
 
@@ -147,19 +149,15 @@ finalized <- stove::logisticRegression(
   formula = formula,
   rec = rec,
   v = v,
-  penaltyRangeMin = penalty_range_min,
-  penaltyRangeMax = penalty_range_max,
-  penaltyRangeLevels = penalty_range_levels,
-  mixtureRangeMin = mixture_range_min,
-  mixtureRangeMax = mixture_range_max,
-  mixtureRangeLevels = mixture_range_levels,
-  metric = metric
+  gridNum = 5,
+  iter = 10,
+  metric = metric,
+  seed = 1234
 )
 
 # Add the model to models_list
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
-
 
 ## K Nearest Neighbor
 
@@ -170,9 +168,9 @@ mode <- "classification"
 algo <- "KNN"
 engine <- "kknn" # kknn (defualt)
 
-neighbors_range_min <- 1 
-neighbors_range_max <- 10
-neighbors_range_levels <- 10
+# neighbors_range_min <- 1 
+# neighbors_range_max <- 10
+# neighbors_range_levels <- 10
 
 v <- 2
 
@@ -189,10 +187,10 @@ finalized <- stove::KNN(
   formula = formula,
   rec = rec,
   v = v,
-  neighborsRangeMin = neighbors_range_min,
-  neighborsRangeMax = neighbors_range_max,
-  neighborsRangeLevels = neighbors_range_levels,
-  metric = metric
+  gridNum = 5,
+  iter = 10,
+  metric = metric,
+  seed = 1234
 )
 
 # Add the model to models_list
@@ -208,12 +206,12 @@ mode <- "classification"
 algo <- "naiveBayes"
 engine <- "klaR" # klaR (default), naivebayes
 
-smoothness_range_min <- 0.5
-smoothness_range_max <- 1.5 
-smoothness_range_levels <- 3 
-laplace_range_min <- 0.0 
-laplace_range_max <- 3.0
-laplace_range_levels <- 4
+# smoothness_range_min <- 0.5
+# smoothness_range_max <- 1.5 
+# smoothness_range_levels <- 3 
+# laplace_range_min <- 0.0 
+# laplace_range_max <- 3.0
+# laplace_range_levels <- 4
 
 v <- 2
 
@@ -230,13 +228,10 @@ finalized <- stove::naiveBayes(
   formula = formula,
   rec = rec,
   v = v,
-  smoothnessRangeMin = smoothness_range_min,
-  smoothnessRangeMax = smoothness_range_max,
-  smoothnessRangeLevels = smoothness_range_levels,
-  LaplaceRangeMin = laplace_range_min,
-  LaplaceRangeMax = laplace_range_max,
-  LaplaceRangeLevels = laplace_range_levels,
-  metric = metric
+  gridNum = 5,
+  iter = 10,
+  metric = metric,
+  seed = 1234
 )
 
 # Add the model to models_list
@@ -252,15 +247,15 @@ mode <- "classification"
 algo <- "decisionTree"
 engine <- "rpart" # rpart (default), C5.0, partykit
 
-tree_depth_range_min <- 1
-tree_depth_range_max <- 15 
-tree_depth_range_levels <- 3 
-min_n_range_min <- 2 
-min_n_range_max <- 40 
-min_n_range_levels <- 3 
-cost_complexity_range_min <- -2.0
-cost_complexity_range_max <- -1.0 
-cost_complexity_range_levels <- 2 
+# tree_depth_range_min <- 1
+# tree_depth_range_max <- 15 
+# tree_depth_range_levels <- 3 
+# min_n_range_min <- 2 
+# min_n_range_max <- 40 
+# min_n_range_levels <- 3 
+# cost_complexity_range_min <- -2.0
+# cost_complexity_range_max <- -1.0 
+# cost_complexity_range_levels <- 2 
 
 v <- 2
 
@@ -277,16 +272,10 @@ finalized <- stove::decisionTree(
   formula = formula,
   rec = rec,
   v = v,
-  treeDepthRangeMin = tree_depth_range_min,
-  treeDepthRangeMax = tree_depth_range_max,
-  treeDepthRangeLevels = tree_depth_range_levels,
-  minNRangeMin = min_n_range_min,
-  minNRangeMax = min_n_range_max,
-  minNRangeLevels = min_n_range_levels,
-  costComplexityRangeMin = cost_complexity_range_min,
-  costComplexityRangeMax = cost_complexity_range_max,
-  costComplexityRangeLevels = cost_complexity_range_levels,
-  metric = metric
+  gridNum = 5,
+  iter = 10,
+  metric = metric,
+  seed = 1234
 )
 
 # Add the model to models_list
@@ -302,15 +291,15 @@ mode <- "classification"
 algo <- "randomForest"
 engine <- "ranger" # ranger (default), randomForest, partykit
 
-mtry_range_min <- 1
-mtry_range_max <- 20 
-mtry_range_levels <- 3 
-trees_range_min <- 100 
-trees_range_max <- 1000 
-trees_range_levels <- 3 
-min_n_range_min <- 2 
-min_n_range_max <- 40 
-min_n_range_levels <- 3 
+# mtry_range_min <- 1
+# mtry_range_max <- 20 
+# mtry_range_levels <- 3 
+# trees_range_min <- 100 
+# trees_range_max <- 1000 
+# trees_range_levels <- 3 
+# min_n_range_min <- 2 
+# min_n_range_max <- 40 
+# min_n_range_levels <- 3 
 
 v <- 2
 
@@ -327,16 +316,10 @@ finalized <- stove::randomForest(
   formula = formula,
   rec = rec,
   v = v,
-  mtryRangeMin = mtry_range_min,
-  mtryRangeMax = mtry_range_max,
-  mtryRangeLevels = mtry_range_levels,
-  treesRangeMin = trees_range_min,
-  treesRangeMax = trees_range_max,
-  treesRangeLevels = trees_range_levels,
-  minNRangeMin = min_n_range_min,
-  minNRangeMax = min_n_range_max,
-  minNRangeLevels = min_n_range_levels,
-  metric = metric
+  gridNum = 5,
+  iter = 10,
+  metric = metric,
+  seed = 1234
 )
 
 # Add the model to models_list
@@ -352,28 +335,28 @@ mode <- "classification"
 algo <- "XGBoost"
 engine <- "xgboost" # xgboost
 
-tree_depth_range_min <- 5
-tree_depth_range_max <- 15 
-tree_depth_range_levels <- 3 
-trees_range_min <- 8 
-trees_range_max <- 32 
-trees_range_levels <- 3 
-learn_rate_range_min <- -2.0 
-learn_rate_range_max <- -1.0 
-learn_rate_range_levels <- 2 
-mtry_range_min <- 0.0 
-mtry_range_max <- 1.0 
-mtry_range_levels <- 3 
-min_n_range_min <- 2 
-min_n_range_max <- 40 
-min_n_range_levels <- 3 
-loss_reduction_range_min <- -1.0 
-loss_reduction_range_max <- 1.0 
-loss_reduction_range_levels <- 3 
-sample_size_range_min <- 0.0 
-sample_size_range_max <- 1.0 
-sample_size_range_levels <- 3 
-stop_iter <- 30 
+# tree_depth_range_min <- 5
+# tree_depth_range_max <- 15 
+# tree_depth_range_levels <- 3 
+# trees_range_min <- 8 
+# trees_range_max <- 32 
+# trees_range_levels <- 3 
+# learn_rate_range_min <- -2.0 
+# learn_rate_range_max <- -1.0 
+# learn_rate_range_levels <- 2 
+# mtry_range_min <- 0.0 
+# mtry_range_max <- 1.0 
+# mtry_range_levels <- 3 
+# min_n_range_min <- 2 
+# min_n_range_max <- 40 
+# min_n_range_levels <- 3 
+# loss_reduction_range_min <- -1.0 
+# loss_reduction_range_max <- 1.0 
+# loss_reduction_range_levels <- 3 
+# sample_size_range_min <- 0.0 
+# sample_size_range_max <- 1.0 
+# sample_size_range_levels <- 3 
+# stop_iter <- 30 
 
 v <- 2
 
@@ -390,29 +373,10 @@ finalized <- stove::xgBoost(
   formula = formula,
   rec = rec,
   v = v,
-  treeDepthRangeMin = tree_depth_range_min,
-  treeDepthRangeMax = tree_depth_range_max,
-  treeDepthRangeLevels = tree_depth_range_levels,
-  treesRangeMin = trees_range_min,
-  treesRangeMax = trees_range_max,
-  treesRangeLevels = trees_range_levels,
-  learnRateRangeMin = learn_rate_range_min,
-  learnRateRangeMax = learn_rate_range_max,
-  learnRateRangeLevels = learn_rate_range_levels,
-  mtryRangeMin = mtry_range_min,
-  mtryRangeMax = mtry_range_max,
-  mtryRangeLevels = mtry_range_levels,
-  minNRangeMin = min_n_range_min,
-  minNRangeMax = min_n_range_max,
-  minNRangeLevels = min_n_range_levels,
-  lossReductionRangeMin = loss_reduction_range_min,
-  lossReductionRangeMax = loss_reduction_range_max,
-  lossReductionRangeLevels = loss_reduction_range_levels,
-  sampleSizeRangeMin = sample_size_range_min,
-  sampleSizeRangeMax = sample_size_range_max,
-  sampleSizeRangeLevels = sample_size_range_levels,
-  stopIter = stop_iter,
-  metric = metric
+  gridNum = 5,
+  iter = 10,
+  metric = metric,
+  seed = 1234
 )
 
 # Add the model to models_list
@@ -429,24 +393,24 @@ mode <- "classification"
 algo <- "lightGBM"
 engine <- "lightgbm" # lightgbm
 
-tree_depth_range_min <- 5
-tree_depth_range_max <- 15 
-tree_depth_range_levels <- 3 
-trees_range_min <- 10 
-trees_range_max <- 100 
-trees_range_levels <- 2 
-learn_rate_range_min <- -2.0 
-learn_rate_range_max <- -1.0 
-learn_rate_range_levels <- 2 
-mtry_range_min <- 1 
-mtry_range_max <- 20 
-mtry_range_levels <- 3 
-min_n_range_min <- 2 
-min_n_range_max <- 40 
-min_n_range_levels <- 3 
-loss_reduction_range_min <- -1.0 
-loss_reduction_range_max <- 1.0 
-loss_reduction_range_levels <- 3 
+# tree_depth_range_min <- 5
+# tree_depth_range_max <- 15 
+# tree_depth_range_levels <- 3 
+# trees_range_min <- 10 
+# trees_range_max <- 100 
+# trees_range_levels <- 2 
+# learn_rate_range_min <- -2.0 
+# learn_rate_range_max <- -1.0 
+# learn_rate_range_levels <- 2 
+# mtry_range_min <- 1 
+# mtry_range_max <- 20 
+# mtry_range_levels <- 3 
+# min_n_range_min <- 2 
+# min_n_range_max <- 40 
+# min_n_range_levels <- 3 
+# loss_reduction_range_min <- -1.0 
+# loss_reduction_range_max <- 1.0 
+# loss_reduction_range_levels <- 3 
 
 v <- 2
 
@@ -463,25 +427,10 @@ finalized <- stove::lightGbm(
   formula = formula,
   rec = rec,
   v = v,
-  treeDepthRangeMin = tree_depth_range_min,
-  treeDepthRangeMax = tree_depth_range_max,
-  treeDepthRangeLevels = tree_depth_range_levels,
-  treesRangeMin = trees_range_min,
-  treesRangeMax = trees_range_max,
-  treesRangeLevels = trees_range_levels,
-  learnRateRangeMin = learn_rate_range_min,
-  learnRateRangeMax = learn_rate_range_max,
-  learnRateRangeLevels = learn_rate_range_levels,
-  mtryRangeMin = mtry_range_min,
-  mtryRangeMax = mtry_range_max,
-  mtryRangeLevels = mtry_range_levels,
-  minNRangeMin = min_n_range_min,
-  minNRangeMax = min_n_range_max,
-  minNRangeLevels = min_n_range_levels,
-  lossReductionRangeMin = loss_reduction_range_min,
-  lossReductionRangeMax = loss_reduction_range_max,
-  lossReductionRangeLevels = loss_reduction_range_levels,
-  metric = metric
+  gridNum = 5,
+  iter = 10,
+  metric = metric,
+  seed = 1234
 )
 
 # Add the model to models_list
@@ -497,15 +446,15 @@ mode <- "classification"
 algo <- "MLP"
 engine <- "nnet" # nnet
 
-hidden_units_range_min <- 1
-hidden_units_range_max <- 10 
-hidden_units_range_levels <- 3 
-penalty_range_min <- 0.001 
-penalty_range_max <- 1.0 
-penalty_range_levels <- 3
-epochs_range_min <- 10 
-epochs_range_max <- 100 
-epochs_range_levels <- 2 
+# hidden_units_range_min <- 1
+# hidden_units_range_max <- 10 
+# hidden_units_range_levels <- 3 
+# penalty_range_min <- 0.001 
+# penalty_range_max <- 1.0 
+# penalty_range_levels <- 3
+# epochs_range_min <- 10 
+# epochs_range_max <- 100 
+# epochs_range_levels <- 2 
 
 v <- 2
 
@@ -522,16 +471,10 @@ finalized <- stove::MLP(
   formula = formula,
   rec = rec,
   v = v,
-  hiddenUnitsRangeMin = hidden_units_range_min,
-  hiddenUnitsRangeMax = hidden_units_range_max,
-  hiddenUnitsRangeLevels = hidden_units_range_levels,
-  penaltyRangeMin = penalty_range_min,
-  penaltyRangeMax = penalty_range_max,
-  penaltyRangeLevels = penalty_range_levels,
-  epochsRangeMin = epochs_range_min,
-  epochsRangeMax = epochs_range_max,
-  epochsRangeLevels = epochs_range_levels,
-  metric = metric
+  gridNum = 5,
+  iter = 10,
+  metric = metric,
+  seed = 1234
 )
 
 # Add the model to models_list
@@ -547,31 +490,31 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```{r, message=FALSE, warning=FALSE}
 # User input
 
-mode <- "classification"
-algo <- "LogisticAuto"
-engine <- "glmnet" # glmnet (default), glm, stan
-
-metric <- "roc_auc" # roc_auc (default), accuracy
-
-# Modeling
-
-finalized <- stove::logisticRegression(
-  algo = algo,
-  engine = engine,
-  mode = mode,
-  trainingData = data_train,
-  splitedData = data_split,
-  formula = formula,
-  rec = rec,
-  # v = v,
-  # penaltyRangeMin = penalty_range_min,
-  # penaltyRangeMax = penalty_range_max,
-  # penaltyRangeLevels = penalty_range_levels,
-  # mixtureRangeMin = mixture_range_min,
-  # mixtureRangeMax = mixture_range_max,
-  # mixtureRangeLevels = mixture_range_levels,
-  metric = metric
-)
+# mode <- "classification"
+# algo <- "LogisticAuto"
+# engine <- "glmnet" # glmnet (default), glm, stan
+# 
+# metric <- "roc_auc" # roc_auc (default), accuracy
+# 
+# # Modeling
+# 
+# finalized <- stove::logisticRegression(
+#   algo = algo,
+#   engine = engine,
+#   mode = mode,
+#   trainingData = data_train,
+#   splitedData = data_split,
+#   formula = formula,
+#   rec = rec,
+#   # v = v,
+#   # penaltyRangeMin = penalty_range_min,
+#   # penaltyRangeMax = penalty_range_max,
+#   # penaltyRangeLevels = penalty_range_levels,
+#   # mixtureRangeMin = mixture_range_min,
+#   # mixtureRangeMax = mixture_range_max,
+#   # mixtureRangeLevels = mixture_range_levels,
+#   metric = metric
+# )
 ```
 
 # Sources for report
@@ -596,7 +539,7 @@ roc_curve
 ```{r}
 # User input
 names(models_list)
-model_name <- "randomForest_ranger"
+model_name <- "naiveBayes_klaR"
 ```
 
 ```{r, fig.width = 7, fig.height = 6}

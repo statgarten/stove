@@ -32,25 +32,12 @@ logisticRegression <- function(algo = "logistic Regression",
                                formula = NULL,
                                rec = NULL,
                                v = 5,
-                               penaltyRangeMin = 0.001,
-                               penaltyRangeMax = 1.0,
-                               penaltyRangeLevels = 5,
-                               mixtureRangeMin = 0.0,
-                               mixtureRangeMax = 1.0,
-                               mixtureRangeLevels = 5,
-                               metric = NULL) {
-  penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
-  mixtureRange <- c(as.numeric(mixtureRangeMin), as.numeric(mixtureRangeMax))
+                               gridNum = 5,
+                               iter = 10,
+                               metric = "roc_auc",
+                               seed = 1234) {
 
   if (engine == "glmnet") {
-    parameterGrid <- dials::grid_regular(
-      dials::penalty(range = penaltyRange),
-      dials::mixture(range = mixtureRange),
-      levels = c(
-        penalty = as.numeric(penaltyRangeLevels),
-        mixture = as.numeric(mixtureRangeLevels)
-      )
-    )
     model <- parsnip::logistic_reg(
       penalty = tune(),
       mixture = tune()
@@ -59,16 +46,18 @@ logisticRegression <- function(algo = "logistic Regression",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- stove::gridSearchCV(
+    bayesOptResult <- stove::bayesOptCV(
       rec = rec,
       model = model,
-      v = as.numeric(v),
+      v = as.numeric(v), # 5-fold CV as default
       trainingData = trainingData,
-      parameterGrid = parameterGrid
+      gridNum = gridNum,
+      iter = iter,
+      seed = seed
     )
 
     finalized <- stove::fitBestModel(
-      gridSearchResult = gridSearchResult,
+      optResult = bayesOptResult,
       metric = metric,
       model = model,
       formula = formula,
@@ -82,16 +71,18 @@ logisticRegression <- function(algo = "logistic Regression",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- stove::gridSearchCV(
+    bayesOptResult <- stove::bayesOptCV(
       rec = rec,
       model = model,
-      v = as.numeric(v),
+      v = as.numeric(v), # 5-fold CV as default
       trainingData = trainingData,
-      parameterGrid = 10 # default value of param 'grid' in tune::tune_grid
+      gridNum = gridNum,
+      iter = iter,
+      seed = seed
     )
 
     finalized <- stove::fitBestModel(
-      gridSearchResult = gridSearchResult,
+      optResult = bayesOptResult,
       metric = metric,
       model = model,
       formula = formula,
@@ -103,6 +94,7 @@ logisticRegression <- function(algo = "logistic Regression",
 
   return(finalized)
 }
+
 
 #' Linear Regression
 #'
@@ -139,25 +131,12 @@ linearRegression <- function(algo = "Linear Regression",
                              formula = NULL,
                              rec = NULL,
                              v = 5,
-                             penaltyRangeMin = 0.001,
-                             penaltyRangeMax = 1.0,
-                             penaltyRangeLevels = 5,
-                             mixtureRangeMin = 0.0,
-                             mixtureRangeMax = 1.0,
-                             mixtureRangeLevels = 5,
-                             metric = "rmse") {
-  penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
-  mixtureRange <- c(as.numeric(mixtureRangeMin), as.numeric(mixtureRangeMax))
+                             gridNum = 5,
+                             iter = 10,
+                             metric = "rmse",
+                             seed = 1234) {
 
   if (engine == "glmnet" || engine == "liblinear" || engine == "brulee") {
-    parameterGrid <- dials::grid_regular(
-      dials::penalty(range = penaltyRange),
-      dials::mixture(range = mixtureRange),
-      levels = c(
-        penalty = as.numeric(penaltyRangeLevels),
-        mixture = as.numeric(mixtureRangeLevels)
-      )
-    )
 
     model <- parsnip::linear_reg(
       penalty = tune(),
@@ -167,16 +146,18 @@ linearRegression <- function(algo = "Linear Regression",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- stove::gridSearchCV(
+    bayesOptResult <- stove::bayesOptCV(
       rec = rec,
       model = model,
-      v = as.numeric(v),
+      v = as.numeric(v), # 5-fold CV as default
       trainingData = trainingData,
-      parameterGrid = parameterGrid
+      gridNum = gridNum,
+      iter = iter,
+      seed = seed
     )
 
     finalized <- stove::fitBestModel(
-      gridSearchResult = gridSearchResult,
+      optResult = bayesOptResult,
       metric = metric,
       model = model,
       formula = formula,
@@ -190,16 +171,18 @@ linearRegression <- function(algo = "Linear Regression",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- stove::gridSearchCV(
+    bayesOptResult <- stove::bayesOptCV(
       rec = rec,
       model = model,
-      v = as.numeric(v),
+      v = as.numeric(v), # 5-fold CV as default
       trainingData = trainingData,
-      parameterGrid = 10 # default value of param 'grid' in tune::tune_grid
+      gridNum = gridNum,
+      iter = iter,
+      seed = seed
     )
 
     finalized <- stove::fitBestModel(
-      gridSearchResult = gridSearchResult,
+      optResult = bayesOptResult,
       metric = metric,
       model = model,
       formula = formula,
@@ -248,32 +231,28 @@ KNN <- function(algo = "KNN",
                 formula = NULL,
                 rec = NULL,
                 v = 5,
-                neighborsRangeMin = 1,
-                neighborsRangeMax = 10,
-                neighborsRangeLevels = 10,
-                metric = NULL) {
-  neighborsRange <- c(as.numeric(neighborsRangeMin), as.numeric(neighborsRangeMax))
-
-  parameterGrid <- dials::grid_regular(
-    dials::neighbors(range = neighborsRange),
-    levels = c(neighbors = as.numeric(neighborsRangeLevels))
-  )
+                gridNum = 5,
+                iter = 10,
+                metric = NULL,
+                seed = 1234) {
 
   model <- parsnip::nearest_neighbor(neighbors = tune()) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  gridSearchResult <- stove::gridSearchCV(
+  bayesOptResult <- stove::bayesOptCV(
     rec = rec,
     model = model,
-    v = as.numeric(v),
+    v = as.numeric(v), # 5-fold CV as default
     trainingData = trainingData,
-    parameterGrid = parameterGrid
+    gridNum = gridNum,
+    iter = iter,
+    seed = seed
   )
 
   finalized <- stove::fitBestModel(
-    gridSearchResult = gridSearchResult,
+    optResult = bayesOptResult,
     metric = metric,
     model = model,
     formula = formula,
@@ -303,8 +282,6 @@ KNN <- function(algo = "KNN",
 #' @param ... hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.
 #'
 #' @importFrom magrittr %>%
-
-
 #' @import parsnip
 #' @importFrom dials Laplace
 #' @importFrom discrim smoothness
@@ -320,24 +297,10 @@ naiveBayes <- function(algo = "Naive Bayes",
                        formula = NULL,
                        rec = NULL,
                        v = 5,
-                       smoothnessRangeMin = 0.5,
-                       smoothnessRangeMax = 1.5,
-                       smoothnessRangeLevels = 3,
-                       LaplaceRangeMin = 0.0,
-                       LaplaceRangeMax = 3.0,
-                       LaplaceRangeLevels = 4,
-                       metric = NULL) {
-  smoothnessRange <- c(as.numeric(smoothnessRangeMin), as.numeric(smoothnessRangeMax))
-  LaplaceRange <- c(as.numeric(LaplaceRangeMin), as.numeric(LaplaceRangeMax))
-
-  parameterGrid <- dials::grid_regular(
-    discrim::smoothness(range = smoothnessRange),
-    dials::Laplace(range = LaplaceRange),
-    levels = c(
-      smoothness = as.numeric(smoothnessRangeLevels),
-      Laplace = as.numeric(LaplaceRangeLevels)
-    )
-  )
+                       gridNum = 5,
+                       iter = 10,
+                       metric = NULL,
+                       seed = 1234) {
 
   model <- parsnip::naive_Bayes(
     smoothness = tune(),
@@ -347,16 +310,18 @@ naiveBayes <- function(algo = "Naive Bayes",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  gridSearchResult <- stove::gridSearchCV(
+  bayesOptResult <- stove::bayesOptCV(
     rec = rec,
     model = model,
-    v = as.numeric(v),
+    v = as.numeric(v), # 5-fold CV as default
     trainingData = trainingData,
-    parameterGrid = parameterGrid
+    gridNum = gridNum,
+    iter = iter,
+    seed = seed
   )
 
   finalized <- stove::fitBestModel(
-    gridSearchResult = gridSearchResult,
+    optResult = bayesOptResult,
     metric = metric,
     model = model,
     formula = formula,
@@ -405,32 +370,12 @@ decisionTree <- function(algo = "Decision Tree",
                          formula = NULL,
                          rec = NULL,
                          v = 5,
-                         treeDepthRangeMin = 1,
-                         treeDepthRangeMax = 15,
-                         treeDepthRangeLevels = 3,
-                         minNRangeMin = 2,
-                         minNRangeMax = 40,
-                         minNRangeLevels = 3,
-                         costComplexityRangeMin = -2.0,
-                         costComplexityRangeMax = -1.0,
-                         costComplexityRangeLevels = 2,
-                         metric = NULL) {
+                         gridNum = 5,
+                         iter = 10,
+                         metric = NULL,
+                         seed = 1234) {
 
   if (engine == "rpart"){
-    treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
-    minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-    costComplexityRange <- c(as.numeric(costComplexityRangeMin), as.numeric(costComplexityRangeMax))
-
-    parameterGrid <- dials::grid_regular(
-      dials::tree_depth(range = treeDepthRange),
-      dials::min_n(range = minNRange),
-      dials::cost_complexity(range = costComplexityRange),
-      levels = c(
-        tree_depth = as.numeric(treeDepthRangeLevels),
-        min_n = as.numeric(minNRangeLevels),
-        cost_complexity = as.numeric(costComplexityRangeLevels)
-      )
-    )
 
     model <- parsnip::decision_tree(
       cost_complexity = tune(),
@@ -441,16 +386,18 @@ decisionTree <- function(algo = "Decision Tree",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- stove::gridSearchCV(
+    bayesOptResult <- stove::bayesOptCV(
       rec = rec,
       model = model,
-      v = as.numeric(v),
+      v = as.numeric(v), # 5-fold CV as default
       trainingData = trainingData,
-      parameterGrid = parameterGrid
+      gridNum = gridNum,
+      iter = iter,
+      seed = seed
     )
 
     finalized <- stove::fitBestModel(
-      gridSearchResult = gridSearchResult,
+      optResult = bayesOptResult,
       metric = metric,
       model = model,
       formula = formula,
@@ -475,16 +422,18 @@ decisionTree <- function(algo = "Decision Tree",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- stove::gridSearchCV(
+    bayesOptResult <- stove::bayesOptCV(
       rec = rec,
       model = model,
-      v = as.numeric(v),
+      v = as.numeric(v), # 5-fold CV as default
       trainingData = trainingData,
-      parameterGrid = parameterGrid
+      gridNum = gridNum,
+      iter = iter,
+      seed = seed
     )
 
     finalized <- stove::fitBestModel(
-      gridSearchResult = gridSearchResult,
+      optResult = bayesOptResult,
       metric = metric,
       model = model,
       formula = formula,
@@ -493,17 +442,6 @@ decisionTree <- function(algo = "Decision Tree",
       algo = paste0(algo, "_", engine)
     )
   } else { # partykit
-    treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
-    minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-
-    parameterGrid <- dials::grid_regular(
-      dials::tree_depth(range = treeDepthRange),
-      dials::min_n(range = minNRange),
-      levels = c(
-        tree_depth = as.numeric(treeDepthRangeLevels),
-        min_n = as.numeric(minNRangeLevels)
-      )
-    )
 
     model <- parsnip::decision_tree(
       tree_depth = tune(),
@@ -513,16 +451,18 @@ decisionTree <- function(algo = "Decision Tree",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    gridSearchResult <- stove::gridSearchCV(
+    bayesOptResult <- stove::bayesOptCV(
       rec = rec,
       model = model,
-      v = as.numeric(v),
+      v = as.numeric(v), # 5-fold CV as default
       trainingData = trainingData,
-      parameterGrid = parameterGrid
+      gridNum = gridNum,
+      iter = iter,
+      seed = seed
     )
 
     finalized <- stove::fitBestModel(
-      gridSearchResult = gridSearchResult,
+      optResult = bayesOptResult,
       metric = metric,
       model = model,
       formula = formula,
@@ -576,30 +516,10 @@ randomForest <- function(algo = "Random Forest",
                          formula = NULL,
                          rec = NULL,
                          v = 5,
-                         mtryRangeMin = 1,
-                         mtryRangeMax = 20,
-                         mtryRangeLevels = 3,
-                         treesRangeMin = 100,
-                         treesRangeMax = 1000,
-                         treesRangeLevels = 3,
-                         minNRangeMin = 2,
-                         minNRangeMax = 40,
-                         minNRangeLevels = 3,
-                         metric = NULL) {
-  mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
-  treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
-  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-
-  parameterGrid <- dials::grid_regular(
-    dials::mtry(range = mtryRange),
-    dials::trees(range = treesRange),
-    dials::min_n(range = minNRange),
-    levels = c(
-      mtry = as.numeric(mtryRangeLevels),
-      trees = as.numeric(treesRangeLevels),
-      min_n = as.numeric(minNRangeLevels)
-    )
-  )
+                         gridNum = 5,
+                         iter = 10,
+                         metric = NULL,
+                         seed = 1234) {
 
   model <- parsnip::rand_forest(
     trees = tune(),
@@ -610,16 +530,18 @@ randomForest <- function(algo = "Random Forest",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  gridSearchResult <- stove::gridSearchCV(
+  bayesOptResult <- stove::bayesOptCV(
     rec = rec,
     model = model,
-    v = as.numeric(v),
+    v = as.numeric(v), # 5-fold CV as default
     trainingData = trainingData,
-    parameterGrid = parameterGrid
+    gridNum = gridNum,
+    iter = iter,
+    seed = seed
   )
 
   finalized <- stove::fitBestModel(
-    gridSearchResult = gridSearchResult,
+    optResult = bayesOptResult,
     metric = metric,
     model = model,
     formula = formula,
@@ -664,58 +586,10 @@ xgBoost <- function(algo = "XGBoost",
                     formula = NULL,
                     rec = NULL,
                     v = 5,
-                    treeDepthRangeMin = 5,
-                    treeDepthRangeMax = 15,
-                    treeDepthRangeLevels = 3,
-                    treesRangeMin = 8,
-                    treesRangeMax = 32,
-                    treesRangeLevels = 3,
-                    learnRateRangeMin = -2.0,
-                    learnRateRangeMax = -1.0,
-                    learnRateRangeLevels = 2,
-                    mtryRangeMin = 0.0,
-                    mtryRangeMax = 1.0,
-                    mtryRangeLevels = 3,
-                    minNRangeMin = 2,
-                    minNRangeMax = 40,
-                    minNRangeLevels = 3,
-                    lossReductionRangeMin = -1.0,
-                    lossReductionRangeMax = 1.0,
-                    lossReductionRangeLevels = 3,
-                    sampleSizeRangeMin = 0.0,
-                    sampleSizeRangeMax = 1.0,
-                    sampleSizeRangeLevels = 3,
-                    stopIter = 30,
-                    metric = NULL) {
-  treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
-  treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
-  learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
-  mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
-  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-  lossReductionRange <- c(as.numeric(lossReductionRangeMin), as.numeric(lossReductionRangeMax))
-  sampleSizeRange <- c(as.numeric(sampleSizeRangeMin), as.numeric(sampleSizeRangeMax))
-  stopIterRange <- c(as.numeric(stopIter), as.numeric(stopIter)) # constant
-
-  parameterGrid <- dials::grid_regular(
-    dials::tree_depth(range = treeDepthRange),
-    dials::trees(range = treesRange),
-    dials::learn_rate(range = learnRateRange),
-    dials::mtry(range = mtryRange),
-    dials::min_n(range = minNRange),
-    dials::loss_reduction(range = lossReductionRange),
-    dials::sample_size(range = sampleSizeRange),
-    dials::stop_iter(range = stopIterRange),
-    levels = c(
-      tree_depth = as.numeric(treeDepthRangeLevels),
-      trees = as.numeric(treesRangeLevels),
-      learn_rate = as.numeric(learnRateRangeLevels),
-      mtry = as.numeric(mtryRangeLevels),
-      min_n = as.numeric(minNRangeLevels),
-      loss_reduction = as.numeric(lossReductionRangeLevels),
-      sample_size = as.numeric(sampleSizeRangeLevels),
-      stop_iter = 1
-    )
-  )
+                    gridNum = 5,
+                    iter = 10,
+                    metric = NULL,
+                    seed = 1234) {
 
   model <- parsnip::boost_tree(
     tree_depth = tune(),
@@ -727,20 +601,22 @@ xgBoost <- function(algo = "XGBoost",
     sample_size = tune(),
     stop_iter = tune()
   ) %>%
-    parsnip::set_engine(engine = engine, counts = FALSE) %>%
+    parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  gridSearchResult <- stove::gridSearchCV(
+  bayesOptResult <- stove::bayesOptCV(
     rec = rec,
     model = model,
-    v = as.numeric(v),
+    v = as.numeric(v), # 5-fold CV as default
     trainingData = trainingData,
-    parameterGrid = parameterGrid
+    gridNum = gridNum,
+    iter = iter,
+    seed = seed
   )
 
   finalized <- stove::fitBestModel(
-    gridSearchResult = gridSearchResult,
+    optResult = bayesOptResult,
     metric = metric,
     model = model,
     formula = formula,
@@ -784,48 +660,10 @@ lightGbm <- function(algo = "lightGBM",
                      formula = NULL,
                      rec = NULL,
                      v = 5,
-                     treeDepthRangeMin = 5,
-                     treeDepthRangeMax = 15,
-                     treeDepthRangeLevels = 3,
-                     treesRangeMin = 10,
-                     treesRangeMax = 100,
-                     treesRangeLevels = 2,
-                     learnRateRangeMin = -2.0,
-                     learnRateRangeMax = -1.0,
-                     learnRateRangeLevels = 2,
-                     mtryRangeMin = 1,
-                     mtryRangeMax = 20,
-                     mtryRangeLevels = 3,
-                     minNRangeMin = 2,
-                     minNRangeMax = 40,
-                     minNRangeLevels = 3,
-                     lossReductionRangeMin = -1.0,
-                     lossReductionRangeMax = 1.0,
-                     lossReductionRangeLevels = 3,
-                     metric = NULL) {
-  treeDepthRange <- c(as.numeric(treeDepthRangeMin), as.numeric(treeDepthRangeMax))
-  treesRange <- c(as.numeric(treesRangeMin), as.numeric(treesRangeMax))
-  learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
-  mtryRange <- c(as.numeric(mtryRangeMin), as.numeric(mtryRangeMax))
-  minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-  lossReductionRange <- c(as.numeric(lossReductionRangeMin), as.numeric(lossReductionRangeMax))
-
-  parameterGrid <- dials::grid_regular(
-    dials::tree_depth(range = treeDepthRange),
-    dials::trees(range = treesRange),
-    dials::learn_rate(range = learnRateRange),
-    dials::mtry(range = mtryRange),
-    dials::min_n(range = minNRange),
-    dials::loss_reduction(range = lossReductionRange),
-    levels = c(
-      tree_depth = as.numeric(treeDepthRangeLevels),
-      trees = as.numeric(treesRangeLevels),
-      learn_rate = as.numeric(learnRateRangeLevels),
-      mtry = as.numeric(mtryRangeLevels),
-      min_n = as.numeric(minNRangeLevels),
-      loss_reduction = as.numeric(lossReductionRangeLevels)
-    )
-  )
+                     gridNum = 5,
+                     iter = 15,
+                     metric = NULL,
+                     seed = 1234) {
 
   model <- parsnip::boost_tree(
     tree_depth = tune(),
@@ -839,16 +677,18 @@ lightGbm <- function(algo = "lightGBM",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  gridSearchResult <- stove::gridSearchCV(
+  bayesOptResult <- stove::bayesOptCV(
     rec = rec,
     model = model,
-    v = as.numeric(v),
+    v = as.numeric(v), # 5-fold CV as default
     trainingData = trainingData,
-    parameterGrid = parameterGrid
+    gridNum = gridNum,
+    iter = iter,
+    seed = seed
   )
 
   finalized <- stove::fitBestModel(
-    gridSearchResult = gridSearchResult,
+    optResult = bayesOptResult,
     metric = metric,
     model = model,
     formula = formula,
@@ -896,45 +736,10 @@ MLP <- function(algo = "MLP",
                 formula = NULL,
                 rec = NULL,
                 v = 5,
-                hiddenUnitsRangeMin = 1,
-                hiddenUnitsRangeMax = 10,
-                hiddenUnitsRangeLevels = 3,
-                penaltyRangeMin = 0.001,
-                penaltyRangeMax = 1.0,
-                penaltyRangeLevels = 3,
-                epochsRangeMin = 10,
-                epochsRangeMax = 100,
-                epochsRangeLevels = 2,
-                # dropoutRangeMin = 0,
-                # dropoutRangeMax = 1,
-                # dropoutRangeLevels = 2,
-                # activation = "linear", #"linear", "softmax", "relu", and "elu"
-                # learnRateRangeMin = 0,
-                # learnRateRangeMax = 1,
-                # learnRateRangeLevels = 2,
-                metric = NULL) {
-  hiddenUnitsRange <- c(as.numeric(hiddenUnitsRangeMin), as.numeric(hiddenUnitsRangeMax))
-  penaltyRange <- c(as.numeric(penaltyRangeMin), as.numeric(penaltyRangeMax))
-  epochsRange <- c(as.numeric(epochsRangeMin), as.numeric(epochsRangeMax))
-  # dropoutRange <- c(as.numeric(dropoutRangeMin), as.numeric(dropoutRangeMax))
-  # learnRateRange <- c(as.numeric(learnRateRangeMin), as.numeric(learnRateRangeMax))
-
-  parameterGrid <- dials::grid_regular(
-    dials::hidden_units(range = hiddenUnitsRange),
-    dials::penalty(range = penaltyRange),
-    dials::epochs(range = epochsRange),
-    # dials::dropout(range = dropoutRange),
-    # dials::learn_rate(range = learnRateRange),
-    # dials::activation(values = activation),
-    levels = c(
-      hidden_units = as.numeric(hiddenUnitsRangeLevels),
-      penalty = as.numeric(penaltyRangeLevels),
-      epochs = as.numeric(epochsRangeLevels)
-      # dropout = as.numeric(dropoutRangeLevels),
-      # learn_rate = as.numeric(learnRateRangeLevels),
-      # activation = 1
-    )
-  )
+                gridNum = 5,
+                iter = 10,
+                metric = NULL,
+                seed = 1234) {
 
   model <- parsnip::mlp(
     hidden_units = tune(),
@@ -948,16 +753,18 @@ MLP <- function(algo = "MLP",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  gridSearchResult <- stove::gridSearchCV(
+  bayesOptResult <- stove::bayesOptCV(
     rec = rec,
     model = model,
-    v = as.numeric(v),
+    v = as.numeric(v), # 5-fold CV as default
     trainingData = trainingData,
-    parameterGrid = parameterGrid
+    gridNum = gridNum,
+    iter = iter,
+    seed = seed
   )
 
   finalized <- stove::fitBestModel(
-    gridSearchResult = gridSearchResult,
+    optResult = bayesOptResult,
     metric = metric,
     model = model,
     formula = formula,

@@ -2,6 +2,7 @@
 
 export(KNN)
 export(MLP)
+export(bayesOptCV)
 export(clusteringVis)
 export(confusionMatrix)
 export(decisionTree)

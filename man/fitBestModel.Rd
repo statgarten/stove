@@ -5,7 +5,7 @@
 \title{fitting in best model}
 \usage{
 fitBestModel(
-  gridSearchResult,
+  optResult,
   metric,
   model,
   formula,
@@ -15,7 +15,7 @@ fitBestModel(
 )
 }
 \arguments{
-\item{gridSearchResult}{gridSearchCV의 결과값}
+\item{optResult}{gridSearchCV의 결과값}
 
 \item{metric}{모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")}
 
