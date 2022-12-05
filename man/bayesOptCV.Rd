@@ -7,11 +7,11 @@
 bayesOptCV(
   rec = NULL,
   model = NULL,
-  v = "5",
+  v = NULL,
   trainingData = NULL,
   gridNum = NULL,
-  iter = 10,
-  seed = "4814"
+  iter = NULL,
+  seed = NULL
 )
 }
 \arguments{

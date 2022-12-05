@@ -22,7 +22,7 @@ logisticRegression(
 \arguments{
 \item{algo}{사용자가 임의로 지정할 알고리즘명 (default: "logistic Regression")}
 
-\item{engine}{모델을 생성할 때 사용할 패키지 ("glmnet" (default), "glm", "stan")}
+\item{engine}{모델을 생성할 때 사용할 패키지 ("glmnet" (default))}
 
 \item{mode}{분석 유형 ("classification" (default))}
 

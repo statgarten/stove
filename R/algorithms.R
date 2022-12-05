@@ -7,7 +7,7 @@
 #' 필요 hyperparameters: penalty, mixture
 #'
 #' @param algo 사용자가 임의로 지정할 알고리즘명 (default: "logistic Regression")
-#' @param engine  모델을 생성할 때 사용할 패키지 ("glmnet" (default), "glm", "stan")
+#' @param engine  모델을 생성할 때 사용할 패키지 ("glmnet" (default))
 #' @param mode  분석 유형 ("classification" (default))
 #' @param trainingData 훈련데이터 셋
 #' @param splitedData train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋
@@ -36,61 +36,33 @@ logisticRegression <- function(algo = "logistic Regression",
                                iter = 10,
                                metric = "roc_auc",
                                seed = 1234) {
-
-  if (engine == "glmnet") {
-    model <- parsnip::logistic_reg(
-      penalty = tune(),
-      mixture = tune()
+  model <- parsnip::logistic_reg(
+    penalty = tune(),
+    mixture = tune()
     ) %>%
-      parsnip::set_engine(engine = engine) %>%
-      parsnip::set_mode(mode = mode) %>%
-      parsnip::translate()
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::translate()
 
-    bayesOptResult <- stove::bayesOptCV(
-      rec = rec,
-      model = model,
-      v = as.numeric(v), # 5-fold CV as default
-      trainingData = trainingData,
-      gridNum = gridNum,
-      iter = iter,
-      seed = seed
-    )
+  bayesOptResult <- stove::bayesOptCV(
+    rec = rec,
+    model = model,
+    v = as.numeric(v),
+    trainingData = trainingData,
+    gridNum = gridNum,
+    iter = iter,
+    seed = seed
+  )
 
-    finalized <- stove::fitBestModel(
-      optResult = bayesOptResult,
-      metric = metric,
-      model = model,
-      formula = formula,
-      trainingData = trainingData,
-      splitedData = splitedData,
-      algo = paste0(algo, "_", engine)
-    )
-  } else {
-    model <- parsnip::logistic_reg() %>%
-      parsnip::set_engine(engine = engine) %>%
-      parsnip::set_mode(mode = mode) %>%
-      parsnip::translate()
-
-    bayesOptResult <- stove::bayesOptCV(
-      rec = rec,
-      model = model,
-      v = as.numeric(v), # 5-fold CV as default
-      trainingData = trainingData,
-      gridNum = gridNum,
-      iter = iter,
-      seed = seed
-    )
-
-    finalized <- stove::fitBestModel(
-      optResult = bayesOptResult,
-      metric = metric,
-      model = model,
-      formula = formula,
-      trainingData = trainingData,
-      splitedData = splitedData,
-      algo = paste0(algo, "_", engine)
-    )
-  }
+  finalized <- stove::fitBestModel(
+    optResult = bayesOptResult,
+    metric = metric,
+    model = model,
+    formula = formula,
+    trainingData = trainingData,
+    splitedData = splitedData,
+    algo = paste0(algo, "_", engine)
+  )
 
   return(finalized)
 }
@@ -135,62 +107,34 @@ linearRegression <- function(algo = "Linear Regression",
                              iter = 10,
                              metric = "rmse",
                              seed = 1234) {
+  model <- parsnip::linear_reg(
+    penalty = tune(),
+    mixture = tune()
+  ) %>%
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::translate()
 
-  if (engine == "glmnet" || engine == "liblinear" || engine == "brulee") {
+  bayesOptResult <- stove::bayesOptCV(
+    rec = rec,
+    model = model,
+    v = as.numeric(v),
+    trainingData = trainingData,
+    gridNum = gridNum,
+    iter = iter,
+    seed = seed
+  )
 
-    model <- parsnip::linear_reg(
-      penalty = tune(),
-      mixture = tune()
-    ) %>%
-      parsnip::set_engine(engine = engine) %>%
-      parsnip::set_mode(mode = mode) %>%
-      parsnip::translate()
+  finalized <- stove::fitBestModel(
+    optResult = bayesOptResult,
+    metric = metric,
+    model = model,
+    formula = formula,
+    trainingData = trainingData,
+    splitedData = splitedData,
+    algo = paste0(algo, "_", engine)
+  )
 
-    bayesOptResult <- stove::bayesOptCV(
-      rec = rec,
-      model = model,
-      v = as.numeric(v), # 5-fold CV as default
-      trainingData = trainingData,
-      gridNum = gridNum,
-      iter = iter,
-      seed = seed
-    )
-
-    finalized <- stove::fitBestModel(
-      optResult = bayesOptResult,
-      metric = metric,
-      model = model,
-      formula = formula,
-      trainingData = trainingData,
-      splitedData = splitedData,
-      algo = paste0(algo, "_", engine)
-    )
-  } else {
-    model <- parsnip::linear_reg() %>%
-      parsnip::set_engine(engine = engine) %>%
-      parsnip::set_mode(mode = mode) %>%
-      parsnip::translate()
-
-    bayesOptResult <- stove::bayesOptCV(
-      rec = rec,
-      model = model,
-      v = as.numeric(v), # 5-fold CV as default
-      trainingData = trainingData,
-      gridNum = gridNum,
-      iter = iter,
-      seed = seed
-    )
-
-    finalized <- stove::fitBestModel(
-      optResult = bayesOptResult,
-      metric = metric,
-      model = model,
-      formula = formula,
-      trainingData = trainingData,
-      splitedData = splitedData,
-      algo = paste0(algo, "_", engine)
-    )
-  }
 
   return(finalized)
 }
@@ -244,7 +188,7 @@ KNN <- function(algo = "KNN",
   bayesOptResult <- stove::bayesOptCV(
     rec = rec,
     model = model,
-    v = as.numeric(v), # 5-fold CV as default
+    v = as.numeric(v),
     trainingData = trainingData,
     gridNum = gridNum,
     iter = iter,
@@ -313,7 +257,7 @@ naiveBayes <- function(algo = "Naive Bayes",
   bayesOptResult <- stove::bayesOptCV(
     rec = rec,
     model = model,
-    v = as.numeric(v), # 5-fold CV as default
+    v = as.numeric(v),
     trainingData = trainingData,
     gridNum = gridNum,
     iter = iter,
@@ -389,7 +333,7 @@ decisionTree <- function(algo = "Decision Tree",
     bayesOptResult <- stove::bayesOptCV(
       rec = rec,
       model = model,
-      v = as.numeric(v), # 5-fold CV as default
+      v = as.numeric(v),
       trainingData = trainingData,
       gridNum = gridNum,
       iter = iter,
@@ -406,14 +350,6 @@ decisionTree <- function(algo = "Decision Tree",
       algo = paste0(algo, "_", engine)
     )
   } else if (engine == "C5.0") {
-    minNRange <- c(as.numeric(minNRangeMin), as.numeric(minNRangeMax))
-
-    parameterGrid <- dials::grid_regular(
-      dials::min_n(range = minNRange),
-      levels = c(
-        min_n = as.numeric(minNRangeLevels)
-      )
-    )
 
     model <- parsnip::decision_tree(
       min_n = tune()
@@ -425,7 +361,7 @@ decisionTree <- function(algo = "Decision Tree",
     bayesOptResult <- stove::bayesOptCV(
       rec = rec,
       model = model,
-      v = as.numeric(v), # 5-fold CV as default
+      v = as.numeric(v),
       trainingData = trainingData,
       gridNum = gridNum,
       iter = iter,
@@ -454,7 +390,7 @@ decisionTree <- function(algo = "Decision Tree",
     bayesOptResult <- stove::bayesOptCV(
       rec = rec,
       model = model,
-      v = as.numeric(v), # 5-fold CV as default
+      v = as.numeric(v),
       trainingData = trainingData,
       gridNum = gridNum,
       iter = iter,
@@ -533,7 +469,7 @@ randomForest <- function(algo = "Random Forest",
   bayesOptResult <- stove::bayesOptCV(
     rec = rec,
     model = model,
-    v = as.numeric(v), # 5-fold CV as default
+    v = as.numeric(v),
     trainingData = trainingData,
     gridNum = gridNum,
     iter = iter,
@@ -608,7 +544,7 @@ xgBoost <- function(algo = "XGBoost",
   bayesOptResult <- stove::bayesOptCV(
     rec = rec,
     model = model,
-    v = as.numeric(v), # 5-fold CV as default
+    v = as.numeric(v),
     trainingData = trainingData,
     gridNum = gridNum,
     iter = iter,
@@ -680,7 +616,7 @@ lightGbm <- function(algo = "lightGBM",
   bayesOptResult <- stove::bayesOptCV(
     rec = rec,
     model = model,
-    v = as.numeric(v), # 5-fold CV as default
+    v = as.numeric(v),
     trainingData = trainingData,
     gridNum = gridNum,
     iter = iter,
@@ -700,20 +636,19 @@ lightGbm <- function(algo = "lightGBM",
   return(finalized)
 }
 
-#' SVM
+#' SVMLinear
 #'
 #' @details
-#' SVM
+#' SVMLinear
 #'
 #'
 #' @importFrom magrittr %>%
 #'
 #' @export
 
-SVM <- function(algo = "SVM",
+SVMLinear <- function(algo = "SVM",
                 engine = "kernlab",
                 mode = "classification",
-                kernel = "linear", ## linear / poly / rbf
                 trainingData = NULL,
                 splitedData = NULL,
                 formula = NULL,
@@ -724,27 +659,10 @@ SVM <- function(algo = "SVM",
                 metric = NULL,
                 seed = 1234) {
 
-  if (kernel == "linear") {
-    model <- parsnip::svm_linear(
-      cost = tune(),
-      margin = tune()
-    )
-  } else if (kernel == "poly") {
-    model <- parsnip::svm_poly(
-      cost = tune(),
-      degree = tune(),
-      scale_factor = tune(),
-      margin = tune()
-    )
-  } else {
-    model <- parsnip::svm_rbf(
-      cost = tune(),
-      rbf_sigma = tune(),
-      margin = tune()
-    )
-  }
-
-  model <- model %>%
+  model <- parsnip::svm_linear(
+    cost = tune(),
+    margin = tune()
+    ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
@@ -752,7 +670,7 @@ SVM <- function(algo = "SVM",
   bayesOptResult <- stove::bayesOptCV(
     rec = rec,
     model = model,
-    v = as.numeric(v), # 5-fold CV as default
+    v = as.numeric(v),
     trainingData = trainingData,
     gridNum = gridNum,
     iter = iter,
@@ -766,7 +684,118 @@ SVM <- function(algo = "SVM",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-    algo = paste0(algo, "_", kernel) ## engine -> kernel
+    algo = paste0(algo, "_", engine)
+  )
+
+  return(finalized)
+}
+
+#' SVMPoly
+#'
+#' @details
+#' SVMPoly
+#'
+#'
+#' @importFrom magrittr %>%
+#'
+#' @export
+
+SVMPoly <- function(algo = "SVM",
+                      engine = "kernlab",
+                      mode = "classification",
+                      trainingData = NULL,
+                      splitedData = NULL,
+                      formula = NULL,
+                      rec = NULL,
+                      v = 5,
+                      gridNum = 5,
+                      iter = 15,
+                      metric = NULL,
+                      seed = 1234) {
+
+  model <- parsnip::svm_poly(
+    cost = tune(),
+    degree = tune(),
+    scale_factor = tune(),
+    margin = tune()
+    ) %>%
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::translate()
+
+  bayesOptResult <- stove::bayesOptCV(
+    rec = rec,
+    model = model,
+    v = as.numeric(v),
+    trainingData = trainingData,
+    gridNum = gridNum,
+    iter = iter,
+    seed = seed
+  )
+
+  finalized <- stove::fitBestModel(
+    optResult = bayesOptResult,
+    metric = metric,
+    model = model,
+    formula = formula,
+    trainingData = trainingData,
+    splitedData = splitedData,
+    algo = paste0(algo, "_", engine)
+  )
+
+  return(finalized)
+}
+
+#' SVMRbf
+#'
+#' @details
+#' SVMRbf
+#'
+#'
+#' @importFrom magrittr %>%
+#'
+#' @export
+
+SVMRbf <- function(algo = "SVM",
+                      engine = "kernlab",
+                      mode = "classification",
+                      trainingData = NULL,
+                      splitedData = NULL,
+                      formula = NULL,
+                      rec = NULL,
+                      v = 5,
+                      gridNum = 5,
+                      iter = 15,
+                      metric = NULL,
+                      seed = 1234) {
+
+  model <- parsnip::svm_rbf(
+    cost = tune(),
+    rbf_sigma = tune(),
+    margin = tune()
+    ) %>%
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::translate()
+
+  bayesOptResult <- stove::bayesOptCV(
+    rec = rec,
+    model = model,
+    v = as.numeric(v),
+    trainingData = trainingData,
+    gridNum = gridNum,
+    iter = iter,
+    seed = seed
+  )
+
+  finalized <- stove::fitBestModel(
+    optResult = bayesOptResult,
+    metric = metric,
+    model = model,
+    formula = formula,
+    trainingData = trainingData,
+    splitedData = splitedData,
+    algo = paste0(algo, "_", engine)
   )
 
   return(finalized)
@@ -828,7 +857,7 @@ MLP <- function(algo = "MLP",
   bayesOptResult <- stove::bayesOptCV(
     rec = rec,
     model = model,
-    v = as.numeric(v), # 5-fold CV as default
+    v = as.numeric(v),
     trainingData = trainingData,
     gridNum = gridNum,
     iter = iter,

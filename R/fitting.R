@@ -16,19 +16,19 @@
 
 gridSearchCV <- function(rec = NULL,
                          model = NULL,
-                         v = "5", # 5-fold CV as default
+                         v = NULL,
                          trainingData = NULL,
-                         parameterGrid = 10,
-                         seed = "4814") {
-  set.seed(seed = as.numeric(seed))
+                         parameterGrid = NULL,
+                         seed = NULL) {
   tunedWorkflow <- workflows::workflow() %>%
     workflows::add_recipe(rec) %>%
     workflows::add_model(model)
 
+  set.seed(seed = as.numeric(seed))
   result <- tune::tune_grid(tunedWorkflow,
     resamples = rsample::vfold_cv(trainingData, v = as.numeric(v)),
     grid = parameterGrid
-  ) # warnings
+  )
 
   return(list(tunedWorkflow = tunedWorkflow, result = result))
 }
@@ -52,30 +52,23 @@ gridSearchCV <- function(rec = NULL,
 
 bayesOptCV <- function(rec = NULL,
                        model = NULL,
-                       v = "5", # 5-fold CV as default
+                       v = NULL,
                        trainingData = NULL,
                        gridNum = NULL,
-                       iter = 10,
-                       seed = "4814") {
+                       iter = NULL,
+                       seed = NULL) {
   set.seed(seed = as.numeric(seed))
   tunedWorkflow <- workflows::workflow() %>%
     workflows::add_recipe(rec) %>%
     workflows::add_model(model)
 
   folds <- rsample::vfold_cv(trainingData, v = as.numeric(v))
-  # initial <- if(model$engine == "kknn"){
-  #   gridNum
-  # } else {
-  #   length(model$args)*gridNum
-  # }
-
   initial <- ifelse(model$engine == "kknn", gridNum, length(model$args)*gridNum)
 
   if (quo_name(model$args$mtry) == "tune()") {
-
   param <- tunedWorkflow %>%
     hardhat::extract_parameter_set_dials() %>%
-    recipes::update(mtry = finalize(mtry(), trainingData))
+    recipes::update(mtry = dials::finalize(mtry(), trainingData))
 
   set.seed(seed = as.numeric(seed))
   result <-

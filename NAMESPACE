@@ -2,7 +2,9 @@
 
 export(KNN)
 export(MLP)
-export(SVM)
+export(SVMLinear)
+export(SVMPoly)
+export(SVMRbf)
 export(bayesOptCV)
 export(clusteringVis)
 export(confusionMatrix)

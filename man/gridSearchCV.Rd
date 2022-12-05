@@ -7,10 +7,10 @@
 gridSearchCV(
   rec = NULL,
   model = NULL,
-  v = "5",
+  v = NULL,
   trainingData = NULL,
-  parameterGrid = 10,
-  seed = "4814"
+  parameterGrid = NULL,
+  seed = NULL
 )
 }
 \arguments{

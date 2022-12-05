@@ -1,6 +1,6 @@
 ---
 title: "stove - classification"
-date: 2022.08.24.
+date: 2022.12.05.
 format:
   pdf:
     toc: true
@@ -105,12 +105,14 @@ rec <- stove::prepForCV(data = data_train,
 
 | User Input |                                             description |
 |:----------:|:-------------------------------------------------------:|
-|       algo |                                        ML 알고리즘 선택 |
-|     engine |                                             engine 선택 |
-|       mode |                                               mode 선택 |
+|       mode |                                    mode 선택(분류/회귀) |
+|       algo |                                   사용자정의 알고리즘명 |
+|     engine |                               알고리즘 구현 engine 선택 |
+|          v |            교차검증시 훈련셋을 몇 번 분할할 것인지 입력 |
 |     metric |                   Best performance에 대한 평가지표 선택 |
-|          v | Cross validation시 train set을 몇 번 분할할 것인지 입력 |
-|        ... | 각 모델의 hyperparameter의 최소/최대값(Min, Max), 몇 단계로 나눌지(Levels)|
+|    gridNum | 각 하이퍼파라미터 별로 몇 개의 그리드를 할당해 베이지안 최적화를할지 설정 (ex. 모델의 하이퍼파라미터가 3개, gridNum이 5일 때, 하이퍼파라미터 최적화를 위한 그리드는 3*5=15개)|
+|    iter |                                베이지안 최적화 시 반복 횟수|
+|    seed |                                결과 재현을 위한 시드값 설정|
 
 모델 object를 저장할 빈 리스트를 생성합니다.
 
@@ -124,19 +126,13 @@ models_list <- list()
 # User input
 
 mode <- "classification"
-algo <- "logisticRegression"
-engine <- "glmnet" # glmnet (default), glm, stan
-
-# penalty_range_min <- 0.001
-# penalty_range_max <- 1.0
-# penalty_range_levels <- 5
-# mixture_range_min <- 0.0
-# mixture_range_max <- 1.0
-# mixture_range_levels <- 5 
-
+algo <- "logisticRegression" # Custom name
+engine <- "glmnet" # glmnet (default)
 v <- 2
-
 metric <- "roc_auc" # roc_auc (default), accuracy
+gridNum <- 5
+iter <- 10
+seed <- 1234
 
 # Modeling
 
@@ -149,10 +145,10 @@ finalized <- stove::logisticRegression(
   formula = formula,
   rec = rec,
   v = v,
-  gridNum = 5,
-  iter = 10,
+  gridNum = gridNum,
+  iter = iter,
   metric = metric,
-  seed = 1234
+  seed = seed
 )
 
 # Add the model to models_list
@@ -167,14 +163,11 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 mode <- "classification"
 algo <- "KNN"
 engine <- "kknn" # kknn (defualt)
-
-# neighbors_range_min <- 1 
-# neighbors_range_max <- 10
-# neighbors_range_levels <- 10
-
 v <- 2
-
 metric <- "roc_auc" # roc_auc (default), accuracy
+gridNum <- 5
+iter <- 10
+seed <- 1234
 
 # Modeling
 
@@ -187,10 +180,10 @@ finalized <- stove::KNN(
   formula = formula,
   rec = rec,
   v = v,
-  gridNum = 5,
-  iter = 10,
+  gridNum = gridNum,
+  iter = iter,
   metric = metric,
-  seed = 1234
+  seed = seed
 )
 
 # Add the model to models_list
@@ -204,18 +197,12 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 
 mode <- "classification"
 algo <- "naiveBayes"
-engine <- "klaR" # klaR (default), naivebayes
-
-# smoothness_range_min <- 0.5
-# smoothness_range_max <- 1.5 
-# smoothness_range_levels <- 3 
-# laplace_range_min <- 0.0 
-# laplace_range_max <- 3.0
-# laplace_range_levels <- 4
-
+engine <- "naivebayes" # klaR (default), naivebayes
 v <- 2
-
 metric <- "roc_auc" # roc_auc (default), accuracy
+gridNum <- 5
+iter <- 10
+seed <- 1234
 
 # Modeling
 
@@ -228,10 +215,10 @@ finalized <- stove::naiveBayes(
   formula = formula,
   rec = rec,
   v = v,
-  gridNum = 5,
-  iter = 10,
+  gridNum = gridNum,
+  iter = iter,
   metric = metric,
-  seed = 1234
+  seed = seed
 )
 
 # Add the model to models_list
@@ -245,21 +232,12 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 
 mode <- "classification"
 algo <- "decisionTree"
-engine <- "rpart" # rpart (default), C5.0, partykit
-
-# tree_depth_range_min <- 1
-# tree_depth_range_max <- 15 
-# tree_depth_range_levels <- 3 
-# min_n_range_min <- 2 
-# min_n_range_max <- 40 
-# min_n_range_levels <- 3 
-# cost_complexity_range_min <- -2.0
-# cost_complexity_range_max <- -1.0 
-# cost_complexity_range_levels <- 2 
-
+engine <- "partykit" # rpart (default), C5.0, partykit
 v <- 2
-
 metric <- "roc_auc" # roc_auc (default), accuracy
+gridNum <- 5
+iter <- 10
+seed <- 1234
 
 # Modeling
 
@@ -272,10 +250,10 @@ finalized <- stove::decisionTree(
   formula = formula,
   rec = rec,
   v = v,
-  gridNum = 5,
-  iter = 10,
+  gridNum = gridNum,
+  iter = iter,
   metric = metric,
-  seed = 1234
+  seed = seed
 )
 
 # Add the model to models_list
@@ -289,21 +267,12 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 
 mode <- "classification"
 algo <- "randomForest"
-engine <- "ranger" # ranger (default), randomForest, partykit
-
-# mtry_range_min <- 1
-# mtry_range_max <- 20 
-# mtry_range_levels <- 3 
-# trees_range_min <- 100 
-# trees_range_max <- 1000 
-# trees_range_levels <- 3 
-# min_n_range_min <- 2 
-# min_n_range_max <- 40 
-# min_n_range_levels <- 3 
-
+engine <- "randomForest" # ranger (default), randomForest, partykit(?)
 v <- 2
-
 metric <- "roc_auc" # roc_auc (default), accuracy
+gridNum <- 5
+iter <- 10
+seed <- 1234
 
 # Modeling
 
@@ -316,10 +285,10 @@ finalized <- stove::randomForest(
   formula = formula,
   rec = rec,
   v = v,
-  gridNum = 5,
-  iter = 10,
+  gridNum = gridNum,
+  iter = iter,
   metric = metric,
-  seed = 1234
+  seed = seed
 )
 
 # Add the model to models_list
@@ -334,33 +303,11 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 mode <- "classification"
 algo <- "XGBoost"
 engine <- "xgboost" # xgboost
-
-# tree_depth_range_min <- 5
-# tree_depth_range_max <- 15 
-# tree_depth_range_levels <- 3 
-# trees_range_min <- 8 
-# trees_range_max <- 32 
-# trees_range_levels <- 3 
-# learn_rate_range_min <- -2.0 
-# learn_rate_range_max <- -1.0 
-# learn_rate_range_levels <- 2 
-# mtry_range_min <- 0.0 
-# mtry_range_max <- 1.0 
-# mtry_range_levels <- 3 
-# min_n_range_min <- 2 
-# min_n_range_max <- 40 
-# min_n_range_levels <- 3 
-# loss_reduction_range_min <- -1.0 
-# loss_reduction_range_max <- 1.0 
-# loss_reduction_range_levels <- 3 
-# sample_size_range_min <- 0.0 
-# sample_size_range_max <- 1.0 
-# sample_size_range_levels <- 3 
-# stop_iter <- 30 
-
 v <- 2
-
 metric <- "roc_auc" # roc_auc (default), accuracy
+gridNum <- 5
+iter <- 10
+seed <- 1234
 
 # Modeling
 
@@ -373,10 +320,10 @@ finalized <- stove::xgBoost(
   formula = formula,
   rec = rec,
   v = v,
-  gridNum = 5,
-  iter = 10,
+  gridNum = gridNum,
+  iter = iter,
   metric = metric,
-  seed = 1234
+  seed = seed
 )
 
 # Add the model to models_list
@@ -386,35 +333,17 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 
 ## lightGBM
 
-```{r, results = FALSE, message=FALSE, warning=FALSE}
+```{r, results=FALSE, message=FALSE, warning=FALSE}
 # User input
 
 mode <- "classification"
 algo <- "lightGBM"
 engine <- "lightgbm" # lightgbm
-
-# tree_depth_range_min <- 5
-# tree_depth_range_max <- 15 
-# tree_depth_range_levels <- 3 
-# trees_range_min <- 10 
-# trees_range_max <- 100 
-# trees_range_levels <- 2 
-# learn_rate_range_min <- -2.0 
-# learn_rate_range_max <- -1.0 
-# learn_rate_range_levels <- 2 
-# mtry_range_min <- 1 
-# mtry_range_max <- 20 
-# mtry_range_levels <- 3 
-# min_n_range_min <- 2 
-# min_n_range_max <- 40 
-# min_n_range_levels <- 3 
-# loss_reduction_range_min <- -1.0 
-# loss_reduction_range_max <- 1.0 
-# loss_reduction_range_levels <- 3 
-
 v <- 2
-
 metric <- "roc_auc" # roc_auc (default), accuracy
+gridNum <- 5
+iter <- 10
+seed <- 1234
 
 # Modeling
 
@@ -427,10 +356,10 @@ finalized <- stove::lightGbm(
   formula = formula,
   rec = rec,
   v = v,
-  gridNum = 5,
-  iter = 10,
+  gridNum = gridNum,
+  iter = iter,
   metric = metric,
-  seed = 1234
+  seed = seed
 )
 
 # Add the model to models_list
@@ -445,20 +374,11 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 mode <- "classification"
 algo <- "MLP"
 engine <- "nnet" # nnet
-
-# hidden_units_range_min <- 1
-# hidden_units_range_max <- 10 
-# hidden_units_range_levels <- 3 
-# penalty_range_min <- 0.001 
-# penalty_range_max <- 1.0 
-# penalty_range_levels <- 3
-# epochs_range_min <- 10 
-# epochs_range_max <- 100 
-# epochs_range_levels <- 2 
-
 v <- 2
-
 metric <- "roc_auc" # roc_auc (default), accuracy
+gridNum <- 5
+iter <- 10
+seed <- 1234
 
 # Modeling
 
@@ -471,10 +391,10 @@ finalized <- stove::MLP(
   formula = formula,
   rec = rec,
   v = v,
-  gridNum = 5,
-  iter = 10,
+  gridNum = gridNum,
+  iter = iter,
   metric = metric,
-  seed = 1234
+  seed = seed
 )
 
 # Add the model to models_list
@@ -482,41 +402,39 @@ models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 
 ```
 
-## SVM
+## SVM - Linear kernel
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
 
 mode <- "classification"
-algo <- "SVM"
+algo <- "SVM_linear"
 engine <- "kernlab"
-kernel = "rbf" ## linear / poly / rbf
-
 v <- 2
-
 metric <- "roc_auc" # roc_auc (default), accuracy
+gridNum <- 5
+iter <- 10
+seed <- 1234
 
 # Modeling
 
-finalized <- stove::SVM(
+finalized <- stove::SVMLinear(
   algo = algo,
   engine = engine,
   mode = mode,
-  kernel = kernel,
   trainingData = data_train,
   splitedData = data_split,
   formula = formula,
   rec = rec,
   v = v,
-  gridNum = 5,
-  iter = 10,
+  gridNum = gridNum,
+  iter = iter,
   metric = metric,
-  seed = 1234
+  seed = seed
 )
 
 # Add the model to models_list
-# SVM은 engine은 kernlab으로 고정이기 때문에, engine 대신 kennel로 명명
-models_list[[paste0(algo, "_", kernel)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
 ```
 
 # Sources for report
@@ -541,7 +459,7 @@ roc_curve
 ```{r}
 # User input
 names(models_list)
-model_name <- "SVM_linear"
+model_name <- "SVM_linear_kernlab"
 ```
 
 ```{r, fig.width = 7, fig.height = 6}
