@@ -104,7 +104,7 @@ models_list <- list()
 # User input
 mode <- "regression"
 algo <- "linearRegression"
-engine <- "glmnet" # glmnet (default), liblinear, brulee
+engine <- "glmnet" # glmnet (default)
 v <- 2
 metric <- "rmse" # rmse (default), rsq
 gridNum <- 5

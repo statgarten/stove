@@ -20,7 +20,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom dials penalty mixture
 #' @import parsnip
-#' @import stats glmnet LiblineaR rstanarm
+#' @import glmnet
 #'
 #' @export
 
