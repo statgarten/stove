@@ -4,3 +4,4 @@
 .Rbuildignore
 /etc
 /quarto-doc/regression_for_rmseplot.qmd
+docs

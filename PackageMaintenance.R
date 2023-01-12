@@ -38,3 +38,7 @@ devtools::document()
 # quarto 문서 관리
 quarto::quarto_preview("document.qmd")
 quarto::quarto_render("document.qmd")
+
+# pkgdown 작성
+usethis::use_pkgdown()
+pkgdown::build_site()
