@@ -39,6 +39,9 @@ devtools::document()
 quarto::quarto_preview("document.qmd")
 quarto::quarto_render("document.qmd")
 
+# MIT license
+usethis::use_mit_license()
+
 # pkgdown 작성
 usethis::use_pkgdown()
 pkgdown::build_site()
