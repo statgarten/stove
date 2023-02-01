@@ -41,7 +41,15 @@ xgBoost(
 \item{...}{hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.}
 }
 \description{
-XGBoost
+XGBoost (eXtreme Gradient Boosting) is a decision tree-based ensemble learning method for gradient boosting.
+Assumption:
+\itemize{
+\item XGBoost requires a set of input features and a target variable.
+\item The input features should be numerical and can be either continuous or categorical.
+\item The target variable should be numerical or categorical, depending on the problem type.
+\item XGBoost can handle missing values in the input data.
+\item XGBoost assumes that the data is independently and identically distributed (IID).
+}
 }
 \details{
 XGBoost

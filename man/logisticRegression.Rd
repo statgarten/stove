@@ -2,7 +2,7 @@
 % Please edit documentation in R/algorithms.R
 \name{logisticRegression}
 \alias{logisticRegression}
-\title{logistic Regression}
+\title{Logistic Regression}
 \usage{
 logisticRegression(
   algo = "logistic Regression",
@@ -20,34 +20,39 @@ logisticRegression(
 )
 }
 \arguments{
-\item{algo}{사용자가 임의로 지정할 알고리즘명 (default: "logistic Regression")}
+\item{algo}{A name of the algorithm which can be customized by user. (default: "logistic Regression")}
 
-\item{engine}{모델을 생성할 때 사용할 패키지 ("glmnet" (default))}
+\item{engine}{The name of software that should be used to fit the model. (Option: "glmnet" (default))}
 
-\item{mode}{분석 유형 ("classification" (default))}
+\item{mode}{The model type. It should be "classification" or "regression". (Option: "classification" (default))}
 
-\item{trainingData}{훈련데이터 셋}
+\item{trainingData}{A data frame for training}
 
-\item{splitedData}{train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋}
+\item{splitedData}{A data frame including metadata of split}
 
-\item{formula}{모델링을 위한 수식}
+\item{formula}{formula for modeling}
 
-\item{rec}{데이터, 전처리 정보를 포함한 recipe object}
+\item{rec}{Recipe object containing preprocessing information for cross-validation}
 
-\item{v}{v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)}
+\item{v}{Applying v-fold cross validation in modeling process (default: 5)}
 
-\item{metric}{모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")}
-
-\item{...}{hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.}
+\item{metric}{Metric to evaluate the performance (Option: "roc_auc" (default), "accuracy")}
 }
 \description{
-로지스틱 회귀 알고리즘 함수. 예측 변수들이 정규분포를 따르지 않아도 사용할 수 있습니다.
-그러나 이 알고리즘은 결과 변수가 선형적으로 구분되며, 예측 변수들의 값이 결과 변수와 선형 관계를
-갖는다고 가정합니다. 만약 데이터가 이 가정을 충족하지 않는 경우 성능이 저하될 수 있습니다.
+Logistic regression is a algorithm for binary classification problems using a logistic function to model the probability of the positive class.
+This function supports: binary classification
+Assumption:
+\itemize{
+\item The modeling function using logistic regression
+\item The dependent variable is binary.
+\item The independent variables are linearly related to the log odds of the dependent variable.
+\item There is little or no multicollinearity among independent variables.
+\item There is little or no missing data.
+\item The observations are independent of each other.
+\item The error term has a constant variance and is normally distributed.
+\item There is a large sample size.
+}
 }
 \details{
-로지스틱 회귀 알고리즘 함수. 예측 변수들이 정규분포를 따르지 않아도 사용할 수 있습니다.
-그러나 이 알고리즘은 결과 변수가 선형적으로 구분되며, 예측 변수들의 값이 결과 변수와 선형 관계를
-갖는다고 가정합니다. 만약 데이터가 이 가정을 충족하지 않는 경우 성능이 저하될 수 있습니다.
-필요 hyperparameters: penalty, mixture
+Hyperparameters for tuning: penalty, mixture
 }

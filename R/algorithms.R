@@ -1,26 +1,30 @@
-#' logistic Regression
+#' Logistic Regression
 #'
 #' @description
-#' 로지스틱 회귀 알고리즘 함수. 예측 변수들이 정규분포를 따르지 않아도 사용할 수 있습니다.
-#' 그러나 이 알고리즘은 결과 변수가 선형적으로 구분되며, 예측 변수들의 값이 결과 변수와 선형 관계를
-#' 갖는다고 가정합니다. 만약 데이터가 이 가정을 충족하지 않는 경우 성능이 저하될 수 있습니다.
+#' Logistic regression is a algorithm for binary classification problems using a logistic function to model the probability of the positive class.
+#' This function supports: binary classification
+#' Assumption:
+#' - The modeling function using logistic regression
+#' - The dependent variable is binary.
+#' - The independent variables are linearly related to the log odds of the dependent variable.
+#' - There is little or no multicollinearity among independent variables.
+#' - There is little or no missing data.
+#' - The observations are independent of each other.
+#' - The error term has a constant variance and is normally distributed.
+#' - There is a large sample size.
 #'
 #' @details
-#' 로지스틱 회귀 알고리즘 함수. 예측 변수들이 정규분포를 따르지 않아도 사용할 수 있습니다.
-#' 그러나 이 알고리즘은 결과 변수가 선형적으로 구분되며, 예측 변수들의 값이 결과 변수와 선형 관계를
-#' 갖는다고 가정합니다. 만약 데이터가 이 가정을 충족하지 않는 경우 성능이 저하될 수 있습니다.
-#' 필요 hyperparameters: penalty, mixture
+#' Hyperparameters for tuning: penalty, mixture
 #'
-#' @param algo 사용자가 임의로 지정할 알고리즘명 (default: "logistic Regression")
-#' @param engine  모델을 생성할 때 사용할 패키지 ("glmnet" (default))
-#' @param mode  분석 유형 ("classification" (default))
-#' @param trainingData 훈련데이터 셋
-#' @param splitedData train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋
-#' @param formula 모델링을 위한 수식
-#' @param rec 데이터, 전처리 정보를 포함한 recipe object
-#' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
-#' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
-#' @param ... hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.
+#' @param algo A name of the algorithm which can be customized by user. (default: "logistic Regression")
+#' @param engine  The name of software that should be used to fit the model. (Option: "glmnet" (default))
+#' @param mode  The model type. It should be "classification" or "regression". (Option: "classification" (default))
+#' @param trainingData A data frame for training
+#' @param splitedData A data frame including metadata of split
+#' @param formula formula for modeling
+#' @param rec Recipe object containing preprocessing information for cross-validation
+#' @param v Applying v-fold cross validation in modeling process (default: 5)
+#' @param metric Metric to evaluate the performance (Option: "roc_auc" (default), "accuracy")
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dials penalty mixture
@@ -496,6 +500,15 @@ randomForest <- function(algo = "Random Forest",
 
 
 #' XGBoost
+#'
+#' @description
+#' XGBoost (eXtreme Gradient Boosting) is a decision tree-based ensemble learning method for gradient boosting.
+#' Assumption:
+#' - XGBoost requires a set of input features and a target variable.
+#' - The input features should be numerical and can be either continuous or categorical.
+#' - The target variable should be numerical or categorical, depending on the problem type.
+#' - XGBoost can handle missing values in the input data.
+#' - XGBoost assumes that the data is independently and identically distributed (IID).
 #'
 #' @details
 #' XGBoost
