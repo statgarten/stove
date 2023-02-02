@@ -1,9 +1,0 @@
-file: logisticRegression_glmnet_0.rds
-file_size: 23301
-pin_hash: 53e8d282c45b28c5
-type: rds
-title: 'logisticRegression_glmnet_0.1: a pinned list'
-description: A glmnet classification modeling workflow
-created: 20220916T015645Z
-api_version: 1.0
-user: []
