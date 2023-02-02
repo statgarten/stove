@@ -2,7 +2,9 @@
 #'
 #' @description
 #' Logistic regression is a algorithm for binary classification problems using a logistic function to model the probability of the positive class.
+#'
 #' This function supports: binary classification
+#'
 #' Assumption:
 #' - The modeling function using logistic regression
 #' - The dependent variable is binary.
