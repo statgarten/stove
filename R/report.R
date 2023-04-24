@@ -17,7 +17,7 @@
 rocCurve <- function(modelsList, targetVar) {
   colors <- grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
 
-  plot <- do.call(rbind, modelsList)[[5]] %>% ## rbind here does nothing
+  plot <- do.call(rbind, modelsList)[[5]] %>%
     do.call(rbind, .) %>%
     dplyr::group_by(model) %>%
     yardstick::roc_curve(

@@ -5,20 +5,10 @@
 #'
 #' This function supports: binary classification
 #'
-#' Assumption:
-#' - The modeling function using logistic regression
-#' - The dependent variable is binary.
-#' - The independent variables are linearly related to the log odds of the dependent variable.
-#' - There is little or no multicollinearity among independent variables.
-#' - There is little or no missing data.
-#' - The observations are independent of each other.
-#' - The error term has a constant variance and is normally distributed.
-#' - There is a large sample size.
-#'
 #' @details
 #' Hyperparameters for tuning: penalty, mixture
 #'
-#' @param algo A name of the algorithm which can be customized by user. (default: "logistic Regression")
+#' @param algo A name of the algorithm which can be customized by user. (default: "Logistic Regression")
 #' @param engine  The name of software that should be used to fit the model. (Option: "glmnet" (default))
 #' @param mode  The model type. It should be "classification" or "regression". (Option: "classification" (default))
 #' @param trainingData A data frame for training
@@ -35,7 +25,7 @@
 #'
 #' @export
 
-logisticRegression <- function(algo = "logistic Regression",
+logisticRegression <- function(algo = "Logistic Regression",
                                engine = "glmnet",
                                mode = "classification",
                                trainingData = NULL,
@@ -78,6 +68,75 @@ logisticRegression <- function(algo = "logistic Regression",
   return(finalized)
 }
 
+#' Multinomial Regression
+#'
+#' @description
+#' Multinomial regression is a algorithm for multinomial classification problems
+#'
+#' This function supports: multinomial classification
+#'
+#' @details
+#' Hyperparameters for tuning: penalty, mixture
+#'
+#' @param algo A name of the algorithm which can be customized by user. (default: "Multinomial Regression")
+#' @param engine  The name of software that should be used to fit the model. (Option: "glmnet" (default))
+#' @param mode  The model type. It should be "classification" or "regression". (Option: "classification" (default))
+#' @param trainingData A data frame for training
+#' @param splitedData A data frame including metadata of split
+#' @param formula formula for modeling
+#' @param rec Recipe object containing preprocessing information for cross-validation
+#' @param v Applying v-fold cross validation in modeling process (default: 5)
+#' @param metric Metric to evaluate the performance (Option: "roc_auc" (default), "accuracy")
+#'
+#' @importFrom magrittr %>%
+#' @importFrom dials penalty mixture
+#' @import parsnip
+#' @import glmnet
+#'
+#' @export
+
+multinomialRegression <- function(algo = "Multinomial Regression",
+                               engine = "glmnet",
+                               mode = "classification",
+                               trainingData = NULL,
+                               splitedData = NULL,
+                               formula = NULL,
+                               rec = NULL,
+                               v = 5,
+                               gridNum = 5,
+                               iter = 10,
+                               metric = "roc_auc",
+                               seed = 1234) {
+  model <- parsnip::multinom_reg(
+    penalty = tune(),
+    mixture = tune()
+  ) %>%
+    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_mode(mode = mode) %>%
+    parsnip::translate()
+
+  bayesOptResult <- stove::bayesOptCV(
+    rec = rec,
+    model = model,
+    v = as.numeric(v),
+    trainingData = trainingData,
+    gridNum = gridNum,
+    iter = iter,
+    seed = seed
+  )
+
+  finalized <- stove::fitBestModel(
+    optResult = bayesOptResult,
+    metric = metric,
+    model = model,
+    formula = formula,
+    trainingData = trainingData,
+    splitedData = splitedData,
+    algo = paste0(algo, "_", engine)
+  )
+
+  return(finalized)
+}
 
 #' Linear Regression
 #'
@@ -306,7 +365,6 @@ naiveBayes <- function(algo = "Naive Bayes",
 #' @param rec 데이터, 전처리 정보를 포함한 recipe object
 #' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
 #' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
-#' @param ... hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.
 #'
 #' @importFrom magrittr %>%
 
@@ -443,7 +501,6 @@ decisionTree <- function(algo = "Decision Tree",
 #' @param rec 데이터, 전처리 정보를 포함한 recipe object
 #' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
 #' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
-#' @param ... hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.
 #'
 #' @importFrom magrittr %>%
 
@@ -524,7 +581,6 @@ randomForest <- function(algo = "Random Forest",
 #' @param rec 데이터, 전처리 정보를 포함한 recipe object
 #' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
 #' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
-#' @param ... hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.
 #'
 #' @importFrom magrittr %>%
 
@@ -598,7 +654,6 @@ xgBoost <- function(algo = "XGBoost",
 #' @param rec 데이터, 전처리 정보를 포함한 recipe object
 #' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
 #' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
-#' @param ... hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.
 #'
 #' @importFrom magrittr %>%
 
@@ -839,11 +894,8 @@ SVMRbf <- function(algo = "SVM",
 #' @param rec 데이터, 전처리 정보를 포함한 recipe object
 #' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
 #' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
-#' @param ... hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.
 #'
 #' @importFrom magrittr %>%
-
-
 #' @importFrom dials hidden_units penalty epochs
 #' @import parsnip
 #'

@@ -1,7 +1,11 @@
 # :yellow_heart: stove <img src="logo.png" width="120" align="right"/>
+
 <!-- badges: start -->
+
 [![Lifecycle:experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+
 <!-- badges: end -->
+
 The stove package provides functions for ML modeling. [Packages from the Tidymodels](https://www.tidymodels.org/packages/) were used, but they were configured to be easy for ML beginners to use. Although it belongs to [statgarten](https://github.com/statgarten) whose packages are incorporated in shiny app, stove package also can be used for itself in console.
 
 ## :wrench: Install
@@ -94,9 +98,17 @@ finalized <- stove::logisticRegression(
   seed = seed
 )
 ```
-You can compare several models' performance and visualize them.  
+
+You can compare several models' performance and visualize them.\
 These [documents](https://github.com/statgarten/stove/tree/main/quarto-doc) contain the example codes for modeling workflow using stove.
 
+## :blush: Authors
+
+-   Yeonchan Seong [\@ycseong07](http://github.com/ycseong07)
+
+## :memo: License
+
+Copyright :copyright: 2022 Yeonchan Seong This project is [MIT](https://opensource.org/licenses/MIT) licensed
 
 ## :clipboard: Dependency
 
@@ -242,11 +254,3 @@ xtable - 1.8-4\
 xts - 0.12.2\
 yardstick - 1.1.0\
 zoo - 1.8-11
-
-## :blush: Authors
-
--   Yeonchan Seong [\@ycseong07](http://github.com/ycseong07)
-
-## :memo: License
-
-Copyright :copyright: 2022 Yeonchan Seong This project is [MIT](https://opensource.org/licenses/MIT) licensed
