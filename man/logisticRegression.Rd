@@ -5,7 +5,7 @@
 \title{Logistic Regression}
 \usage{
 logisticRegression(
-  algo = "logistic Regression",
+  algo = "Logistic Regression",
   engine = "glmnet",
   mode = "classification",
   trainingData = NULL,
@@ -20,7 +20,7 @@ logisticRegression(
 )
 }
 \arguments{
-\item{algo}{A name of the algorithm which can be customized by user. (default: "logistic Regression")}
+\item{algo}{A name of the algorithm which can be customized by user. (default: "Logistic Regression")}
 
 \item{engine}{The name of software that should be used to fit the model. (Option: "glmnet" (default))}
 

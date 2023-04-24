@@ -15,33 +15,42 @@
 #' @export
 
 rocCurve <- function(modelsList, targetVar) {
-  colors <- grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
 
-  plot <- do.call(rbind, modelsList)[[5]] %>%
+  tmp <- do.call(rbind, modelsList)[[5]] %>%
     do.call(rbind, .) %>%
-    dplyr::group_by(model) %>%
-    yardstick::roc_curve(
-      truth = eval(parse(text = targetVar)),
-      .pred_1,
-      event_level = "second"
-    ) %>%
-    ggplot(
-      aes(
-        x = 1 - specificity,
-        y = sensitivity,
-        color = model
-      )
-    ) +
-    labs(
-      title = "ROC curve",
-      x = "False Positive Rate (1-Specificity)",
-      y = "True Positive Rate (Sensitivity)"
-    ) +
-    geom_line(size = 1.1) +
-    geom_abline(slope = 1, intercept = 0, size = 0.5) +
-    scale_color_manual(values = colors(length(modelsList))) +
-    coord_fixed() +
-    cowplot::theme_cowplot()
+    dplyr::group_by(model)
+
+  if (".pred_1" %in% colnames(tmp)){
+    colors <- grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
+
+    plot <- do.call(rbind, modelsList)[[5]] %>%
+      do.call(rbind, .) %>%
+      dplyr::group_by(model) %>%
+      yardstick::roc_curve(
+        truth = eval(parse(text = targetVar)),
+        .pred_1,
+        event_level = "second"
+      ) %>%
+      ggplot(
+        aes(
+          x = 1 - specificity,
+          y = sensitivity,
+          color = model
+        )
+      ) +
+      labs(
+        title = "ROC curve",
+        x = "False Positive Rate (1-Specificity)",
+        y = "True Positive Rate (Sensitivity)"
+      ) +
+      geom_line(size = 1.1) +
+      geom_abline(slope = 1, intercept = 0, size = 0.5) +
+      scale_color_manual(values = colors(length(modelsList))) +
+      coord_fixed() +
+      cowplot::theme_cowplot()
+  } else {
+    stop("`rocCurve()` supports only the results of the binary classification model.")
+  }
 
   return(plot)
 }

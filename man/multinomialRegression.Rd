@@ -5,7 +5,7 @@
 \title{Multinomial Regression}
 \usage{
 multinomialRegression(
-  algo = "logistic Regression",
+  algo = "Multinomial Regression",
   engine = "glmnet",
   mode = "classification",
   trainingData = NULL,
@@ -20,7 +20,7 @@ multinomialRegression(
 )
 }
 \arguments{
-\item{algo}{A name of the algorithm which can be customized by user. (default: "logistic Regression")}
+\item{algo}{A name of the algorithm which can be customized by user. (default: "Multinomial Regression")}
 
 \item{engine}{The name of software that should be used to fit the model. (Option: "glmnet" (default))}
 
@@ -41,7 +41,7 @@ multinomialRegression(
 \description{
 Multinomial regression is a algorithm for multinomial classification problems
 
-This function supports: binary classification
+This function supports: multinomial classification
 }
 \details{
 Hyperparameters for tuning: penalty, mixture

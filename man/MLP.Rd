@@ -37,8 +37,6 @@ MLP(
 \item{v}{v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)}
 
 \item{metric}{모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")}
-
-\item{...}{hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.}
 }
 \description{
 neural network
