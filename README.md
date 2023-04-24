@@ -112,6 +112,9 @@ Copyright :copyright: 2022 Yeonchan Seong This project is [MIT](https://opensour
 
 ## :clipboard: Dependency
 
+<details>
+<summary>Click to expand</summary>
+
 assertthat - 0.2.1\
 base64enc - 0.1-3\
 bayesplot - 1.10.0\
@@ -254,3 +257,5 @@ xtable - 1.8-4\
 xts - 0.12.2\
 yardstick - 1.1.0\
 zoo - 1.8-11
+  
+</details>
