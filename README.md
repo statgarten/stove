@@ -102,6 +102,10 @@ finalized <- stove::logisticRegression(
 You can compare several models' performance and visualize them.\
 These [documents](https://github.com/statgarten/stove/tree/main/quarto-doc) contain the example codes for modeling workflow using stove.
 
+## :white_check_mark: Recommendation
+
+When training an ML model, the amount of data required depends on the complexity of the task you want to solve or the complexity of the learning algorithm. 'stove' does not support the training process without cross-validation. We recommend training the model with data having at least 1,000 rows.
+
 ## :blush: Authors
 
 -   Yeonchan Seong [\@ycseong07](http://github.com/ycseong07)
