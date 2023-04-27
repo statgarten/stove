@@ -124,5 +124,5 @@ fitBestModel <- function(optResult,
   finalFittedModel$.predictions[[1]] <- finalFittedModel$.predictions[[1]] %>%
     dplyr::mutate(model = algo)
 
-  return(list(finalModel = finalModel, finalFittedModel = finalFittedModel))
+  return(list(finalModel = finalModel, finalFittedModel = finalFittedModel, bestParams = bestParams))
 }
