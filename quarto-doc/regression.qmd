@@ -96,6 +96,7 @@ rec <- stove::prepForCV(data = data_train,
 
 ```{r}
 models_list <- list()
+tuned_results_list <- list()
 ```
 
 ## Linear Regression
@@ -127,9 +128,9 @@ finalized <- stove::linearRegression(
   seed = seed
 )
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
+tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
-
 
 ## K Nearest Neighbor
 
@@ -160,7 +161,8 @@ finalized <- stove::KNN(
   seed = seed
 )
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
+tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
 
 ## Decision Tree
@@ -192,7 +194,8 @@ finalized <- stove::decisionTree(
   seed = seed
 )
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
+tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
 
 ## Random Forest
@@ -224,7 +227,8 @@ finalized <- stove::randomForest(
   seed = seed
 )
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
+tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
 
 ## XGBoost
@@ -256,7 +260,8 @@ finalized <- stove::xgBoost(
   seed = seed
 )
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
+tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
 
 
@@ -289,7 +294,8 @@ finalized <- stove::lightGbm(
   seed = seed
 )
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
+tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
 
 ## MLP
@@ -321,7 +327,8 @@ finalized <- stove::MLP(
   seed = seed
 )
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
+tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
 
 # Sources for report
@@ -353,3 +360,45 @@ evalMet <- stove::evalMetricsR(models_list, target_var)
 knitr::kable(evalMet)
 ```
 
+## RMSE plot
+```{r}
+extractRmseValues <- function(tuned_results_list) {
+  rmse_df <- data.frame()
+  model_name <- tuned_results_list
+
+  for (i in seq(v + 1, v + v * iter, by = 1)) {
+    rmse_value <- tuned_results$.metrics[[i]] %>%
+      dplyr::filter(.metric == "rmse") %>%
+      dplyr::pull(.estimate)
+
+    temp_df <- data.frame(
+      model = model_name,
+      iteration = i - v,
+      rmse = rmse_value
+    )
+
+    rmse_df <- rbind(rmse_df, temp_df)
+
+    rmse_summary <- rmse_df %>%
+      dplyr::summarize(mean_rmse = mean(rmse),
+                       rmse_se = sd(rmse) / sqrt(n())) %>%
+      mutate(lower_bound = mean_rmse - 1.96 * rmse_se,
+             upper_bound = mean_rmse + 1.96 * rmse_se)
+
+    rmse_plot_data <- data.frame(
+      model_name = "RF",
+      mean_rmse = rmse_summary$mean_rmse,
+      lower_bound = rmse_summary$lower_bound,
+      upper_bound = rmse_summary$upper_bound
+    )
+  }
+
+  return(rmse_df)
+}
+
+
+```
+
+```{r}
+tuned_results_list
+```

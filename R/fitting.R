@@ -62,7 +62,7 @@ bayesOptCV <- function(rec = NULL,
     workflows::add_recipe(rec) %>%
     workflows::add_model(model)
 
-  folds <- rsample::vfold_cv(trainingData, v = as.numeric(v))
+  folds <- rsample::vfold_cv(trainingData, v = as.numeric(v), strata = rec$var_info$variable[rec$var_info$role=="outcome"])
   initial <- ifelse(model$engine == "kknn", gridNum, length(model$args)*gridNum)
 
   if (quo_name(model$args$mtry) == "tune()") {

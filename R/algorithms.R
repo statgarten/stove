@@ -45,7 +45,7 @@ logisticRegression <- function(algo = "Logistic Regression",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  bayesOptResult <- stove::bayesOptCV(
+  bayes_opt_result <- stove::bayesOptCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -56,7 +56,7 @@ logisticRegression <- function(algo = "Logistic Regression",
   )
 
   finalized <- stove::fitBestModel(
-    optResult = bayesOptResult,
+    optResult = bayes_opt_result,
     metric = metric,
     model = model,
     formula = formula,
@@ -65,7 +65,7 @@ logisticRegression <- function(algo = "Logistic Regression",
     algo = paste0(algo, "_", engine)
   )
 
-  return(finalized)
+  return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
 }
 
 #' Multinomial Regression
@@ -115,7 +115,7 @@ multinomialRegression <- function(algo = "Multinomial Regression",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  bayesOptResult <- stove::bayesOptCV(
+  bayes_opt_result <- stove::bayesOptCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -126,7 +126,7 @@ multinomialRegression <- function(algo = "Multinomial Regression",
   )
 
   finalized <- stove::fitBestModel(
-    optResult = bayesOptResult,
+    optResult = bayes_opt_result,
     metric = metric,
     model = model,
     formula = formula,
@@ -135,7 +135,7 @@ multinomialRegression <- function(algo = "Multinomial Regression",
     algo = paste0(algo, "_", engine)
   )
 
-  return(finalized)
+  return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
 }
 
 #' Linear Regression
@@ -185,7 +185,7 @@ linearRegression <- function(algo = "Linear Regression",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  bayesOptResult <- stove::bayesOptCV(
+  bayes_opt_result <- stove::bayesOptCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -196,7 +196,7 @@ linearRegression <- function(algo = "Linear Regression",
   )
 
   finalized <- stove::fitBestModel(
-    optResult = bayesOptResult,
+    optResult = bayes_opt_result,
     metric = metric,
     model = model,
     formula = formula,
@@ -206,7 +206,7 @@ linearRegression <- function(algo = "Linear Regression",
   )
 
 
-  return(finalized)
+  return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
 }
 
 
@@ -255,7 +255,7 @@ KNN <- function(algo = "KNN",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  bayesOptResult <- stove::bayesOptCV(
+  bayes_opt_result <- stove::bayesOptCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -266,7 +266,7 @@ KNN <- function(algo = "KNN",
   )
 
   finalized <- stove::fitBestModel(
-    optResult = bayesOptResult,
+    optResult = bayes_opt_result,
     metric = metric,
     model = model,
     formula = formula,
@@ -275,7 +275,7 @@ KNN <- function(algo = "KNN",
     algo = paste0(algo, "_", engine)
   )
 
-  return(finalized)
+  return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
 }
 
 #' Naive Bayes
@@ -324,7 +324,7 @@ naiveBayes <- function(algo = "Naive Bayes",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  bayesOptResult <- stove::bayesOptCV(
+  bayes_opt_result <- stove::bayesOptCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -335,7 +335,7 @@ naiveBayes <- function(algo = "Naive Bayes",
   )
 
   finalized <- stove::fitBestModel(
-    optResult = bayesOptResult,
+    optResult = bayes_opt_result,
     metric = metric,
     model = model,
     formula = formula,
@@ -344,7 +344,7 @@ naiveBayes <- function(algo = "Naive Bayes",
     algo = paste0(algo, "_", engine)
   )
 
-  return(finalized)
+  return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
 }
 
 #' Decision Tree
@@ -399,7 +399,7 @@ decisionTree <- function(algo = "Decision Tree",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    bayesOptResult <- stove::bayesOptCV(
+    bayes_opt_result <- stove::bayesOptCV(
       rec = rec,
       model = model,
       v = as.numeric(v),
@@ -410,7 +410,7 @@ decisionTree <- function(algo = "Decision Tree",
     )
 
     finalized <- stove::fitBestModel(
-      optResult = bayesOptResult,
+      optResult = bayes_opt_result,
       metric = metric,
       model = model,
       formula = formula,
@@ -427,7 +427,7 @@ decisionTree <- function(algo = "Decision Tree",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    bayesOptResult <- stove::bayesOptCV(
+    bayes_opt_result <- stove::bayesOptCV(
       rec = rec,
       model = model,
       v = as.numeric(v),
@@ -438,7 +438,7 @@ decisionTree <- function(algo = "Decision Tree",
     )
 
     finalized <- stove::fitBestModel(
-      optResult = bayesOptResult,
+      optResult = bayes_opt_result,
       metric = metric,
       model = model,
       formula = formula,
@@ -456,7 +456,7 @@ decisionTree <- function(algo = "Decision Tree",
       parsnip::set_mode(mode = mode) %>%
       parsnip::translate()
 
-    bayesOptResult <- stove::bayesOptCV(
+    bayes_opt_result <- stove::bayesOptCV(
       rec = rec,
       model = model,
       v = as.numeric(v),
@@ -467,7 +467,7 @@ decisionTree <- function(algo = "Decision Tree",
     )
 
     finalized <- stove::fitBestModel(
-      optResult = bayesOptResult,
+      optResult = bayes_opt_result,
       metric = metric,
       model = model,
       formula = formula,
@@ -477,7 +477,7 @@ decisionTree <- function(algo = "Decision Tree",
     )
   }
 
-  return(finalized)
+  return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
 }
 
 
@@ -534,7 +534,7 @@ randomForest <- function(algo = "Random Forest",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  bayesOptResult <- stove::bayesOptCV(
+  bayes_opt_result <- stove::bayesOptCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -545,7 +545,7 @@ randomForest <- function(algo = "Random Forest",
   )
 
   finalized <- stove::fitBestModel(
-    optResult = bayesOptResult,
+    optResult = bayes_opt_result,
     metric = metric,
     model = model,
     formula = formula,
@@ -554,7 +554,7 @@ randomForest <- function(algo = "Random Forest",
     algo = paste0(algo, "_", engine)
   )
 
-  return(finalized)
+  return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
 }
 
 
@@ -617,7 +617,7 @@ xgBoost <- function(algo = "XGBoost",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  bayesOptResult <- stove::bayesOptCV(
+  bayes_opt_result <- stove::bayesOptCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -628,7 +628,7 @@ xgBoost <- function(algo = "XGBoost",
   )
 
   finalized <- stove::fitBestModel(
-    optResult = bayesOptResult,
+    optResult = bayes_opt_result,
     metric = metric,
     model = model,
     formula = formula,
@@ -637,7 +637,7 @@ xgBoost <- function(algo = "XGBoost",
     algo = paste0(algo, "_", engine)
   )
 
-  return(finalized)
+  return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
 }
 
 #' Light GBM
@@ -688,7 +688,7 @@ lightGbm <- function(algo = "lightGBM",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  bayesOptResult <- stove::bayesOptCV(
+  bayes_opt_result <- stove::bayesOptCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -699,7 +699,7 @@ lightGbm <- function(algo = "lightGBM",
   )
 
   finalized <- stove::fitBestModel(
-    optResult = bayesOptResult,
+    optResult = bayes_opt_result,
     metric = metric,
     model = model,
     formula = formula,
@@ -708,7 +708,7 @@ lightGbm <- function(algo = "lightGBM",
     algo = paste0(algo, "_", engine)
   )
 
-  return(finalized)
+  return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
 }
 
 #' SVMLinear
@@ -742,7 +742,7 @@ SVMLinear <- function(algo = "SVM",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  bayesOptResult <- stove::bayesOptCV(
+  bayes_opt_result <- stove::bayesOptCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -753,7 +753,7 @@ SVMLinear <- function(algo = "SVM",
   )
 
   finalized <- stove::fitBestModel(
-    optResult = bayesOptResult,
+    optResult = bayes_opt_result,
     metric = metric,
     model = model,
     formula = formula,
@@ -762,7 +762,7 @@ SVMLinear <- function(algo = "SVM",
     algo = paste0(algo, "_", engine)
   )
 
-  return(finalized)
+  return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
 }
 
 #' SVMPoly
@@ -798,7 +798,7 @@ SVMPoly <- function(algo = "SVM",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  bayesOptResult <- stove::bayesOptCV(
+  bayes_opt_result <- stove::bayesOptCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -809,7 +809,7 @@ SVMPoly <- function(algo = "SVM",
   )
 
   finalized <- stove::fitBestModel(
-    optResult = bayesOptResult,
+    optResult = bayes_opt_result,
     metric = metric,
     model = model,
     formula = formula,
@@ -818,7 +818,7 @@ SVMPoly <- function(algo = "SVM",
     algo = paste0(algo, "_", engine)
   )
 
-  return(finalized)
+  return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
 }
 
 #' SVMRbf
@@ -853,7 +853,7 @@ SVMRbf <- function(algo = "SVM",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  bayesOptResult <- stove::bayesOptCV(
+  bayes_opt_result <- stove::bayesOptCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -864,7 +864,7 @@ SVMRbf <- function(algo = "SVM",
   )
 
   finalized <- stove::fitBestModel(
-    optResult = bayesOptResult,
+    optResult = bayes_opt_result,
     metric = metric,
     model = model,
     formula = formula,
@@ -873,7 +873,7 @@ SVMRbf <- function(algo = "SVM",
     algo = paste0(algo, "_", engine)
   )
 
-  return(finalized)
+  return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
 }
 
 #' neural network
@@ -926,7 +926,7 @@ MLP <- function(algo = "MLP",
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
-  bayesOptResult <- stove::bayesOptCV(
+  bayes_opt_result <- stove::bayesOptCV(
     rec = rec,
     model = model,
     v = as.numeric(v),
@@ -937,7 +937,7 @@ MLP <- function(algo = "MLP",
   )
 
   finalized <- stove::fitBestModel(
-    optResult = bayesOptResult,
+    optResult = bayes_opt_result,
     metric = metric,
     model = model,
     formula = formula,
@@ -946,7 +946,7 @@ MLP <- function(algo = "MLP",
     algo = paste0(algo, "_", engine)
   )
 
-  return(finalized)
+  return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
 }
 
 #' K means clustering

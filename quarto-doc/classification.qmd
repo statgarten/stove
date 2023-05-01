@@ -152,7 +152,7 @@ finalized <- stove::logisticRegression(
 )
 
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 ```
 
 ## K Nearest Neighbor
@@ -187,7 +187,7 @@ finalized <- stove::KNN(
 )
 
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 ```
 
 ## Naive Bayes
@@ -222,7 +222,7 @@ finalized <- stove::naiveBayes(
 )
 
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 ```
 
 ## Decision Tree
@@ -257,7 +257,7 @@ finalized <- stove::decisionTree(
 )
 
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 ```
 
 ## Random Forest
@@ -292,7 +292,7 @@ finalized <- stove::randomForest(
 )
 
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 ```
 
 ## XGBoost
@@ -327,7 +327,7 @@ finalized <- stove::xgBoost(
 )
 
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 ```
 
 
@@ -363,7 +363,7 @@ finalized <- stove::lightGbm(
 )
 
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 ```
 
 ## MLP
@@ -398,7 +398,7 @@ finalized <- stove::MLP(
 )
 
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 
 ```
 
@@ -434,7 +434,7 @@ finalized <- stove::SVMLinear(
 )
 
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalFittedModel
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 ```
 
 # Sources for report
