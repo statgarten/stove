@@ -341,7 +341,7 @@ tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```{r}
 # User input
 names(models_list)
-model_name <- "lightGBM_lightgbm"
+model_name <- "MLP_nnet"
 ```
 
 ```{r, fig.width = 7, fig.height = 7}
@@ -362,43 +362,9 @@ knitr::kable(evalMet)
 
 ## RMSE plot
 ```{r}
-extractRmseValues <- function(tuned_results_list) {
-  rmse_df <- data.frame()
-  model_name <- tuned_results_list
+rmse_plot <- stove::plotRmseComparison(tunedResultsList = tuned_results_list,
+                                 v = v,
+                                 iter = iter)
+rmse_plot
 
-  for (i in seq(v + 1, v + v * iter, by = 1)) {
-    rmse_value <- tuned_results$.metrics[[i]] %>%
-      dplyr::filter(.metric == "rmse") %>%
-      dplyr::pull(.estimate)
-
-    temp_df <- data.frame(
-      model = model_name,
-      iteration = i - v,
-      rmse = rmse_value
-    )
-
-    rmse_df <- rbind(rmse_df, temp_df)
-
-    rmse_summary <- rmse_df %>%
-      dplyr::summarize(mean_rmse = mean(rmse),
-                       rmse_se = sd(rmse) / sqrt(n())) %>%
-      mutate(lower_bound = mean_rmse - 1.96 * rmse_se,
-             upper_bound = mean_rmse + 1.96 * rmse_se)
-
-    rmse_plot_data <- data.frame(
-      model_name = "RF",
-      mean_rmse = rmse_summary$mean_rmse,
-      lower_bound = rmse_summary$lower_bound,
-      upper_bound = rmse_summary$upper_bound
-    )
-  }
-
-  return(rmse_df)
-}
-
-
-```
-
-```{r}
-tuned_results_list
 ```

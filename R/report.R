@@ -296,59 +296,73 @@ clusteringVis <- function(data = NULL,
 }
 
 
+
+#' rmsePlot
 #'
-#' #' rmsePlot
-#' #'
-#' #' @details
-#' #' rmsePlot
-#' #' https://www.tmwr.org/workflow-sets.html
-#' #' https://workflowsets.tidymodels.org/
-#' #' https://towardsdatascience.com/using-workflow-sets-to-screen-and-compare-model-recipe-combinations-for-bank-loan-classification-fcaad2853290
-#' #'
-#' #' @import ggplot2 cowplot
-#' #' @import grDevices
-#' #' @importFrom dplyr select mutate group_by
-#' #' @importFrom tibble tibble
-#' #'
-#' #' @export
+#' @details
+#' rmsePlot
 #'
-#' rmsePlot <- function(modelsList = NULL,
-#'                      targetVar = NULL
-#'                      ) {
+#' @import ggplot2
+#' @import grDevices
+#' @importFrom dplyr select mutate group_by
+#' @importFrom tibble tibble
 #'
-#'   df <- do.call(rbind, modelsList)[[5]] %>% ## rbind here does nothing
-#'     do.call(rbind, .) %>%
-#'     dplyr::select(model, .pred, !!as.name(targetVar)) %>%
-#'     dplyr::mutate(errorSq = (!!as.name(targetVar) - .pred)**2) %>%
-#'     dplyr::group_by(model) %>%
-#'     dplyr::mutate(rmse = sqrt(mean(errorSq)))
-#'
-#'   plotDf<- df[!duplicated(df$model),] %>%
-#'     dplyr::select(model, rmse)
-#'
-#'   rmse_interval <- function(rmse, deg_free, p_lower = 0.025, p_upper = 0.975){
-#'     tibble(.pred_lower = sqrt(deg_free / qchisq(p_upper, df = deg_free)) * rmse,
-#'            .pred_upper = sqrt(deg_free / qchisq(p_lower, df = deg_free)) * rmse)
-#'   }
-#'
-#'   plotDf$lower <- rmse_interval(plotDf$rmse, nrow(data_train))$.pred_lower
-#'   plotDf$upper <- rmse_interval(plotDf$rmse, nrow(data_train))$.pred_upper
-#'
-#'   colors <- grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
-#'
-#'   rmsePlot <- ggplot(plotDf,aes(x = model)) +
-#'     geom_errorbar(aes(ymin = lower, ymax = upper), size = 1) +
-#'     geom_point(aes(y = rmse),size=3) +
-#'     coord_flip() +
-#'     theme_bw() +
-#'     xlab('') +
-#'     theme(legend.position='none') +
-#'     scale_color_manual(values = colors(length(modelsList))) +
-#'     cowplot::theme_cowplot()
-#'
-#'   return(rmsePlot)
-#'
-#' }
+#' @export
+
+plotRmseComparison <- function(tunedResultsList,
+                                 v = v,
+                                 iter = iter) {
+
+  combined_rmse_df <- data.frame()
+  model_name <- names(tunedResultsList)
+
+  for (i in seq_along(tunedResultsList)) {
+    iter_df_merge <- data.frame()
+    for (j in seq(v + 1, v + v * iter, by = 1)) {
+      # model's name
+      custom_name <- model_name[i] %>%
+        as.data.frame()
+      colnames(custom_name) <- "model"
+
+      # iteration
+      iteration <- j - v %>%
+        as.data.frame()
+      colnames(iteration) <- "iteration"
+
+      # rmse value
+      rmse_value <- tunedResultsList[[i]]$result$.metrics[[j]] %>%
+        dplyr::filter(.metric == "rmse") %>%
+        dplyr::pull(.estimate) %>%
+        as.data.frame()
+      colnames(rmse_value) <- "rmse_value"
+
+      tmp <- cbind(custom_name, iteration, rmse_value)
+      iter_df_merge <- rbind(iter_df_merge, tmp)
+    }
+    combined_rmse_df <- rbind(combined_rmse_df, iter_df_merge)
+  }
+
+  rmse_summary <- combined_rmse_df %>%
+    group_by(model) %>%
+    dplyr::summarize(mean_rmse = mean(rmse_value),
+                     rmse_se = sd(rmse_value) / sqrt(n())) %>%
+    mutate(lower_bound = mean_rmse - 1.96 * rmse_se,
+           upper_bound = mean_rmse + 1.96 * rmse_se)
+
+  colors <- grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
+
+  rmse_plot <- ggplot(rmse_summary, aes(x = model, y = mean_rmse, ymin = lower_bound, ymax = upper_bound, color = model)) +
+    geom_point(size = 3) +
+    geom_errorbar(width = 0.2) +
+    scale_color_manual(values = colors(length(tunedResultsList))) +
+    labs(title = "RMSE Comparison",
+         x = "Model",
+         y = "Mean RMSE") +
+    theme_minimal()
+
+  return(list(rmse_plot = rmse_plot, rmse_summary = rmse_summary, model_name = model_name))
+
+}
 
 
 
