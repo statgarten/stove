@@ -14,14 +14,14 @@ mainfont: Gulim
 # Introduction
 
 1) 본 문서는 stove 패키지를 Shiny app에서 사용하는 것을 상정해 작성했습니다.
-
-2) 본 문서의 케이스 스타일은 Camel case와 Snake case가 혼용되어 있습니다.
-- Camel case : stove의 함수명 및 파라미터명
-- Snake case: 유저로부터 받는 입력, shiny app의 server에서 사용(될 것이라고 예상)하는 object명, snake case로 작성된 dependencies의 함수명 등
+2) stove 패키지의 code 스타일은 [OHDSI code style](https://ohdsi.github.io/Hades/codeStyle.html)을 따랐습니다.
+3) 본 문서에서 사용하는 global preprocessing / local preprocesing은 다음을 의미합니다.
+다른 값이나 데이터의 분산 등을 사용하지 않는 전처리: 중복값 제거, 원-핫 인코딩, 피처 선택 등 -> global preprocessing
+다른 값이나 데이터의 분산 등을 사용하는 전처리: Imputation, Scaling, Oversampling 등 -> local preprocessing
 
 # Import sample data
 
-1) 전처리가 완료된 샘플데이터를 불러옵니다. 
+1) global preprocessing이 완료된 샘플데이터를 불러옵니다. 
 - NA가 없어야 함
 - string value가 있는 열은 factor로 변환
 - 한 열이 모두 같은 값으로 채워져 있을 경우 제외해야 함
@@ -39,7 +39,7 @@ mainfont: Gulim
 - IHD : 허혈심장질환 진료여부(있음:1, 없음:0)
 - STK : 뇌혈관질환 진료여부(있음:1, 없음:0)
 
-3) N수가 너무 크면 알고리즘에 따라 모델링 시간이 너무 길어질 수 있습니다. 빠른 결과를 얻고싶다면 1,000개 이하로 sampling하는 것을 추천합니다.
+3) N수가 너무 크면 알고리즘에 따라 모델링 시간이 길어질 수 있습니다.
 
 ```{r, message=FALSE}
 # remotes::install_github("statgarten/datatoys")
@@ -56,7 +56,7 @@ cleaned_data <- cleaned_data %>%
   mutate(TG = ifelse(TG < 150, 0, 1)) %>%
   mutate_at(vars(TG), factor) %>%
   group_by(TG) %>%
-  sample_n(500) # TG(0):TG(1) = 500:500
+  sample_n(1000)
 ```
 
 # Data Setup Tab
@@ -90,7 +90,7 @@ data_test <- split_tmp[[2]] # test data
 data_split <- split_tmp[[3]] # whole data with split information
 ```
 
-3) train set에 적용할 전처리 정보를 담은 recipe를 생성합니다
+3) train set에 적용할 local preprocessing 정보를 담은 recipe를 생성합니다
 
 ```{r}
 rec <- stove::prepForCV(data = data_train,
@@ -103,16 +103,20 @@ rec <- stove::prepForCV(data = data_train,
                          
 # Modeling Tab
 
-| User Input |                                             description |
-|:----------:|:-------------------------------------------------------:|
-|       mode |                                    mode 선택(분류/회귀) |
-|       algo |                                   사용자정의 알고리즘명 |
-|     engine |                               알고리즘 구현 engine 선택 |
-|          v |            교차검증시 훈련셋을 몇 번 분할할 것인지 입력 |
-|     metric |                   Best performance에 대한 평가지표 선택 |
+| User Input |                                                            description |
+|:----------:|:----------------------------------------------------------------------:|
+|       algo |                                                  사용자정의 알고리즘명 |
+|     engine |                                              알고리즘 구현 engine 선택 |
+|       mode |                                                   mode 선택(분류/회귀) |
+|trainingData|                                                          훈련데이터 셋 |
+| splitedData|                                          분할정보가 담긴 전체 데이터 셋|
+|    formula |                             Target 변수와 Feature 변수를 정의한 formula|
+|        rec |  교차 검증에서 각 fold에 적용할 local preprocessing 정보를 담은 recipe |
+|          v |                           교차검증시 훈련셋을 몇 번 분할할 것인지 입력 |
 |    gridNum | 각 하이퍼파라미터 별로 몇 개의 그리드를 할당해 베이지안 최적화를할지 설정 (ex. 모델의 하이퍼파라미터가 3개, gridNum이 5일 때, 하이퍼파라미터 최적화를 위한 그리드는 3*5=15개)|
-|    iter |                                베이지안 최적화 시 반복 횟수|
-|    seed |                                결과 재현을 위한 시드값 설정|
+|       iter |                                            베이지안 최적화 시 반복 횟수|
+|     metric |                                  Best performance에 대한 평가지표 선택 |
+|       seed |                                            결과 재현을 위한 시드값 설정|
 
 모델 object를 저장할 빈 리스트를 생성합니다.
 

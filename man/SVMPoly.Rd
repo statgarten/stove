@@ -19,9 +19,34 @@ SVMPoly(
   seed = 1234
 )
 }
+\arguments{
+\item{algo}{A name of the algorithm which can be customized by user (default: "lightGBM").}
+
+\item{engine}{The name of software that should be used to fit the model ("lightgbm" (default)).}
+
+\item{mode}{The model type. It should be "classification" or "regression" ("classification" (default), "regression").}
+
+\item{trainingData}{The training data.}
+
+\item{splitedData}{A data frame including metadata of split.}
+
+\item{formula}{formula for modeling}
+
+\item{rec}{Recipe object containing preprocessing information for cross-validation.}
+
+\item{v}{Applying v-fold cross validation in modeling process (default: 5).}
+
+\item{gridNum}{Initial number of iterations to run before starting the optimization algorithm.}
+
+\item{iter}{The maximum number of search iterations.}
+
+\item{metric}{Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").}
+
+\item{seed}{Seed for reproducible results.}
+}
 \description{
 SVMPoly
 }
 \details{
-SVMPoly
+The function for training user-defined SVM Poly model.
 }

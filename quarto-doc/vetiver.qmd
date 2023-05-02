@@ -54,7 +54,7 @@ plumber::pr() %>%
 
 ## predict for new data using deployed model
 
-- 위 포트에 deploy가 되어있으면, endpoint를 지정하고 다른 세션에서 새 데이터를 모델에 넣어보자
+- 위 포트에 deploy가 되어있으면, endpoint를 지정하고 다른 세션에서 새 데이터를 모델에 투입입
 ```{r, eval = FALSE}
 endpoint <- vetiver_endpoint("http://127.0.0.1:8088/predict")
 

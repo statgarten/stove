@@ -20,26 +20,32 @@ multinomialRegression(
 )
 }
 \arguments{
-\item{algo}{A name of the algorithm which can be customized by user. (default: "Multinomial Regression")}
+\item{algo}{A name of the algorithm which can be customized by user (default: "Multinomial Regression").}
 
-\item{engine}{The name of software that should be used to fit the model. (Option: "glmnet" (default))}
+\item{engine}{The name of software that should be used to fit the model (Option: "glmnet" (default)).}
 
-\item{mode}{The model type. It should be "classification" or "regression". (Option: "classification" (default))}
+\item{mode}{The model type. It should be "classification" or "regression" (Option: "classification" (default)).}
 
-\item{trainingData}{A data frame for training}
+\item{trainingData}{A data frame for training.}
 
-\item{splitedData}{A data frame including metadata of split}
+\item{splitedData}{A data frame including metadata of split.}
 
-\item{formula}{formula for modeling}
+\item{formula}{formula for modeling.}
 
-\item{rec}{Recipe object containing preprocessing information for cross-validation}
+\item{rec}{Recipe object containing preprocessing information for cross-validation.}
 
-\item{v}{Applying v-fold cross validation in modeling process (default: 5)}
+\item{v}{Applying v-fold cross validation in modeling process (default: 5).}
 
-\item{metric}{Metric to evaluate the performance (Option: "roc_auc" (default), "accuracy")}
+\item{gridNum}{Initial number of iterations to run before starting the optimization algorithm.}
+
+\item{iter}{The maximum number of search iterations.}
+
+\item{metric}{Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").}
+
+\item{seed}{Seed for reproducible results.}
 }
 \description{
-Multinomial regression is a algorithm for multinomial classification problems
+The function for training user-defined Multinomial regression model.
 
 This function supports: multinomial classification
 }

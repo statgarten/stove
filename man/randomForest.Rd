@@ -20,33 +20,35 @@ randomForest(
 )
 }
 \arguments{
-\item{algo}{사용자가 임의로 지정할 알고리즘명 (default: "Random Forest")}
+\item{algo}{A name of the algorithm which can be customized by user (default: "Random Forest").}
 
-\item{engine}{모델을 생성할 때 사용할 패키지 ("rpart" (default), "randomForest", "partykit")}
+\item{engine}{The name of software that should be used to fit the model ("rpart" (default), "randomForest", "partykit").}
 
-\item{mode}{분석 유형 ("classification" (default), "regression")}
+\item{mode}{The model type. It should be "classification" or "regression" ("classification" (default), "regression").}
 
-\item{trainingData}{훈련데이터 셋}
+\item{trainingData}{The training data.}
 
-\item{splitedData}{train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋}
+\item{splitedData}{A data frame including metadata of split.}
 
-\item{formula}{모델링을 위한 수식}
+\item{formula}{formula for modeling}
 
-\item{rec}{데이터, 전처리 정보를 포함한 recipe object}
+\item{rec}{Recipe object containing preprocessing information for cross-validation.}
 
-\item{v}{v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)}
+\item{v}{Applying v-fold cross validation in modeling process (default: 5).}
 
-\item{metric}{모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")}
+\item{gridNum}{Initial number of iterations to run before starting the optimization algorithm.}
+
+\item{iter}{The maximum number of search iterations.}
+
+\item{metric}{Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").}
+
+\item{seed}{Seed for reproducible results.}
 }
 \description{
 Random Forest
 }
 \details{
-랜덤 포레스트 알고리즘 함수. 여러개의 Decision Tree를 형성.
-새로운 데이터 포인트를 각 트리에 동시에 통과 시켜 각 트리가 분류한 결과에서 투표를 실시하여
-가장 많이 득표한 결과를 최종 분류 결과로 선택
-hyperparameters:
-trees: 결정트리의 개수를 지정합니다.
-min_n: 트리를 분할하기 위해 필요한 관측값의 최소 개수를 설정합니다.
-mtry: 트리를 분할하기 위해 필요한 feature의 수를 설정합니다.
+The function for training user-defined Random Forest model.
+
+Hyperparameters for tuning: trees, min_n, mtry
 }

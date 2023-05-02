@@ -16,23 +16,25 @@ prepForCV(
 )
 }
 \arguments{
-\item{data}{data}
+\item{data}{Training dataset to apply local preprocessing recipe.}
 
-\item{formula}{formula}
+\item{formula}{formula for modeling}
 
-\item{imputation}{imputation}
+\item{imputation}{If "imputation = TRUE", the model will be trained using cross-validation with imputation.}
 
-\item{normalization}{normalization}
+\item{normalization}{If "normalization = TRUE", the model will be trained using cross-validation with normalization}
 
-\item{normalizationType}{normalizationType}
+\item{nominalImputationType}{Imputation method for nominal variable (Option: mode(default), bag, knn)}
+
+\item{numericImputationType}{Imputation method for numeric variable (Option: mean(default), bag, knn, linear, lower, median, roll)}
+
+\item{normalizationType}{Normalization method (Option: range(default), center, normalization, scale)}
 
 \item{seed}{seed}
-
-\item{imputationType}{imputationType}
 }
 \description{
 Preprocessing for cross validation
 }
 \details{
-Deprecated
+Define the local preprocessing method to be applied to the training data for each fold when the training data is divided into several folds.
 }

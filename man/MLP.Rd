@@ -20,31 +20,35 @@ MLP(
 )
 }
 \arguments{
-\item{algo}{사용자가 임의로 지정할 알고리즘명 (default: "MLP")}
+\item{algo}{A name of the algorithm which can be customized by user (default: "MLP").}
 
-\item{engine}{모델을 생성할 때 사용할 패키지 ("nnet" (default))}
+\item{engine}{The name of software that should be used to fit the model ("nnet" (default)).}
 
-\item{mode}{분석 유형 ("classification" (default), "regression")}
+\item{mode}{The model type. It should be "classification" or "regression" ("classification" (default), "regression").}
 
-\item{trainingData}{훈련데이터 셋}
+\item{trainingData}{The training data.}
 
-\item{splitedData}{train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋}
+\item{splitedData}{A data frame including metadata of split.}
 
-\item{formula}{모델링을 위한 수식}
+\item{formula}{formula for modeling}
 
-\item{rec}{데이터, 전처리 정보를 포함한 recipe object}
+\item{rec}{Recipe object containing preprocessing information for cross-validation.}
 
-\item{v}{v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)}
+\item{v}{Applying v-fold cross validation in modeling process (default: 5).}
 
-\item{metric}{모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")}
+\item{gridNum}{Initial number of iterations to run before starting the optimization algorithm.}
+
+\item{iter}{The maximum number of search iterations.}
+
+\item{metric}{Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").}
+
+\item{seed}{Seed for reproducible results.}
 }
 \description{
 neural network
 }
 \details{
-neural network 알고리즘 함수.
-neural network 모델은 생물학적인 뉴런을 수학적으로 모델링한 것.
-여러개의 뉴런으로부터 입력값을 받아서 세포체에 저장하다가 자신의 용량을 넘어서면 외부로 출력값을 내보내는 것처럼,
-인공신경망 뉴런은 여러 입력값을 받아서 일정 수준이 넘어서면 활성화되어 출력값을 내보낸다.
-hyperparameters: hidden_units, penalty, dropout, epochs, activation, learn_rate
+The function for training user-defined MLP model.
+
+Hyperparameters for tuning: hidden_units, penalty, epochs
 }

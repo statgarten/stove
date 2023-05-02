@@ -20,15 +20,15 @@ logisticRegression(
 )
 }
 \arguments{
-\item{algo}{A name of the algorithm which can be customized by user. (default: "Logistic Regression")}
+\item{algo}{A name of the algorithm which can be customized by user (default: "Logistic Regression").}
 
-\item{engine}{The name of software that should be used to fit the model. (Option: "glmnet" (default))}
+\item{engine}{The name of software that should be used to fit the model (Option: "glmnet" (default)).}
 
-\item{mode}{The model type. It should be "classification" or "regression". (Option: "classification" (default))}
+\item{mode}{The model type. It should be "classification" or "regression" (Option: "classification" (default)).}
 
-\item{trainingData}{A data frame for training}
+\item{trainingData}{The training data.}
 
-\item{splitedData}{A data frame including metadata of split}
+\item{splitedData}{The whole dataset including the information of each fold}
 
 \item{formula}{formula for modeling}
 
@@ -36,10 +36,16 @@ logisticRegression(
 
 \item{v}{Applying v-fold cross validation in modeling process (default: 5)}
 
-\item{metric}{Metric to evaluate the performance (Option: "roc_auc" (default), "accuracy")}
+\item{gridNum}{Initial number of iterations to run before starting the optimization algorithm.}
+
+\item{iter}{The maximum number of search iterations.}
+
+\item{metric}{Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").}
+
+\item{seed}{Seed for reproducible results.}
 }
 \description{
-Logistic regression is a algorithm for binary classification problems using a logistic function to model the probability of the positive class.
+The function for training user-defined Logistic regression model.
 
 This function supports: binary classification
 }

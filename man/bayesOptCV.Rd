@@ -15,23 +15,23 @@ bayesOptCV(
 )
 }
 \arguments{
-\item{rec}{데이터, 전처리 정보를 포함한 recipe object}
+\item{rec}{The recipe object including local preprocessing.}
 
-\item{model}{hyperparameters, ngine, mode 정보가 포함된 model object}
+\item{model}{The model object including the list of hyperparameters, engine and mode.}
 
-\item{v}{v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)}
+\item{v}{Perform cross-validation by dividing the training data into v folds.}
 
-\item{trainingData}{훈련데이터 셋}
+\item{trainingData}{The training data.}
 
-\item{iter}{grid search를 수행할 때 각 hyperparameter의 값을 담은 object}
+\item{gridNum}{Initial number of iterations to run before starting the optimization algorithm.}
 
-\item{seed}{seed값 설정}
+\item{iter}{The maximum number of search iterations.}
 
-\item{initial}{몇 개의 grid로}
+\item{seed}{Seed for reproducible results.}
 }
 \description{
 Bayesian optimization with cross validation
 }
 \details{
-교차검증 수행 과정에서, Bayesian optimization을 통해 모델의 하이퍼파라미터를 최적화합니다.
+Optimize the hyperparameters of the model with Cross Validation and Bayesian optimization.
 }

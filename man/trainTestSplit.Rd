@@ -7,17 +7,17 @@
 trainTestSplit(data = NULL, target = NULL, prop, seed = "4814")
 }
 \arguments{
-\item{data}{전처리가 완료된 전체 data}
+\item{data}{Full data set with global preprocess completed.}
 
-\item{target}{타겟 변수}
+\item{target}{The target variable.}
 
-\item{prop}{전체 데이터 중 훈련 데이터로 사용할 비율}
+\item{prop}{Proportion of total data to be used as training data.}
 
-\item{seed}{seed값 설정}
+\item{seed}{Seed for reproducible results.}
 }
 \description{
 Train-Test Split
 }
 \details{
-Data를 Train set과 Test set으로 분리합니다.
+Separate the entire data into a training set and a test set.
 }

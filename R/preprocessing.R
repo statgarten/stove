@@ -1,12 +1,12 @@
 #' Train-Test Split
 #'
 #' @details
-#' Data를 Train set과 Test set으로 분리합니다.
+#' Separate the entire data into a training set and a test set.
 #'
-#' @param data  전처리가 완료된 전체 data
-#' @param target 타겟 변수
-#' @param prop  전체 데이터 중 훈련 데이터로 사용할 비율
-#' @param seed  seed값 설정
+#' @param data  Full data set with global preprocess completed.
+#' @param target The target variable.
+#' @param prop  Proportion of total data to be used as training data.
+#' @param seed  Seed for reproducible results.
 #'
 #' @import rsample
 #' @importFrom tidyselect all_of
@@ -29,29 +29,28 @@ trainTestSplit <- function(data = NULL,
 #' Preprocessing for cross validation
 #'
 #' @details
-#' Deprecated
+#' Define the local preprocessing method to be applied to the training data for each fold when the training data is divided into several folds.
 #'
-#' @param data  data
-#' @param formula formula
-#' @param imputationType imputationType
-#' @param normalizationType normalizationType
-#' @param imputation imputation
-#' @param normalization normalization
+#' @param data  Training dataset to apply local preprocessing recipe.
+#' @param formula formula for modeling
+#' @param imputation If "imputation = TRUE", the model will be trained using cross-validation with imputation.
+#' @param normalization If "normalization = TRUE", the model will be trained using cross-validation with normalization
+#' @param nominalImputationType Imputation method for nominal variable (Option: mode(default), bag, knn)
+#' @param numericImputationType Imputation method for numeric variable (Option: mean(default), bag, knn, linear, lower, median, roll)
+#' @param normalizationType Normalization method (Option: range(default), center, normalization, scale)
 #' @param seed seed
 #'
 #' @rawNamespace import(recipes, except = c(step))
 #'
 #' @export
 
-## todo: make user to choose predictors
-
 prepForCV <- function(data = NULL,
                       formula = NULL,
                       imputation = FALSE,
                       normalization = FALSE,
-                      nominalImputationType = "mode", # mode(default), bag, knn
-                      numericImputationType = "mean", # mean(default), bag, knn, linear, lower, median, roll
-                      normalizationType = "range", # range(default), center, normalization, scale
+                      nominalImputationType = "mode",
+                      numericImputationType = "mean",
+                      normalizationType = "range",
                       seed = "4814") {
   set.seed(seed = as.numeric(seed))
 

@@ -20,27 +20,35 @@ lightGbm(
 )
 }
 \arguments{
-\item{algo}{사용자가 임의로 지정할 알고리즘명 (default: "lightGBM")}
+\item{algo}{A name of the algorithm which can be customized by user. (default: "lightGBM").}
 
-\item{engine}{모델을 생성할 때 사용할 패키지 ("lightgbm" (default))}
+\item{engine}{The name of software that should be used to fit the model("lightgbm" (default)).}
 
-\item{mode}{분석 유형 ("classification" (default), "regression")}
+\item{mode}{The model type. It should be "classification" or "regression" ("classification" (default), "regression").}
 
-\item{trainingData}{훈련데이터 셋}
+\item{trainingData}{The training data.}
 
-\item{splitedData}{train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋}
+\item{splitedData}{A data frame including metadata of split.}
 
-\item{formula}{모델링을 위한 수식}
+\item{formula}{formula for modeling}
 
-\item{rec}{데이터, 전처리 정보를 포함한 recipe object}
+\item{rec}{Recipe object containing preprocessing information for cross-validation.}
 
-\item{v}{v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)}
+\item{v}{Applying v-fold cross validation in modeling process (default: 5).}
 
-\item{metric}{모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")}
+\item{gridNum}{Initial number of iterations to run before starting the optimization algorithm.}
+
+\item{iter}{The maximum number of search iterations.}
+
+\item{metric}{Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").}
+
+\item{seed}{Seed for reproducible results.}
 }
 \description{
 Light GBM
 }
 \details{
-Light GBM
+The function for training user-defined Light GBM model.
+
+Hyperparameters for tuning: tree_depth, trees, learn_rate, mtry, min_n, loss_reduction
 }

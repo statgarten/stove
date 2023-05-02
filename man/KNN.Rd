@@ -20,31 +20,35 @@ KNN(
 )
 }
 \arguments{
-\item{algo}{사용자가 임의로 지정할 알고리즘명 (default: "KNN")}
+\item{algo}{A name of the algorithm which can be customized by user (default: "KNN").}
 
-\item{engine}{모델을 생성할 때 사용할 패키지 ("kknn" (default))}
+\item{engine}{The name of software that should be used to fit the model ("kknn" (default)).}
 
-\item{mode}{분석 유형 ("classification" (default), "regression")}
+\item{mode}{The model type. It should be "classification" or "regression" ("classification" (default), "regression").}
 
-\item{trainingData}{훈련데이터 셋}
+\item{trainingData}{The training data.}
 
-\item{splitedData}{train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋}
+\item{splitedData}{A data frame including metadata of split.}
 
-\item{formula}{모델링을 위한 수식}
+\item{formula}{formula for modeling}
 
-\item{rec}{데이터, 전처리 정보를 포함한 recipe object}
+\item{rec}{Recipe object containing preprocessing information for cross-validation.}
 
-\item{v}{v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)}
+\item{v}{Applying v-fold cross validation in modeling process (default: 5).}
 
-\item{metric}{모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")}
+\item{gridNum}{Initial number of iterations to run before starting the optimization algorithm.}
 
-\item{...}{hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.}
+\item{iter}{The maximum number of search iterations.}
+
+\item{metric}{Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").}
+
+\item{seed}{Seed for reproducible results.}
 }
 \description{
 K-Nearest Neighbors
 }
 \details{
-KNN 알고리즘 함수.
-데이터로부터 거리가 가까운 K개의 다른 데이터의 레이블을 참조하여 분류하는 알고리즘
-hyperparameters: neighbors
+The function for training user-defined K-Nearest Neighbors model.
+
+Hyperparameters for tuning: neighbors
 }

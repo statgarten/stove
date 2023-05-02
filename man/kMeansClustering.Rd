@@ -36,7 +36,7 @@ kMeansClustering(
 K means clustering
 }
 \details{
-K means clustering
-selectOptimal: silhouette, gap_stat
-hyperparameters: maxK, nstart
+The function for K means clustering.
+
+parameters for tuning: maxK, nstart
 }

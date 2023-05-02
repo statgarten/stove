@@ -11,27 +11,27 @@ fitBestModel(
   formula,
   trainingData,
   splitedData,
-  algo
+  modelName
 )
 }
 \arguments{
-\item{optResult}{gridSearchCV의 결과값}
+\item{optResult}{The result object of bayesOptCV}
 
-\item{metric}{모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")}
+\item{metric}{Baseline metric for evaluating model performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")}
 
-\item{model}{hyperparameters, ngine, mode 정보가 포함된 model object}
+\item{model}{The model object including the list of hyperparameters, engine and mode.}
 
-\item{formula}{모델링을 위한 수식}
+\item{formula}{formula for modeling}
 
-\item{trainingData}{훈련데이터 셋}
+\item{trainingData}{The training data.}
 
-\item{splitedData}{train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋}
+\item{splitedData}{The whole dataset including the information of each fold}
 
-\item{algo}{사용자가 임의로 지정할 알고리즘명 (default: "linear Regression")}
+\item{modelName}{The name of model defined by the algorithm and engine selected by user}
 }
 \description{
 fitting in best model
 }
 \details{
-gridSearchCV 함수 리턴값을 받아 가장 성능이 좋은 모델을 fitting합니다.
+Get the bayesOptCV function's return value and fit the model.
 }

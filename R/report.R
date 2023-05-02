@@ -358,7 +358,13 @@ plotRmseComparison <- function(tunedResultsList,
     labs(title = "RMSE Comparison",
          x = "Model",
          y = "Mean RMSE") +
-    theme_minimal()
+    cowplot::theme_cowplot() +
+    theme(axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank(),
+          panel.grid.major.y = element_line(color = "grey", linetype = "solid"),
+          panel.grid.minor.y = element_line(color = "grey", linetype = "dashed")
+    )
 
   return(list(rmse_plot = rmse_plot, rmse_summary = rmse_summary, model_name = model_name))
 

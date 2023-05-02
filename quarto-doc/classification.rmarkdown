@@ -1,6 +1,6 @@
 ---
-title: "stove - regression"
-date: 2023.05.02.
+title: "stove - classification"
+date: 2022.12.05.
 format:
   pdf:
     toc: true
@@ -10,6 +10,7 @@ format:
     highlight-style: github-dark
 mainfont: Gulim
 ---
+
 
 # Introduction
 
@@ -39,19 +40,27 @@ mainfont: Gulim
 - IHD : 허혈심장질환 진료여부(있음:1, 없음:0)
 - STK : 뇌혈관질환 진료여부(있음:1, 없음:0)
 
-3) N수가 너무 크면 알고리즘에 따라 모델링 시간무 길어질 수 있습니다.
+3) N수가 너무 크면 알고리즘에 따라 모델링 시간이 너무 길어질 수 있습니다. 빠른 결과를 얻고싶다면 1,000개 이하로 sampling하는 것을 추천합니다.
+
 
 ```{r, message=FALSE}
 # remotes::install_github("statgarten/datatoys")
 library(stove)
 library(datatoys)
 library(dplyr)
+
 set.seed(1234)
+
 cleaned_data <- datatoys::bloodTest
+
 cleaned_data <- cleaned_data %>%
   mutate_at(vars(SEX, ANE, IHD, STK), factor) %>%
-  sample_n(1000)
+  mutate(TG = ifelse(TG < 150, 0, 1)) %>%
+  mutate_at(vars(TG), factor) %>%
+  group_by(TG) %>%
+  sample_n(500) # TG(0):TG(1) = 500:500
 ```
+
 
 # Data Setup Tab
 
@@ -63,6 +72,7 @@ cleaned_data <- cleaned_data %>%
 1) User input을 다음과 같이 받습니다.
 - formula는 user가 target_var를 입력할 때 함께 생성되도록 함
 
+
 ```{r}
 target_var <- "TG"
 train_set_ratio <- 0.7
@@ -70,27 +80,35 @@ seed <- 1234
 formula <- paste0(target_var, " ~ .")
 ```
 
+
 2) Train-test split 작업이 완료된 Object를 저장하고, Train set을 보여줍니다.
+
 
 ```{r}
 split_tmp <- stove::trainTestSplit(data = cleaned_data,
-                                    target = target_var,
-                                    prop = train_set_ratio,
-                                    seed = seed
-                                    )
+                                   target = target_var,
+                                   prop = train_set_ratio,
+                                   seed = seed
+                                   )
+
 data_train <- split_tmp[[1]] # train data
 data_test <- split_tmp[[2]] # test data
 data_split <- split_tmp[[3]] # whole data with split information
 ```
 
+
 3) train set에 적용할 local preprocessing 정보를 담은 recipe를 생성합니다
+
 
 ```{r}
 rec <- stove::prepForCV(data = data_train,
-                         formula = formula,
-                         seed = seed
-                         )
+                        formula = formula,
+                        imputation = T,
+                        normalization = T,
+                        seed = seed
+                        )
 ```
+
                          
 # Modeling Tab
 
@@ -111,26 +129,30 @@ rec <- stove::prepForCV(data = data_train,
 
 모델 object를 저장할 빈 리스트를 생성합니다.
 
+
 ```{r}
 models_list <- list()
-tuned_results_list <- list()
 ```
 
-## Linear Regression
+
+## Logistic Regression
+
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
-mode <- "regression"
-algo <- "linearRegression"
+
+mode <- "classification"
+algo <- "logisticRegression" # Custom name
 engine <- "glmnet" # glmnet (default)
 v <- 2
-metric <- "rmse" # rmse (default), rsq
+metric <- "roc_auc" # roc_auc (default), accuracy
 gridNum <- 5
 iter <- 10
 seed <- 1234
 
 # Modeling
-finalized <- stove::linearRegression(
+
+finalized <- stove::logisticRegression(
   algo = algo,
   engine = engine,
   mode = mode,
@@ -144,25 +166,29 @@ finalized <- stove::linearRegression(
   metric = metric,
   seed = seed
 )
+
 # Add the model to models_list
 models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
-tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
+
 
 ## K Nearest Neighbor
 
+
 ```{r, message=FALSE, warning=FALSE}
 # User input
-mode <- "regression"
+
+mode <- "classification"
 algo <- "KNN"
 engine <- "kknn" # kknn (defualt)
 v <- 2
-metric <- "rmse" # rmse (default), rsq
+metric <- "roc_auc" # roc_auc (default), accuracy
 gridNum <- 5
 iter <- 10
 seed <- 1234
 
 # Modeling
+
 finalized <- stove::KNN(
   algo = algo,
   engine = engine,
@@ -177,25 +203,66 @@ finalized <- stove::KNN(
   metric = metric,
   seed = seed
 )
+
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
-tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 ```
 
-## Decision Tree
+
+## Naive Bayes
+
 
 ```{r, message=FALSE, warning=FALSE}
 # User input
-mode <- "regression"
-algo <- "decisionTree"
-engine <- "rpart" # rpart (default), partykit
+
+mode <- "classification"
+algo <- "naiveBayes"
+engine <- "naivebayes" # klaR (default), naivebayes
 v <- 2
-metric <- "rmse" # rmse (default), rsq
+metric <- "roc_auc" # roc_auc (default), accuracy
 gridNum <- 5
 iter <- 10
 seed <- 1234
 
 # Modeling
+
+finalized <- stove::naiveBayes(
+  algo = algo,
+  engine = engine,
+  mode = mode,
+  trainingData = data_train,
+  splitedData = data_split,
+  formula = formula,
+  rec = rec,
+  v = v,
+  gridNum = gridNum,
+  iter = iter,
+  metric = metric,
+  seed = seed
+)
+
+# Add the model to models_list
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
+```
+
+
+## Decision Tree
+
+
+```{r, message=FALSE, warning=FALSE}
+# User input
+
+mode <- "classification"
+algo <- "decisionTree"
+engine <- "partykit" # rpart (default), C5.0, partykit
+v <- 2
+metric <- "roc_auc" # roc_auc (default), accuracy
+gridNum <- 5
+iter <- 10
+seed <- 1234
+
+# Modeling
+
 finalized <- stove::decisionTree(
   algo = algo,
   engine = engine,
@@ -210,25 +277,29 @@ finalized <- stove::decisionTree(
   metric = metric,
   seed = seed
 )
+
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
-tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 ```
+
 
 ## Random Forest
 
+
 ```{r, message=FALSE, warning=FALSE}
 # User input
-mode <- "regression"
+
+mode <- "classification"
 algo <- "randomForest"
-engine <- "ranger" # ranger (default), randomForest, partykit
+engine <- "randomForest" # ranger (default), randomForest, partykit(?)
 v <- 2
-metric <- "rmse" # rmse (default), rsq
+metric <- "roc_auc" # roc_auc (default), accuracy
 gridNum <- 5
 iter <- 10
 seed <- 1234
 
 # Modeling
+
 finalized <- stove::randomForest(
   algo = algo,
   engine = engine,
@@ -243,25 +314,29 @@ finalized <- stove::randomForest(
   metric = metric,
   seed = seed
 )
+
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
-tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 ```
+
 
 ## XGBoost
 
+
 ```{r, message=FALSE, warning=FALSE}
 # User input
-mode <- "regression"
+
+mode <- "classification"
 algo <- "XGBoost"
 engine <- "xgboost" # xgboost
 v <- 2
-metric <- "rmse" # rmse (default), rsq
+metric <- "roc_auc" # roc_auc (default), accuracy
 gridNum <- 5
 iter <- 10
 seed <- 1234
 
 # Modeling
+
 finalized <- stove::xgBoost(
   algo = algo,
   engine = engine,
@@ -276,26 +351,30 @@ finalized <- stove::xgBoost(
   metric = metric,
   seed = seed
 )
+
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
-tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 ```
+
 
 
 ## lightGBM
 
+
 ```{r, results=FALSE, message=FALSE, warning=FALSE}
 # User input
-mode <- "regression"
+
+mode <- "classification"
 algo <- "lightGBM"
 engine <- "lightgbm" # lightgbm
 v <- 2
-metric <- "rmse" # rmse (default), rsq
+metric <- "roc_auc" # roc_auc (default), accuracy
 gridNum <- 5
 iter <- 10
 seed <- 1234
 
 # Modeling
+
 finalized <- stove::lightGbm(
   algo = algo,
   engine = engine,
@@ -310,25 +389,29 @@ finalized <- stove::lightGbm(
   metric = metric,
   seed = seed
 )
+
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
-tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 ```
+
 
 ## MLP
 
+
 ```{r, message=FALSE, warning=FALSE}
 # User input
-mode <- "regression"
+
+mode <- "classification"
 algo <- "MLP"
 engine <- "nnet" # nnet
 v <- 2
-metric <- "rmse" # rmse (default), rsq
+metric <- "roc_auc" # roc_auc (default), accuracy
 gridNum <- 5
 iter <- 10
 seed <- 1234
 
 # Modeling
+
 finalized <- stove::MLP(
   algo = algo,
   engine = engine,
@@ -343,45 +426,97 @@ finalized <- stove::MLP(
   metric = metric,
   seed = seed
 )
+
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
-tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
+
 ```
+
+
+## SVM - Linear kernel
+
+
+```{r, message=FALSE, warning=FALSE}
+# User input
+
+mode <- "classification"
+algo <- "SVM_linear"
+engine <- "kernlab"
+v <- 2
+metric <- "roc_auc" # roc_auc (default), accuracy
+gridNum <- 5
+iter <- 10
+seed <- 1234
+
+# Modeling
+
+finalized <- stove::SVMLinear(
+  algo = algo,
+  engine = engine,
+  mode = mode,
+  trainingData = data_train,
+  splitedData = data_split,
+  formula = formula,
+  rec = rec,
+  v = v,
+  gridNum = gridNum,
+  iter = iter,
+  metric = metric,
+  seed = seed
+)
+
+# Add the model to models_list
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
+```
+
 
 # Sources for report
 
-## Regression plot (actual vs predicted)
+## ROC Curve
+
+유저가 선택한 모델의 ROC curve 출력
+
+
+```{r, fig.width = 7, fig.height = 7}
+roc_curve <- stove::rocCurve(
+  modelsList = models_list,
+  targetVar = target_var
+)
+roc_curve
+```
+
+
+## Confusion Matrix
 
 유저가 선택한 모델의 confusion matrix 출력
 리스트 내 모델의 이름은 {algo}_{engine}의 형태로 저장되어 있음
 
+
 ```{r}
 # User input
 names(models_list)
-model_name <- "randomForest_ranger"
+model_name <- "SVM_linear_kernlab"
 ```
 
-```{r, fig.width = 7, fig.height = 7}
-rp <- stove::regressionPlot(modelName = model_name, 
-                             modelsList = models_list, 
-                             targetVar = target_var)
-rp
+```{r, fig.width = 7, fig.height = 6}
+cm <- stove::confusionMatrix(
+  modelName = model_name,
+  modelsList = models_list,
+  targetVar = target_var
+)
+cm
 ```
+
 
 ## Evaluation metrics
 
 - 모델 성능 비교를 위한 표 출력
+- options(yardstick.event_level = "second")은 오름차순으로 factor의 level 설정하기 위한 옵션
+
 
 ```{r}
-evalMet <- stove::evalMetricsR(models_list, target_var)
+options(yardstick.event_level = "second")
+evalMet <- stove::evalMetricsC(models_list, target_var)
 knitr::kable(evalMet)
 ```
 
-## RMSE plot
-```{r, fig.width = 7, fig.height = 5}
-rmse_plot <- stove::plotRmseComparison(tunedResultsList = tuned_results_list,
-                                 v = v,
-                                 iter = iter)
-rmse_plot
-
-```

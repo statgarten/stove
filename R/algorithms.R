@@ -1,22 +1,25 @@
 #' Logistic Regression
 #'
 #' @description
-#' Logistic regression is a algorithm for binary classification problems using a logistic function to model the probability of the positive class.
+#' The function for training user-defined Logistic regression model.
 #'
 #' This function supports: binary classification
 #'
 #' @details
 #' Hyperparameters for tuning: penalty, mixture
 #'
-#' @param algo A name of the algorithm which can be customized by user. (default: "Logistic Regression")
-#' @param engine  The name of software that should be used to fit the model. (Option: "glmnet" (default))
-#' @param mode  The model type. It should be "classification" or "regression". (Option: "classification" (default))
-#' @param trainingData A data frame for training
-#' @param splitedData A data frame including metadata of split
+#' @param algo A name of the algorithm which can be customized by user (default: "Logistic Regression").
+#' @param engine  The name of software that should be used to fit the model (Option: "glmnet" (default)).
+#' @param mode  The model type. It should be "classification" or "regression" (Option: "classification" (default)).
+#' @param trainingData The training data.
+#' @param splitedData The whole dataset including the information of each fold
 #' @param formula formula for modeling
 #' @param rec Recipe object containing preprocessing information for cross-validation
 #' @param v Applying v-fold cross validation in modeling process (default: 5)
-#' @param metric Metric to evaluate the performance (Option: "roc_auc" (default), "accuracy")
+#' @param gridNum Initial number of iterations to run before starting the optimization algorithm.
+#' @param iter The maximum number of search iterations.
+#' @param metric Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").
+#' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dials penalty mixture
@@ -62,7 +65,7 @@ logisticRegression <- function(algo = "Logistic Regression",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-    algo = paste0(algo, "_", engine)
+   modelName = paste0(algo, "_", engine)
   )
 
   return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
@@ -71,22 +74,25 @@ logisticRegression <- function(algo = "Logistic Regression",
 #' Multinomial Regression
 #'
 #' @description
-#' Multinomial regression is a algorithm for multinomial classification problems
+#' The function for training user-defined Multinomial regression model.
 #'
 #' This function supports: multinomial classification
 #'
 #' @details
 #' Hyperparameters for tuning: penalty, mixture
 #'
-#' @param algo A name of the algorithm which can be customized by user. (default: "Multinomial Regression")
-#' @param engine  The name of software that should be used to fit the model. (Option: "glmnet" (default))
-#' @param mode  The model type. It should be "classification" or "regression". (Option: "classification" (default))
-#' @param trainingData A data frame for training
-#' @param splitedData A data frame including metadata of split
-#' @param formula formula for modeling
-#' @param rec Recipe object containing preprocessing information for cross-validation
-#' @param v Applying v-fold cross validation in modeling process (default: 5)
-#' @param metric Metric to evaluate the performance (Option: "roc_auc" (default), "accuracy")
+#' @param algo A name of the algorithm which can be customized by user (default: "Multinomial Regression").
+#' @param engine  The name of software that should be used to fit the model (Option: "glmnet" (default)).
+#' @param mode  The model type. It should be "classification" or "regression" (Option: "classification" (default)).
+#' @param trainingData A data frame for training.
+#' @param splitedData A data frame including metadata of split.
+#' @param formula formula for modeling.
+#' @param rec Recipe object containing preprocessing information for cross-validation.
+#' @param v Applying v-fold cross validation in modeling process (default: 5).
+#' @param gridNum Initial number of iterations to run before starting the optimization algorithm.
+#' @param iter The maximum number of search iterations.
+#' @param metric Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").
+#' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dials penalty mixture
@@ -132,7 +138,7 @@ multinomialRegression <- function(algo = "Multinomial Regression",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-    algo = paste0(algo, "_", engine)
+    modelName = paste0(algo, "_", engine)
   )
 
   return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
@@ -141,24 +147,24 @@ multinomialRegression <- function(algo = "Multinomial Regression",
 #' Linear Regression
 #'
 #' @details
-#' 선형 회귀 알고리즘 함수. 선형회귀는 다음과 같은 가정을 합니다. 1) target - features 간의 선형성, 2) features 간 작은 다중공선성,
-#' 3) 등분산성 가정, 4) 오차항의 정규분포, 5) 오차항 간 적은 상관성. 만약 데이터가 이 가정을 충족하지 않는 경우 성능이 저하될 수 있습니다.
-#' hyperparameters: penalty, mixture
+#' The function for training user-defined Linear Regression model.
 #'
-#' @param algo 사용자가 임의로 지정할 알고리즘명 (default: "Linear Regression")
-#' @param engine  모델을 생성할 때 사용할 패키지 ("glmnet" (default), "lm", "glm", "stan")
-#' @param mode  분석 유형 ("regression" (default))
-#' @param trainingData 훈련데이터 셋
-#' @param splitedData train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋
-#' @param formula 모델링을 위한 수식
-#' @param rec 데이터, 전처리 정보를 포함한 recipe object
-#' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
-#' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
-#' @param ... hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.
+#' Hyperparameters for tuning: penalty, mixture
+#'
+#' @param algo A name of the algorithm which can be customized by user (default: "Linear Regression").
+#' @param engine  The name of software that should be used to fit the model ("glmnet" (default), "lm", "glm", "stan").
+#' @param mode  The model type. It should be "classification" or "regression" ("regression" (default)).
+#' @param trainingData The training data.
+#' @param splitedData A data frame including metadata of split.
+#' @param formula formula for modeling
+#' @param rec Recipe object containing preprocessing information for cross-validation.
+#' @param v Applying v-fold cross validation in modeling process (default: 5).
+#' @param gridNum Initial number of iterations to run before starting the optimization algorithm.
+#' @param iter The maximum number of search iterations.
+#' @param metric Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").
+#' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
-
-
 #' @importFrom dials penalty mixture
 #' @import parsnip
 #' @import stats glmnet rstanarm
@@ -202,7 +208,7 @@ linearRegression <- function(algo = "Linear Regression",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-    algo = paste0(algo, "_", engine)
+    modelName = paste0(algo, "_", engine)
   )
 
 
@@ -213,24 +219,24 @@ linearRegression <- function(algo = "Linear Regression",
 #' K-Nearest Neighbors
 #'
 #' @details
-#' KNN 알고리즘 함수.
-#' 데이터로부터 거리가 가까운 K개의 다른 데이터의 레이블을 참조하여 분류하는 알고리즘
-#' hyperparameters: neighbors
+#' The function for training user-defined K-Nearest Neighbors model.
 #'
-#' @param algo 사용자가 임의로 지정할 알고리즘명 (default: "KNN")
-#' @param engine  모델을 생성할 때 사용할 패키지 ("kknn" (default))
-#' @param mode  분석 유형 ("classification" (default), "regression")
-#' @param trainingData 훈련데이터 셋
-#' @param splitedData train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋
-#' @param formula 모델링을 위한 수식
-#' @param rec 데이터, 전처리 정보를 포함한 recipe object
-#' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
-#' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
-#' @param ... hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.
+#' Hyperparameters for tuning: neighbors
+#'
+#' @param algo A name of the algorithm which can be customized by user (default: "KNN").
+#' @param engine  The name of software that should be used to fit the model ("kknn" (default)).
+#' @param mode  The model type. It should be "classification" or "regression" ("classification" (default), "regression").
+#' @param trainingData The training data.
+#' @param splitedData A data frame including metadata of split.
+#' @param formula formula for modeling
+#' @param rec Recipe object containing preprocessing information for cross-validation.
+#' @param v Applying v-fold cross validation in modeling process (default: 5).
+#' @param gridNum Initial number of iterations to run before starting the optimization algorithm.
+#' @param iter The maximum number of search iterations.
+#' @param metric Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").
+#' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
-
-
 #' @importFrom dials neighbors
 #' @import parsnip
 #' @import kknn
@@ -272,7 +278,7 @@ KNN <- function(algo = "KNN",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-    algo = paste0(algo, "_", engine)
+    modelName = paste0(algo, "_", engine)
   )
 
   return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
@@ -281,19 +287,22 @@ KNN <- function(algo = "KNN",
 #' Naive Bayes
 #'
 #' @details
-#' Naive Bayes
-#' hyperparameters: smoothness, Laplace
+#' The function for training user-defined Naive Bayes model.
 #'
-#' @param algo 사용자가 임의로 지정할 알고리즘명 (default: "Naive Bayes")
-#' @param engine  모델을 생성할 때 사용할 패키지 ("klaR" (default), naivebayes)
-#' @param mode  분석 유형 ("classification" (default))
-#' @param trainingData 훈련데이터 셋
-#' @param splitedData train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋
-#' @param formula 모델링을 위한 수식
-#' @param rec 데이터, 전처리 정보를 포함한 recipe object
-#' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
-#' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
-#' @param ... hyperparameters의 범위에 대한 Min, Max, Levels 값에 해당하는 파라미터를 지정합니다.
+#' Hyperparameters for tuning: smoothness, Laplace
+#'
+#' @param algo A name of the algorithm which can be customized by user (default: "Naive Bayes").
+#' @param engine  The name of software that should be used to fit the model ("klaR" (default), naivebayes).
+#' @param mode  The model type. It should be "classification" or "regression" ("classification" (default)).
+#' @param trainingData The training data.
+#' @param splitedData A data frame including metadata of split.
+#' @param formula formula for modeling
+#' @param rec Recipe object containing preprocessing information for cross-validation.
+#' @param v Applying v-fold cross validation in modeling process (default: 5).
+#' @param gridNum Initial number of iterations to run before starting the optimization algorithm.
+#' @param iter The maximum number of search iterations.
+#' @param metric Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").
+#' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
 #' @import parsnip
@@ -341,7 +350,7 @@ naiveBayes <- function(algo = "Naive Bayes",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-    algo = paste0(algo, "_", engine)
+    modelName = paste0(algo, "_", engine)
   )
 
   return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
@@ -350,25 +359,24 @@ naiveBayes <- function(algo = "Naive Bayes",
 #' Decision Tree
 #'
 #' @details
-#' 의사결정나무 알고리즘 함수. 의사 결정 규칙 (Decision rule)을 나무 형태로 분류해 나가는 분석 기법을 말합니다.
-#' hyperparameters:
-#' tree_depth: 최종 예측값에 다다르기까지 몇 번 트리를 분할할지 설정합니다.
-#' min_n: 트리를 분할하기 위해 필요한 관측값의 최소 개수를 설정합니다.
-#' cost_complexity: 트리 분할을 위해 필요한 비용을 설정합니다. 0일 경우, 가능한 모든 분할이 수행됩니다.
+#' The function for training user-defined Decision Tree model.
 #'
-#' @param algo 사용자가 임의로 지정할 알고리즘명 (default: "Decision Tree")
-#' @param engine  모델을 생성할 때 사용할 패키지 ("rpart" (default), "C50", "partykit")
-#' @param mode  분석 유형 ("classification" (default), "regression")
-#' @param trainingData 훈련데이터 셋
-#' @param splitedData train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋
-#' @param formula 모델링을 위한 수식
-#' @param rec 데이터, 전처리 정보를 포함한 recipe object
-#' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
-#' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
+#' Hyperparameters for tuning: tree_depth, min_n, cost_complexity
+#'
+#' @param algo A name of the algorithm which can be customized by user (default: "Decision Tree").
+#' @param engine  The name of software that should be used to fit the model ("rpart" (default), "C50", "partykit").
+#' @param mode  The model type. It should be "classification" or "regression" ("classification" (default), "regression").
+#' @param trainingData The training data.
+#' @param splitedData A data frame including metadata of split.
+#' @param formula formula for modeling
+#' @param rec Recipe object containing preprocessing information for cross-validation.
+#' @param v Applying v-fold cross validation in modeling process (default: 5).
+#' @param gridNum Initial number of iterations to run before starting the optimization algorithm.
+#' @param iter The maximum number of search iterations.
+#' @param metric Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").
+#' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
-
-
 #' @importFrom dials tree_depth min_n cost_complexity
 #' @import parsnip
 #' @import rpart C50 partykit
@@ -416,7 +424,7 @@ decisionTree <- function(algo = "Decision Tree",
       formula = formula,
       trainingData = trainingData,
       splitedData = splitedData,
-      algo = paste0(algo, "_", engine)
+      modelName = paste0(algo, "_", engine)
     )
   } else if (engine == "C5.0") {
 
@@ -444,7 +452,7 @@ decisionTree <- function(algo = "Decision Tree",
       formula = formula,
       trainingData = trainingData,
       splitedData = splitedData,
-      algo = paste0(algo, "_", engine)
+      modelName = paste0(algo, "_", engine)
     )
   } else { # partykit
 
@@ -473,7 +481,7 @@ decisionTree <- function(algo = "Decision Tree",
       formula = formula,
       trainingData = trainingData,
       splitedData = splitedData,
-      algo = paste0(algo, "_", engine)
+      modelName = paste0(algo, "_", engine)
     )
   }
 
@@ -484,30 +492,28 @@ decisionTree <- function(algo = "Decision Tree",
 #' Random Forest
 #'
 #' @details
-#' 랜덤 포레스트 알고리즘 함수. 여러개의 Decision Tree를 형성.
-#' 새로운 데이터 포인트를 각 트리에 동시에 통과 시켜 각 트리가 분류한 결과에서 투표를 실시하여
-#' 가장 많이 득표한 결과를 최종 분류 결과로 선택
-#' hyperparameters:
-#' trees: 결정트리의 개수를 지정합니다.
-#' min_n: 트리를 분할하기 위해 필요한 관측값의 최소 개수를 설정합니다.
-#' mtry: 트리를 분할하기 위해 필요한 feature의 수를 설정합니다.
+#' The function for training user-defined Random Forest model.
 #'
-#' @param algo 사용자가 임의로 지정할 알고리즘명 (default: "Random Forest")
-#' @param engine  모델을 생성할 때 사용할 패키지 ("rpart" (default), "randomForest", "partykit")
-#' @param mode  분석 유형 ("classification" (default), "regression")
-#' @param trainingData 훈련데이터 셋
-#' @param splitedData train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋
-#' @param formula 모델링을 위한 수식
-#' @param rec 데이터, 전처리 정보를 포함한 recipe object
-#' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
-#' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
+#' Hyperparameters for tuning: trees, min_n, mtry
+#'
+#' @param algo A name of the algorithm which can be customized by user (default: "Random Forest").
+#' @param engine  The name of software that should be used to fit the model ("rpart" (default), "randomForest", "partykit").
+#' @param mode  The model type. It should be "classification" or "regression" ("classification" (default), "regression").
+#' @param trainingData The training data.
+#' @param splitedData A data frame including metadata of split.
+#' @param formula formula for modeling
+#' @param rec Recipe object containing preprocessing information for cross-validation.
+#' @param v Applying v-fold cross validation in modeling process (default: 5).
+#' @param gridNum Initial number of iterations to run before starting the optimization algorithm.
+#' @param iter The maximum number of search iterations.
+#' @param metric Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").
+#' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
-
-
 #' @importFrom dials mtry trees min_n
 #' @import parsnip
 #' @import ranger partykit
+#'
 #' @rawNamespace import(randomForest, except = c(margin, importance))
 #'
 #' @export
@@ -551,7 +557,7 @@ randomForest <- function(algo = "Random Forest",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-    algo = paste0(algo, "_", engine)
+    modelName = paste0(algo, "_", engine)
   )
 
   return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
@@ -561,30 +567,27 @@ randomForest <- function(algo = "Random Forest",
 #' XGBoost
 #'
 #' @description
-#' XGBoost (eXtreme Gradient Boosting) is a decision tree-based ensemble learning method for gradient boosting.
-#' Assumption:
-#' - XGBoost requires a set of input features and a target variable.
-#' - The input features should be numerical and can be either continuous or categorical.
-#' - The target variable should be numerical or categorical, depending on the problem type.
-#' - XGBoost can handle missing values in the input data.
-#' - XGBoost assumes that the data is independently and identically distributed (IID).
+#' The function for training user-defined XGBoost model.
+#'
+#' Hyperparameters for tuning: tree_depth, trees,learn_rate, mtry, min_n, loss_reduction, sample_size
 #'
 #' @details
 #' XGBoost
 #'
-#' @param algo 사용자가 임의로 지정할 알고리즘명 (default: "XGBoost")
-#' @param engine  모델을 생성할 때 사용할 패키지 ("xgboost" (default))
-#' @param mode  분석 유형 ("classification" (default), "regression")
-#' @param trainingData 훈련데이터 셋
-#' @param splitedData train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋
-#' @param formula 모델링을 위한 수식
-#' @param rec 데이터, 전처리 정보를 포함한 recipe object
-#' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
-#' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
+#' @param algo A name of the algorithm which can be customized by user (default: "XGBoost").
+#' @param engine  The name of software that should be used to fit the model ("xgboost" (default)).
+#' @param mode  The model type. It should be "classification" or "regression" ("classification" (default), "regression").
+#' @param trainingData The training data.
+#' @param splitedData A data frame including metadata of split.
+#' @param formula formula for modeling
+#' @param rec Recipe object containing preprocessing information for cross-validation.
+#' @param v Applying v-fold cross validation in modeling process (default: 5).
+#' @param gridNum Initial number of iterations to run before starting the optimization algorithm.
+#' @param iter The maximum number of search iterations.
+#' @param metric Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").
+#' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
-
-
 #' @importFrom dials tree_depth trees learn_rate mtry min_n loss_reduction sample_size stop_iter
 #' @import parsnip treesnip
 #'
@@ -610,8 +613,7 @@ xgBoost <- function(algo = "XGBoost",
     mtry = tune(),
     min_n = tune(),
     loss_reduction = tune(),
-    sample_size = tune(),
-    stop_iter = tune()
+    sample_size = tune()
   ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
@@ -634,7 +636,7 @@ xgBoost <- function(algo = "XGBoost",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-    algo = paste0(algo, "_", engine)
+    modelName = paste0(algo, "_", engine)
   )
 
   return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
@@ -643,21 +645,24 @@ xgBoost <- function(algo = "XGBoost",
 #' Light GBM
 #'
 #' @details
-#' Light GBM
+#' The function for training user-defined Light GBM model.
 #'
-#' @param algo 사용자가 임의로 지정할 알고리즘명 (default: "lightGBM")
-#' @param engine  모델을 생성할 때 사용할 패키지 ("lightgbm" (default))
-#' @param mode  분석 유형 ("classification" (default), "regression")
-#' @param trainingData 훈련데이터 셋
-#' @param splitedData train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋
-#' @param formula 모델링을 위한 수식
-#' @param rec 데이터, 전처리 정보를 포함한 recipe object
-#' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
-#' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
+#' Hyperparameters for tuning: tree_depth, trees, learn_rate, mtry, min_n, loss_reduction
+#'
+#' @param algo A name of the algorithm which can be customized by user. (default: "lightGBM").
+#' @param engine  The name of software that should be used to fit the model("lightgbm" (default)).
+#' @param mode  The model type. It should be "classification" or "regression" ("classification" (default), "regression").
+#' @param trainingData The training data.
+#' @param splitedData A data frame including metadata of split.
+#' @param formula formula for modeling
+#' @param rec Recipe object containing preprocessing information for cross-validation.
+#' @param v Applying v-fold cross validation in modeling process (default: 5).
+#' @param gridNum Initial number of iterations to run before starting the optimization algorithm.
+#' @param iter The maximum number of search iterations.
+#' @param metric Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").
+#' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
-
-
 #' @importFrom dials tree_depth trees learn_rate mtry min_n loss_reduction
 #' @import parsnip treesnip
 #'
@@ -705,7 +710,7 @@ lightGbm <- function(algo = "lightGBM",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-    algo = paste0(algo, "_", engine)
+    modelName = paste0(algo, "_", engine)
   )
 
   return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
@@ -714,8 +719,20 @@ lightGbm <- function(algo = "lightGBM",
 #' SVMLinear
 #'
 #' @details
-#' SVMLinear
+#' The function for training user-defined SVM Linear model.
 #'
+#' @param algo A name of the algorithm which can be customized by user (default: "lightGBM").
+#' @param engine  The name of software that should be used to fit the model ("lightgbm" (default)).
+#' @param mode  The model type. It should be "classification" or "regression" ("classification" (default), "regression").
+#' @param trainingData The training data.
+#' @param splitedData A data frame including metadata of split.
+#' @param formula formula for modeling
+#' @param rec Recipe object containing preprocessing information for cross-validation.
+#' @param v Applying v-fold cross validation in modeling process (default: 5).
+#' @param gridNum Initial number of iterations to run before starting the optimization algorithm.
+#' @param iter The maximum number of search iterations.
+#' @param metric Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").
+#' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
 #'
@@ -759,7 +776,7 @@ SVMLinear <- function(algo = "SVM",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-    algo = paste0(algo, "_", engine)
+    modelName = paste0(algo, "_", engine)
   )
 
   return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
@@ -768,8 +785,20 @@ SVMLinear <- function(algo = "SVM",
 #' SVMPoly
 #'
 #' @details
-#' SVMPoly
+#' The function for training user-defined SVM Poly model.
 #'
+#' @param algo A name of the algorithm which can be customized by user (default: "lightGBM").
+#' @param engine  The name of software that should be used to fit the model ("lightgbm" (default)).
+#' @param mode  The model type. It should be "classification" or "regression" ("classification" (default), "regression").
+#' @param trainingData The training data.
+#' @param splitedData A data frame including metadata of split.
+#' @param formula formula for modeling
+#' @param rec Recipe object containing preprocessing information for cross-validation.
+#' @param v Applying v-fold cross validation in modeling process (default: 5).
+#' @param gridNum Initial number of iterations to run before starting the optimization algorithm.
+#' @param iter The maximum number of search iterations.
+#' @param metric Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").
+#' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
 #'
@@ -815,7 +844,7 @@ SVMPoly <- function(algo = "SVM",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-    algo = paste0(algo, "_", engine)
+    modelName = paste0(algo, "_", engine)
   )
 
   return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
@@ -824,8 +853,20 @@ SVMPoly <- function(algo = "SVM",
 #' SVMRbf
 #'
 #' @details
-#' SVMRbf
+#' The function for training user-defined SVM Rbf model.
 #'
+#' @param algo A name of the algorithm which can be customized by user (default: "lightGBM").
+#' @param engine  The name of software that should be used to fit the model ("lightgbm" (default)).
+#' @param mode  The model type. It should be "classification" or "regression" ("classification" (default), "regression").
+#' @param trainingData The training data.
+#' @param splitedData A data frame including metadata of split.
+#' @param formula formula for modeling
+#' @param rec Recipe object containing preprocessing information for cross-validation.
+#' @param v Applying v-fold cross validation in modeling process (default: 5).
+#' @param gridNum Initial number of iterations to run before starting the optimization algorithm.
+#' @param iter The maximum number of search iterations.
+#' @param metric Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").
+#' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
 #'
@@ -870,7 +911,7 @@ SVMRbf <- function(algo = "SVM",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-    algo = paste0(algo, "_", engine)
+    modelName = paste0(algo, "_", engine)
   )
 
   return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
@@ -879,21 +920,22 @@ SVMRbf <- function(algo = "SVM",
 #' neural network
 #'
 #' @details
-#' neural network 알고리즘 함수.
-#' neural network 모델은 생물학적인 뉴런을 수학적으로 모델링한 것.
-#' 여러개의 뉴런으로부터 입력값을 받아서 세포체에 저장하다가 자신의 용량을 넘어서면 외부로 출력값을 내보내는 것처럼,
-#' 인공신경망 뉴런은 여러 입력값을 받아서 일정 수준이 넘어서면 활성화되어 출력값을 내보낸다.
-#' hyperparameters: hidden_units, penalty, dropout, epochs, activation, learn_rate
+#' The function for training user-defined MLP model.
 #'
-#' @param algo 사용자가 임의로 지정할 알고리즘명 (default: "MLP")
-#' @param engine  모델을 생성할 때 사용할 패키지 ("nnet" (default))
-#' @param mode  분석 유형 ("classification" (default), "regression")
-#' @param trainingData 훈련데이터 셋
-#' @param splitedData train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋
-#' @param formula 모델링을 위한 수식
-#' @param rec 데이터, 전처리 정보를 포함한 recipe object
-#' @param v v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)
-#' @param metric 모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")
+#' Hyperparameters for tuning: hidden_units, penalty, epochs
+#'
+#' @param algo A name of the algorithm which can be customized by user (default: "MLP").
+#' @param engine  The name of software that should be used to fit the model ("nnet" (default)).
+#' @param mode  The model type. It should be "classification" or "regression" ("classification" (default), "regression").
+#' @param trainingData The training data.
+#' @param splitedData A data frame including metadata of split.
+#' @param formula formula for modeling
+#' @param rec Recipe object containing preprocessing information for cross-validation.
+#' @param v Applying v-fold cross validation in modeling process (default: 5).
+#' @param gridNum Initial number of iterations to run before starting the optimization algorithm.
+#' @param iter The maximum number of search iterations.
+#' @param metric Metric to evaluate the performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq").
+#' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dials hidden_units penalty epochs
@@ -917,10 +959,7 @@ MLP <- function(algo = "MLP",
   model <- parsnip::mlp(
     hidden_units = tune(),
     penalty = tune(),
-    epochs = tune(),
-    # dropout = tune(),
-    # activation = tune(),
-    # learn_rate = tune()
+    epochs = tune()
   ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
@@ -943,7 +982,7 @@ MLP <- function(algo = "MLP",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-    algo = paste0(algo, "_", engine)
+    modelName = paste0(algo, "_", engine)
   )
 
   return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
@@ -952,9 +991,9 @@ MLP <- function(algo = "MLP",
 #' K means clustering
 #'
 #' @details
-#' K means clustering
-#' selectOptimal: silhouette, gap_stat
-#' hyperparameters: maxK, nstart
+#' The function for K means clustering.
+#'
+#' parameters for tuning: maxK, nstart
 #'
 #' @param data 전처리가 완료된 데이터
 #' @param maxK 클러스터링 수행 시 군집을 2, 3, ..., maxK개로 분할 (default: 15)

@@ -14,10 +14,7 @@ mainfont: Gulim
 # Introduction
 
 1) 본 문서는 stove 패키지를 Shiny app에서 사용하는 것을 상정해 작성했습니다.
-
-2) 본 문서의 케이스 스타일은 Camel case와 Snake case가 혼용되어 있습니다.
-- Camel case : stove의 함수명 및 파라미터명
-- Snake case: 유저로부터 받는 입력, shiny app의 server에서 사용(될 것이라고 예상)하는 object명, snake case로 작성된 dependencies의 함수명 등
+2) stove 패키지의 code 스타일은 [OHDSI code style](https://ohdsi.github.io/Hades/codeStyle.html)을 따랐습니다.
 
 # Import sample data
 
