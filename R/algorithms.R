@@ -721,8 +721,8 @@ lightGbm <- function(algo = "lightGBM",
 #' @details
 #' The function for training user-defined SVM Linear model.
 #'
-#' @param algo A name of the algorithm which can be customized by user (default: "lightGBM").
-#' @param engine  The name of software that should be used to fit the model ("lightgbm" (default)).
+#' @param algo A name of the algorithm which can be customized by user (default: "SVMLinear").
+#' @param engine  The name of software that should be used to fit the model ("kernlab" (default)).
 #' @param mode  The model type. It should be "classification" or "regression" ("classification" (default), "regression").
 #' @param trainingData The training data.
 #' @param splitedData A data frame including metadata of split.
@@ -735,10 +735,13 @@ lightGbm <- function(algo = "lightGBM",
 #' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
+#' @importFrom dials cost margin
+#' @import parsnip
+#' @import kernlab
 #'
 #' @export
 
-SVMLinear <- function(algo = "SVM",
+SVMLinear <- function(algo = "SVMLinear",
                 engine = "kernlab",
                 mode = "classification",
                 trainingData = NULL,
@@ -787,8 +790,8 @@ SVMLinear <- function(algo = "SVM",
 #' @details
 #' The function for training user-defined SVM Poly model.
 #'
-#' @param algo A name of the algorithm which can be customized by user (default: "lightGBM").
-#' @param engine  The name of software that should be used to fit the model ("lightgbm" (default)).
+#' @param algo A name of the algorithm which can be customized by user (default: "SVMPoly").
+#' @param engine  The name of software that should be used to fit the model ("kernlab" (default)).
 #' @param mode  The model type. It should be "classification" or "regression" ("classification" (default), "regression").
 #' @param trainingData The training data.
 #' @param splitedData A data frame including metadata of split.
@@ -801,10 +804,13 @@ SVMLinear <- function(algo = "SVM",
 #' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
+#' @importFrom dials cost degree scale_factor margin
+#' @import parsnip
+#' @import kernlab
 #'
 #' @export
 
-SVMPoly <- function(algo = "SVM",
+SVMPoly <- function(algo = "SVMPoly",
                       engine = "kernlab",
                       mode = "classification",
                       trainingData = NULL,
@@ -855,8 +861,8 @@ SVMPoly <- function(algo = "SVM",
 #' @details
 #' The function for training user-defined SVM Rbf model.
 #'
-#' @param algo A name of the algorithm which can be customized by user (default: "lightGBM").
-#' @param engine  The name of software that should be used to fit the model ("lightgbm" (default)).
+#' @param algo A name of the algorithm which can be customized by user (default: "SVMRbf").
+#' @param engine  The name of software that should be used to fit the model ("kernlab" (default)).
 #' @param mode  The model type. It should be "classification" or "regression" ("classification" (default), "regression").
 #' @param trainingData The training data.
 #' @param splitedData A data frame including metadata of split.
@@ -869,10 +875,13 @@ SVMPoly <- function(algo = "SVM",
 #' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
+#' @importFrom dials cost rbf_sigma margin
+#' @import parsnip
+#' @import kernlab
 #'
 #' @export
 
-SVMRbf <- function(algo = "SVM",
+SVMRbf <- function(algo = "SVMRbf",
                       engine = "kernlab",
                       mode = "classification",
                       trainingData = NULL,

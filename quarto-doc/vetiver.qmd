@@ -1,6 +1,6 @@
 ---
 title: "Applying vetiver"
-date: 2022.09.16.
+date: 2022.12.14.
 format:
   pdf:
     toc: true
@@ -22,7 +22,7 @@ library(pins)
 library(plumber)
 library(dplyr)
 
-models_list <- readRDS(file = "../data/sample_models_list.rda")
+models_list <- readRDS(file = "~/git/stove/data/sample_models_list.rda")
 names(models_list)
 ```
 
@@ -54,7 +54,7 @@ plumber::pr() %>%
 
 ## predict for new data using deployed model
 
-- 위 포트에 deploy가 되어있으면, endpoint를 지정하고 다른 세션에서 새 데이터를 모델에 투입입
+- 위 포트에 deploy가 되어있으면, endpoint를 지정하고 다른 세션에서 새 데이터를 모델에 투입
 ```{r, eval = FALSE}
 endpoint <- vetiver_endpoint("http://127.0.0.1:8088/predict")
 

@@ -1,6 +1,6 @@
 ---
 title: "stove - classification"
-date: 2022.12.05.
+date: 2023.05.02.
 format:
   pdf:
     toc: true
@@ -463,7 +463,7 @@ roc_curve
 ```{r}
 # User input
 names(models_list)
-model_name <- "SVM_linear_kernlab"
+model_name <- "XGBoost_xgboost"
 ```
 
 ```{r, fig.width = 7, fig.height = 6}
