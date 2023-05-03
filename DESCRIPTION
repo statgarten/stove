@@ -1,6 +1,6 @@
 Package: stove
 Title: Stove
-Version: 0.0.0.9000
+Version: 1.1
 Authors@R: 
     person("Yeonchan", "Seong", , "ycseong07@gmail.com", role = c("aut", "cre"))
 Description: Provides functions for ML modeling with no hyperparameter tuning using tidymodels
