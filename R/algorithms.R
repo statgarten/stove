@@ -689,7 +689,7 @@ lightGbm <- function(algo = "lightGBM",
     min_n = tune(),
     loss_reduction = tune()
   ) %>%
-    parsnip::set_engine(engine = engine) %>%
+    parsnip::set_engine(engine = engine, force_row_wise=T) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 

@@ -358,7 +358,7 @@ tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```{r}
 # User input
 names(models_list)
-model_name <- "randomForest_ranger"
+model_name <- "linearRegression_glmnet"
 ```
 
 ```{r, fig.width = 7, fig.height = 7}
