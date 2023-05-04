@@ -213,7 +213,7 @@ evalMetricsR <- function(modelsList, targetVar) {
   for (i in 1:length(modelsList)) {
     tmp <- custom_metrics(modelsList[[as.numeric(i)]] %>%
       tune::collect_predictions(),
-    truth = eval(parse(text = targetVar)),
+    truth = targetVar,
     estimate = .pred
     ) %>%
       dplyr::select(.estimate) %>%
