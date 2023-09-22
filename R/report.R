@@ -15,12 +15,11 @@
 #' @export
 
 rocCurve <- function(modelsList, targetVar) {
-
   tmp <- do.call(rbind, modelsList)[[5]] %>%
     do.call(rbind, .) %>%
     dplyr::group_by(model)
 
-  if (".pred_1" %in% colnames(tmp)){
+  if (".pred_1" %in% colnames(tmp)) {
     colors <- grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
 
     plot <- do.call(rbind, modelsList)[[5]] %>%
@@ -168,10 +167,11 @@ evalMetricsC <- function(modelsList, targetVar) {
   )
 
   for (i in 1:length(modelsList)) {
-    tmp <- custom_metrics(modelsList[[as.numeric(i)]] %>%
-      tune::collect_predictions(),
-    truth = eval(parse(text = targetVar)),
-    estimate = .pred_class
+    tmp <- custom_metrics(
+      modelsList[[as.numeric(i)]] %>%
+        tune::collect_predictions(),
+      truth = eval(parse(text = targetVar)),
+      estimate = .pred_class
     ) %>%
       dplyr::select(.estimate) %>%
       data.table::transpose() %>%
@@ -211,10 +211,11 @@ evalMetricsR <- function(modelsList, targetVar) {
   )
 
   for (i in 1:length(modelsList)) {
-    tmp <- custom_metrics(modelsList[[as.numeric(i)]] %>%
-      tune::collect_predictions(),
-    truth = targetVar,
-    estimate = .pred
+    tmp <- custom_metrics(
+      modelsList[[as.numeric(i)]] %>%
+        tune::collect_predictions(),
+      truth = targetVar,
+      estimate = .pred
     ) %>%
       dplyr::select(.estimate) %>%
       data.table::transpose() %>%
@@ -310,9 +311,8 @@ clusteringVis <- function(data = NULL,
 #' @export
 
 plotRmseComparison <- function(tunedResultsList,
-                                 v = v,
-                                 iter = iter) {
-
+                               v = v,
+                               iter = iter) {
   combined_rmse_df <- data.frame()
   model_name <- names(tunedResultsList)
 
@@ -344,10 +344,14 @@ plotRmseComparison <- function(tunedResultsList,
 
   rmse_summary <- combined_rmse_df %>%
     group_by(model) %>%
-    dplyr::summarize(mean_rmse = mean(rmse_value),
-                     rmse_se = sd(rmse_value) / sqrt(n())) %>%
-    mutate(lower_bound = mean_rmse - 1.96 * rmse_se,
-           upper_bound = mean_rmse + 1.96 * rmse_se)
+    dplyr::summarize(
+      mean_rmse = mean(rmse_value),
+      rmse_se = sd(rmse_value) / sqrt(n())
+    ) %>%
+    mutate(
+      lower_bound = mean_rmse - 1.96 * rmse_se,
+      upper_bound = mean_rmse + 1.96 * rmse_se
+    )
 
   colors <- grDevices::colorRampPalette(c("#C70A80", "#FBCB0A", "#3EC70B", "#590696", "#37E2D5"))
 
@@ -355,44 +359,19 @@ plotRmseComparison <- function(tunedResultsList,
     geom_point(size = 3) +
     geom_errorbar(width = 0.2) +
     scale_color_manual(values = colors(length(tunedResultsList))) +
-    labs(title = "RMSE Comparison",
-         x = "Model",
-         y = "Mean RMSE") +
+    labs(
+      title = "RMSE Comparison",
+      x = "Model",
+      y = "Mean RMSE"
+    ) +
     cowplot::theme_cowplot() +
-    theme(axis.title.x=element_blank(),
-          axis.text.x=element_blank(),
-          axis.ticks.x=element_blank(),
-          panel.grid.major.y = element_line(color = "grey", linetype = "solid"),
-          panel.grid.minor.y = element_line(color = "grey", linetype = "dashed")
+    theme(
+      axis.title.x = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      panel.grid.major.y = element_line(color = "grey", linetype = "solid"),
+      panel.grid.minor.y = element_line(color = "grey", linetype = "dashed")
     )
 
   return(list(rmse_plot = rmse_plot, rmse_summary = rmse_summary, model_name = model_name))
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

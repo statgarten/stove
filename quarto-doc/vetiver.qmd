@@ -18,7 +18,7 @@ mainfont: Gulim
 
 ```{r}
 library(vetiver)
-library(pins) 
+library(pins)
 library(plumber)
 library(dplyr)
 
@@ -31,10 +31,12 @@ names(models_list)
 ```{r}
 my_model <- "logisticRegression_glmnet"
 version <- 0.1
-model_name = paste0(my_model,"_", version)
+model_name <- paste0(my_model, "_", version)
 
-v <- vetiver::vetiver_model(model = models_list[[my_model]]$.workflow[[1]],
-                            model_name = model_name)
+v <- vetiver::vetiver_model(
+  model = models_list[[my_model]]$.workflow[[1]],
+  model_name = model_name
+)
 v
 ```
 ## Save the vetiver object in local folder
@@ -58,9 +60,9 @@ plumber::pr() %>%
 ```{r, eval = FALSE}
 endpoint <- vetiver_endpoint("http://127.0.0.1:8088/predict")
 
-new_sac <- cleaned_data %>% 
-    dplyr::slice_sample(n = 50) %>% 
-    dplyr::select(TG, SEX, AGE_G, HGB)
+new_sac <- cleaned_data %>%
+  dplyr::slice_sample(n = 50) %>%
+  dplyr::select(TG, SEX, AGE_G, HGB)
 
 predict(endpoint, new_sac)
 ```

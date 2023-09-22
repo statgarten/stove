@@ -73,11 +73,12 @@ formula <- paste0(target_var, " ~ .")
 2) Train-test split 작업이 완료된 Object를 저장하고, Train set을 보여줍니다.
 
 ```{r}
-split_tmp <- stove::trainTestSplit(data = cleaned_data,
-                                    target = target_var,
-                                    prop = train_set_ratio,
-                                    seed = seed
-                                    )
+split_tmp <- stove::trainTestSplit(
+  data = cleaned_data,
+  target = target_var,
+  prop = train_set_ratio,
+  seed = seed
+)
 data_train <- split_tmp[[1]] # train data
 data_test <- split_tmp[[2]] # test data
 data_split <- split_tmp[[3]] # whole data with split information
@@ -86,10 +87,11 @@ data_split <- split_tmp[[3]] # whole data with split information
 3) train set에 적용할 local preprocessing 정보를 담은 recipe를 생성합니다
 
 ```{r}
-rec <- stove::prepForCV(data = data_train,
-                         formula = formula,
-                         seed = seed
-                         )
+rec <- stove::prepForCV(
+  data = data_train,
+  formula = formula,
+  seed = seed
+)
 ```
                          
 # Modeling Tab
@@ -178,7 +180,7 @@ finalized <- stove::KNN(
   seed = seed
 )
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
 
@@ -211,7 +213,7 @@ finalized <- stove::decisionTree(
   seed = seed
 )
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
 
@@ -244,7 +246,7 @@ finalized <- stove::randomForest(
   seed = seed
 )
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
 
@@ -277,7 +279,7 @@ finalized <- stove::xgBoost(
   seed = seed
 )
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
 
@@ -311,7 +313,7 @@ finalized <- stove::lightGbm(
   seed = seed
 )
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
 
@@ -344,7 +346,7 @@ finalized <- stove::MLP(
   seed = seed
 )
 # Add the model to models_list
-models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel 
+models_list[[paste0(algo, "_", engine)]] <- finalized$finalized$finalFittedModel
 tuned_results_list[[paste0(algo, "_", engine)]] <- finalized$bayes_opt_result
 ```
 
@@ -362,9 +364,11 @@ model_name <- "linearRegression_glmnet"
 ```
 
 ```{r, fig.width = 7, fig.height = 7}
-rp <- stove::regressionPlot(modelName = model_name, 
-                             modelsList = models_list, 
-                             targetVar = target_var)
+rp <- stove::regressionPlot(
+  modelName = model_name,
+  modelsList = models_list,
+  targetVar = target_var
+)
 rp
 ```
 
@@ -379,9 +383,10 @@ knitr::kable(evalMet)
 
 ## RMSE plot
 ```{r, fig.width = 7, fig.height = 5}
-rmse_plot <- stove::plotRmseComparison(tunedResultsList = tuned_results_list,
-                                 v = v,
-                                 iter = iter)
+rmse_plot <- stove::plotRmseComparison(
+  tunedResultsList = tuned_results_list,
+  v = v,
+  iter = iter
+)
 rmse_plot
-
 ```

@@ -27,20 +27,19 @@ bayesOptCV <- function(rec = NULL,
     workflows::add_recipe(rec) %>%
     workflows::add_model(model)
 
-  folds <- rsample::vfold_cv(trainingData, v = as.numeric(v), strata = rec$var_info$variable[rec$var_info$role=="outcome"])
-  initial <- ifelse(model$engine == "kknn", gridNum, length(model$args)*gridNum)
+  folds <- rsample::vfold_cv(trainingData, v = as.numeric(v), strata = rec$var_info$variable[rec$var_info$role == "outcome"])
+  initial <- ifelse(model$engine == "kknn", gridNum, length(model$args) * gridNum)
 
   if (quo_name(model$args$mtry) == "tune()") {
-  param <- tunedWorkflow %>%
-    hardhat::extract_parameter_set_dials() %>%
-    recipes::update(mtry = dials::finalize(mtry(), trainingData))
+    param <- tunedWorkflow %>%
+      hardhat::extract_parameter_set_dials() %>%
+      recipes::update(mtry = dials::finalize(mtry(), trainingData))
 
-  set.seed(seed = as.numeric(seed))
-  result <-
-    tunedWorkflow %>%
-    tune::tune_bayes(folds, initial = initial, iter = iter, param_info = param)
+    set.seed(seed = as.numeric(seed))
+    result <-
+      tunedWorkflow %>%
+      tune::tune_bayes(folds, initial = initial, iter = iter, param_info = param)
   } else {
-
     set.seed(seed = as.numeric(seed))
     result <-
       tunedWorkflow %>%

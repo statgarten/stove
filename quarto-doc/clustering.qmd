@@ -48,20 +48,21 @@ max_k <- 15 # k = 2:max_k, <= number of columns
 n_start <- 25 # attempts 25 initial configurations, <= 175
 iter_max <- 10 # <= 5000
 n_boot <- 100 # Used only for determining the number of clusters using gap statistic
-algorithm = "Hartigan-Wong" ## "Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"
+algorithm <- "Hartigan-Wong" ## "Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"
 select_optimal <- "silhouette" # "silhouette", "gap_stat" // there's no mathematical definition for selecting optimal k using elbow(wss) method.
 seed <- 6471
 
 # K-means clustering
-km_model <- stove::kMeansClustering(data = cleaned_data,
-                                     maxK = max_k,
-                                     nStart = n_start,
-                                     iterMax = iter_max,
-                                     nBoot = n_boot,
-                                     algorithm = algorithm,
-                                     selectOptimal = select_optimal,
-                                     seedNum = seed
-                                     )
+km_model <- stove::kMeansClustering(
+  data = cleaned_data,
+  maxK = max_k,
+  nStart = n_start,
+  iterMax = iter_max,
+  nBoot = n_boot,
+  algorithm = algorithm,
+  selectOptimal = select_optimal,
+  seedNum = seed
+)
 
 km_model$result
 ```

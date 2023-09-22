@@ -43,7 +43,7 @@ logisticRegression <- function(algo = "Logistic Regression",
   model <- parsnip::logistic_reg(
     penalty = tune(),
     mixture = tune()
-    ) %>%
+  ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
@@ -65,7 +65,7 @@ logisticRegression <- function(algo = "Logistic Regression",
     formula = formula,
     trainingData = trainingData,
     splitedData = splitedData,
-   modelName = paste0(algo, "_", engine)
+    modelName = paste0(algo, "_", engine)
   )
 
   return(list(finalized = finalized, bayes_opt_result = bayes_opt_result))
@@ -102,17 +102,17 @@ logisticRegression <- function(algo = "Logistic Regression",
 #' @export
 
 multinomialRegression <- function(algo = "Multinomial Regression",
-                               engine = "glmnet",
-                               mode = "classification",
-                               trainingData = NULL,
-                               splitedData = NULL,
-                               formula = NULL,
-                               rec = NULL,
-                               v = 5,
-                               gridNum = 5,
-                               iter = 10,
-                               metric = "roc_auc",
-                               seed = 1234) {
+                                  engine = "glmnet",
+                                  mode = "classification",
+                                  trainingData = NULL,
+                                  splitedData = NULL,
+                                  formula = NULL,
+                                  rec = NULL,
+                                  v = 5,
+                                  gridNum = 5,
+                                  iter = 10,
+                                  metric = "roc_auc",
+                                  seed = 1234) {
   model <- parsnip::multinom_reg(
     penalty = tune(),
     mixture = tune()
@@ -255,7 +255,6 @@ KNN <- function(algo = "KNN",
                 iter = 10,
                 metric = NULL,
                 seed = 1234) {
-
   model <- parsnip::nearest_neighbor(neighbors = tune()) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
@@ -324,7 +323,6 @@ naiveBayes <- function(algo = "Naive Bayes",
                        iter = 10,
                        metric = NULL,
                        seed = 1234) {
-
   model <- parsnip::naive_Bayes(
     smoothness = tune(),
     Laplace = tune()
@@ -395,9 +393,7 @@ decisionTree <- function(algo = "Decision Tree",
                          iter = 10,
                          metric = NULL,
                          seed = 1234) {
-
-  if (engine == "rpart"){
-
+  if (engine == "rpart") {
     model <- parsnip::decision_tree(
       cost_complexity = tune(),
       tree_depth = tune(),
@@ -427,7 +423,6 @@ decisionTree <- function(algo = "Decision Tree",
       modelName = paste0(algo, "_", engine)
     )
   } else if (engine == "C5.0") {
-
     model <- parsnip::decision_tree(
       min_n = tune()
     ) %>%
@@ -530,7 +525,6 @@ randomForest <- function(algo = "Random Forest",
                          iter = 10,
                          metric = NULL,
                          seed = 1234) {
-
   model <- parsnip::rand_forest(
     trees = tune(),
     min_n = tune(),
@@ -605,7 +599,6 @@ xgBoost <- function(algo = "XGBoost",
                     iter = 10,
                     metric = NULL,
                     seed = 1234) {
-
   model <- parsnip::boost_tree(
     tree_depth = tune(),
     trees = tune(),
@@ -680,7 +673,6 @@ lightGbm <- function(algo = "lightGBM",
                      iter = 15,
                      metric = NULL,
                      seed = 1234) {
-
   model <- parsnip::boost_tree(
     tree_depth = tune(),
     trees = tune(),
@@ -689,7 +681,7 @@ lightGbm <- function(algo = "lightGBM",
     min_n = tune(),
     loss_reduction = tune()
   ) %>%
-    parsnip::set_engine(engine = engine, force_row_wise=T) %>%
+    parsnip::set_engine(engine = engine, force_row_wise = T) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
 
@@ -742,22 +734,21 @@ lightGbm <- function(algo = "lightGBM",
 #' @export
 
 SVMLinear <- function(algo = "SVMLinear",
-                engine = "kernlab",
-                mode = "classification",
-                trainingData = NULL,
-                splitedData = NULL,
-                formula = NULL,
-                rec = NULL,
-                v = 5,
-                gridNum = 5,
-                iter = 15,
-                metric = NULL,
-                seed = 1234) {
-
+                      engine = "kernlab",
+                      mode = "classification",
+                      trainingData = NULL,
+                      splitedData = NULL,
+                      formula = NULL,
+                      rec = NULL,
+                      v = 5,
+                      gridNum = 5,
+                      iter = 15,
+                      metric = NULL,
+                      seed = 1234) {
   model <- parsnip::svm_linear(
     cost = tune(),
     margin = tune()
-    ) %>%
+  ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
@@ -811,24 +802,23 @@ SVMLinear <- function(algo = "SVMLinear",
 #' @export
 
 SVMPoly <- function(algo = "SVMPoly",
-                      engine = "kernlab",
-                      mode = "classification",
-                      trainingData = NULL,
-                      splitedData = NULL,
-                      formula = NULL,
-                      rec = NULL,
-                      v = 5,
-                      gridNum = 5,
-                      iter = 15,
-                      metric = NULL,
-                      seed = 1234) {
-
+                    engine = "kernlab",
+                    mode = "classification",
+                    trainingData = NULL,
+                    splitedData = NULL,
+                    formula = NULL,
+                    rec = NULL,
+                    v = 5,
+                    gridNum = 5,
+                    iter = 15,
+                    metric = NULL,
+                    seed = 1234) {
   model <- parsnip::svm_poly(
     cost = tune(),
     degree = tune(),
     scale_factor = tune(),
     margin = tune()
-    ) %>%
+  ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
@@ -882,23 +872,22 @@ SVMPoly <- function(algo = "SVMPoly",
 #' @export
 
 SVMRbf <- function(algo = "SVMRbf",
-                      engine = "kernlab",
-                      mode = "classification",
-                      trainingData = NULL,
-                      splitedData = NULL,
-                      formula = NULL,
-                      rec = NULL,
-                      v = 5,
-                      gridNum = 5,
-                      iter = 15,
-                      metric = NULL,
-                      seed = 1234) {
-
+                   engine = "kernlab",
+                   mode = "classification",
+                   trainingData = NULL,
+                   splitedData = NULL,
+                   formula = NULL,
+                   rec = NULL,
+                   v = 5,
+                   gridNum = 5,
+                   iter = 15,
+                   metric = NULL,
+                   seed = 1234) {
   model <- parsnip::svm_rbf(
     cost = tune(),
     rbf_sigma = tune(),
     margin = tune()
-    ) %>%
+  ) %>%
     parsnip::set_engine(engine = engine) %>%
     parsnip::set_mode(mode = mode) %>%
     parsnip::translate()
@@ -964,7 +953,6 @@ MLP <- function(algo = "MLP",
                 iter = 10,
                 metric = NULL,
                 seed = 1234) {
-
   model <- parsnip::mlp(
     hidden_units = tune(),
     penalty = tune(),
@@ -1050,7 +1038,6 @@ kMeansClustering <- function(data,
     )
     cols <- colors(result_clust$data$clusters[which.max(result_clust$data$y)])
     optimalK <- as.numeric(result_clust$data$clusters[which.max(result_clust$data$y)])
-
   } else if (selectOptimal == "gap_stat") {
     result_clust <- factoextra::fviz_nbclust(
       x = data,
