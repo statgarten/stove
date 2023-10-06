@@ -26,7 +26,8 @@ rocCurve <- function(modelsList, targetVar) {
       do.call(rbind, .) %>%
       dplyr::group_by(model) %>%
       yardstick::roc_curve(
-        truth = eval(parse(text = targetVar)),
+        # truth = eval(parse(text = targetVar)), 아래와 같이 수정
+        truth = targetVar,
         .pred_1,
         event_level = "second"
       ) %>%
@@ -170,7 +171,8 @@ evalMetricsC <- function(modelsList, targetVar) {
     tmp <- custom_metrics(
       modelsList[[as.numeric(i)]] %>%
         tune::collect_predictions(),
-      truth = eval(parse(text = targetVar)),
+      # truth = eval(parse(text = targetVar)), 아래와 같이 수정
+      truth = targetVar,
       estimate = .pred_class
     ) %>%
       dplyr::select(.estimate) %>%
