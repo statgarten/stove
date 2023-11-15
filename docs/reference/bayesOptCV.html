@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">stove</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,36 +62,36 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>rec</dt>
-<dd><p>데이터, 전처리 정보를 포함한 recipe object</p></dd>
+<dd><p>The recipe object including local preprocessing.</p></dd>
 
 
 <dt>model</dt>
-<dd><p>hyperparameters, ngine, mode 정보가 포함된 model object</p></dd>
+<dd><p>The model object including the list of hyperparameters, engine and mode.</p></dd>
 
 
 <dt>v</dt>
-<dd><p>v-fold cross validation을 진행 (default: 5, 각 fold 별로 30개 이상의 observations가 있어야 유효한 모델링 결과를 얻을 수 있습니다.)</p></dd>
+<dd><p>Perform cross-validation by dividing the training data into v folds.</p></dd>
 
 
 <dt>trainingData</dt>
-<dd><p>훈련데이터 셋</p></dd>
+<dd><p>The training data.</p></dd>
+
+
+<dt>gridNum</dt>
+<dd><p>Initial number of iterations to run before starting the optimization algorithm.</p></dd>
 
 
 <dt>iter</dt>
-<dd><p>grid search를 수행할 때 각 hyperparameter의 값을 담은 object</p></dd>
+<dd><p>The maximum number of search iterations.</p></dd>
 
 
 <dt>seed</dt>
-<dd><p>seed값 설정</p></dd>
-
-
-<dt>initial</dt>
-<dd><p>몇 개의 grid로</p></dd>
+<dd><p>Seed for reproducible results.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>교차검증 수행 과정에서, Bayesian optimization을 통해 모델의 하이퍼파라미터를 최적화합니다.</p>
+    <p>Optimize the hyperparameters of the model with Cross Validation and Bayesian optimization.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

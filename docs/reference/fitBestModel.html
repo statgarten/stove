@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">stove</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,43 +55,43 @@
 <span>  <span class="va">formula</span>,</span>
 <span>  <span class="va">trainingData</span>,</span>
 <span>  <span class="va">splitedData</span>,</span>
-<span>  <span class="va">algo</span></span>
+<span>  <span class="va">modelName</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>optResult</dt>
-<dd><p>gridSearchCV의 결과값</p></dd>
+<dd><p>The result object of bayesOptCV</p></dd>
 
 
 <dt>metric</dt>
-<dd><p>모델의 성능을 평가할 기준지표 (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")</p></dd>
+<dd><p>Baseline metric for evaluating model performance (classification: "roc_auc" (default), "accuracy" / regression: "rmse" (default), "rsq")</p></dd>
 
 
 <dt>model</dt>
-<dd><p>hyperparameters, ngine, mode 정보가 포함된 model object</p></dd>
+<dd><p>The model object including the list of hyperparameters, engine and mode.</p></dd>
 
 
 <dt>formula</dt>
-<dd><p>모델링을 위한 수식</p></dd>
+<dd><p>formula for modeling</p></dd>
 
 
 <dt>trainingData</dt>
-<dd><p>훈련데이터 셋</p></dd>
+<dd><p>The training data.</p></dd>
 
 
 <dt>splitedData</dt>
-<dd><p>train-test 데이터 분할 정보를 포함하고 있는 전체 데이터 셋</p></dd>
+<dd><p>The whole dataset including the information of each fold</p></dd>
 
 
-<dt>algo</dt>
-<dd><p>사용자가 임의로 지정할 알고리즘명 (default: "linear Regression")</p></dd>
+<dt>modelName</dt>
+<dd><p>The name of model defined by the algorithm and engine selected by user</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>gridSearchCV 함수 리턴값을 받아 가장 성능이 좋은 모델을 fitting합니다.</p>
+    <p>Get the bayesOptCV function's return value and fit the model.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -4,16 +4,31 @@
     <loc>/404.html</loc>
   </url>
   <url>
+    <loc>/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>/LICENSE.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
     <loc>/index.html</loc>
   </url>
   <url>
-    <loc>/LICENSE-text.html</loc>
+    <loc>/reference/KNN.html</loc>
   </url>
   <url>
-    <loc>/LICENSE.html</loc>
+    <loc>/reference/MLP.html</loc>
+  </url>
+  <url>
+    <loc>/reference/SVMLinear.html</loc>
+  </url>
+  <url>
+    <loc>/reference/SVMPoly.html</loc>
+  </url>
+  <url>
+    <loc>/reference/SVMRbf.html</loc>
   </url>
   <url>
     <loc>/reference/bayesOptCV.html</loc>
@@ -40,9 +55,6 @@
     <loc>/reference/kMeansClustering.html</loc>
   </url>
   <url>
-    <loc>/reference/KNN.html</loc>
-  </url>
-  <url>
     <loc>/reference/lightGbm.html</loc>
   </url>
   <url>
@@ -52,7 +64,7 @@
     <loc>/reference/logisticRegression.html</loc>
   </url>
   <url>
-    <loc>/reference/MLP.html</loc>
+    <loc>/reference/multinomialRegression.html</loc>
   </url>
   <url>
     <loc>/reference/naiveBayes.html</loc>
@@ -61,19 +73,13 @@
     <loc>/reference/pipe.html</loc>
   </url>
   <url>
+    <loc>/reference/plotRmseComparison.html</loc>
+  </url>
+  <url>
     <loc>/reference/prepForCV.html</loc>
   </url>
   <url>
     <loc>/reference/randomForest.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SVMLinear.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SVMPoly.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SVMRbf.html</loc>
   </url>
   <url>
     <loc>/reference/trainTestSplit.html</loc>
