@@ -88,54 +88,88 @@
 <div class="section level3">
 <h3 id="id_1-sample-data-import">1. Sample Data Import<a class="anchor" aria-label="anchor" href="#id_1-sample-data-import"></a>
 </h3>
-<p>```{r} # remotes::install_github(“statgarten/datatoys”) library(stove) library(datatoys) library(dplyr)</p>
-<p>set.seed(1234)</p>
-<p>cleaned_data &lt;- datatoys::bloodTest</p>
-<p>cleaned_data &lt;- cleaned_data %&gt;% mutate_at(vars(SEX, ANE, IHD, STK), factor) %&gt;% mutate(TG = ifelse(TG &lt; 150, 0, 1)) %&gt;% mutate_at(vars(TG), factor) %&gt;% group_by(TG) %&gt;% sample_n(500) # TG(0):TG(1) = 500:500</p>
-<pre><code>
-### 2. Data split and Define preprocessing
-
-```{r}
-target_var &lt;- "TG"
-train_set_ratio &lt;- 0.7
-seed &lt;- 1234
-formula &lt;- paste0(target_var, " ~ .")
-
-# Split data
-
-split_tmp &lt;- stove::trainTestSplit(data = cleaned_data,
-                                   target = target_var,
-                                   prop = train_set_ratio,
-                                   seed = seed
-                                   )
-
-data_train &lt;- split_tmp[[1]] # train data
-data_test &lt;- split_tmp[[2]] # test data
-data_split &lt;- split_tmp[[3]] # whole data with split information
-
-# Define preprocessing recipe for cross validation
-
-rec &lt;- stove::prepForCV(data = data_train,
-                        formula = formula,
-                        imputation = T,
-                        normalization = T,
-                        seed = seed
-                        )</code></pre>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># remotes::install_github("statgarten/datatoys")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/statgarten/stove" class="external-link">stove</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://statgarten.github.io/datatoys/" class="external-link">datatoys</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cleaned_data</span> <span class="op">&lt;-</span> <span class="fu">datatoys</span><span class="fu">::</span><span class="va"><a href="https://statgarten.github.io/datatoys/reference/bloodTest.html" class="external-link">bloodTest</a></span></span>
+<span></span>
+<span><span class="va">cleaned_data</span> <span class="op">&lt;-</span> <span class="va">cleaned_data</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html" class="external-link">mutate_at</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">SEX</span>, <span class="va">ANE</span>, <span class="va">IHD</span>, <span class="va">STK</span><span class="op">)</span>, <span class="va">factor</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>TG <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">TG</span> <span class="op">&lt;</span> <span class="fl">150</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html" class="external-link">mutate_at</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">TG</span><span class="op">)</span>, <span class="va">factor</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">TG</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/sample_n.html" class="external-link">sample_n</a></span><span class="op">(</span><span class="fl">500</span><span class="op">)</span> <span class="co"># TG(0):TG(1) = 500:500</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="id_2-data-split-and-define-preprocessing">2. Data split and Define preprocessing<a class="anchor" aria-label="anchor" href="#id_2-data-split-and-define-preprocessing"></a>
+</h3>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">target_var</span> <span class="op">&lt;-</span> <span class="st">"TG"</span></span>
+<span><span class="va">train_set_ratio</span> <span class="op">&lt;-</span> <span class="fl">0.7</span></span>
+<span><span class="va">seed</span> <span class="op">&lt;-</span> <span class="fl">1234</span></span>
+<span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">target_var</span>, <span class="st">" ~ ."</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Split data</span></span>
+<span></span>
+<span><span class="va">split_tmp</span> <span class="op">&lt;-</span> <span class="fu">stove</span><span class="fu">::</span><span class="fu"><a href="reference/trainTestSplit.html">trainTestSplit</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">cleaned_data</span>,</span>
+<span>                                   target <span class="op">=</span> <span class="va">target_var</span>,</span>
+<span>                                   prop <span class="op">=</span> <span class="va">train_set_ratio</span>,</span>
+<span>                                   seed <span class="op">=</span> <span class="va">seed</span></span>
+<span>                                   <span class="op">)</span></span>
+<span></span>
+<span><span class="va">data_train</span> <span class="op">&lt;-</span> <span class="va">split_tmp</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co"># train data</span></span>
+<span><span class="va">data_test</span> <span class="op">&lt;-</span> <span class="va">split_tmp</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="co"># test data</span></span>
+<span><span class="va">data_split</span> <span class="op">&lt;-</span> <span class="va">split_tmp</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span> <span class="co"># whole data with split information</span></span>
+<span></span>
+<span><span class="co"># Define preprocessing recipe for cross validation</span></span>
+<span></span>
+<span><span class="va">rec</span> <span class="op">&lt;-</span> <span class="fu">stove</span><span class="fu">::</span><span class="fu"><a href="reference/prepForCV.html">prepForCV</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_train</span>,</span>
+<span>                        formula <span class="op">=</span> <span class="va">formula</span>,</span>
+<span>                        imputation <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>                        normalization <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>                        seed <span class="op">=</span> <span class="va">seed</span></span>
+<span>                        <span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="id_3-modeling">3. Modeling<a class="anchor" aria-label="anchor" href="#id_3-modeling"></a>
 </h3>
-<p>```{r} # User input</p>
-<p>mode &lt;- “classification” algo &lt;- “logisticRegression” # Custom name engine &lt;- “glmnet” # glmnet (default) v &lt;- 2 metric &lt;- “roc_auc” # roc_auc (default), accuracy gridNum &lt;- 5 iter &lt;- 10 seed &lt;- 1234</p>
-</div>
-</div>
-</div>
-<div class="section level1">
-<h1 id="modeling-using-logistic-regression-algorithm">Modeling using logistic regression algorithm<a class="anchor" aria-label="anchor" href="#modeling-using-logistic-regression-algorithm"></a>
-</h1>
-<p>finalized &lt;- stove::logisticRegression( algo = algo, engine = engine, mode = mode, trainingData = data_train, splitedData = data_split, formula = formula, rec = rec, v = v, gridNum = gridNum, iter = iter, metric = metric, seed = seed ) ```</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># User input</span></span>
+<span></span>
+<span><span class="va">mode</span> <span class="op">&lt;-</span> <span class="st">"classification"</span></span>
+<span><span class="va">algo</span> <span class="op">&lt;-</span> <span class="st">"logisticRegression"</span> <span class="co"># Custom name</span></span>
+<span><span class="va">engine</span> <span class="op">&lt;-</span> <span class="st">"glmnet"</span> <span class="co"># glmnet (default)</span></span>
+<span><span class="va">v</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
+<span><span class="va">metric</span> <span class="op">&lt;-</span> <span class="st">"roc_auc"</span> <span class="co"># roc_auc (default), accuracy</span></span>
+<span><span class="va">gridNum</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
+<span><span class="va">iter</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
+<span><span class="va">seed</span> <span class="op">&lt;-</span> <span class="fl">1234</span></span>
+<span></span>
+<span><span class="co"># Modeling using logistic regression algorithm</span></span>
+<span></span>
+<span><span class="va">finalized</span> <span class="op">&lt;-</span> <span class="fu">stove</span><span class="fu">::</span><span class="fu"><a href="reference/logisticRegression.html">logisticRegression</a></span><span class="op">(</span></span>
+<span>  algo <span class="op">=</span> <span class="va">algo</span>,</span>
+<span>  engine <span class="op">=</span> <span class="va">engine</span>,</span>
+<span>  mode <span class="op">=</span> <span class="va">mode</span>,</span>
+<span>  trainingData <span class="op">=</span> <span class="va">data_train</span>,</span>
+<span>  splitedData <span class="op">=</span> <span class="va">data_split</span>,</span>
+<span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
+<span>  rec <span class="op">=</span> <span class="va">rec</span>,</span>
+<span>  v <span class="op">=</span> <span class="va">v</span>,</span>
+<span>  gridNum <span class="op">=</span> <span class="va">gridNum</span>,</span>
+<span>  iter <span class="op">=</span> <span class="va">iter</span>,</span>
+<span>  metric <span class="op">=</span> <span class="va">metric</span>,</span>
+<span>  seed <span class="op">=</span> <span class="va">seed</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>You can compare several models’ performance and visualize them.<br>
 These <a href="https://github.com/statgarten/stove/tree/main/quarto-doc" class="external-link">documents</a> contain the example codes for modeling workflow using stove.</p>
+</div>
+</div>
 <div class="section level2">
 <h2 id="white_check_mark-recommendation">
 <span class="emoji" data-emoji="white_check_mark">✅</span> Recommendation<a class="anchor" aria-label="anchor" href="#white_check_mark-recommendation"></a>
@@ -308,7 +342,6 @@ zoo - 1.8-11</p>
 </details>
 </div>
 </div>
-
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">

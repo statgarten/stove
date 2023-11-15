@@ -19,7 +19,7 @@ devtools::install_github("statgarten/stove")
 
 ### 1. Sample Data Import
 
-```{r}
+``` r
 # remotes::install_github("statgarten/datatoys")
 library(stove)
 library(datatoys)
@@ -39,7 +39,7 @@ cleaned_data <- cleaned_data %>%
 
 ### 2. Data split and Define preprocessing
 
-```{r}
+``` r
 target_var <- "TG"
 train_set_ratio <- 0.7
 seed <- 1234
@@ -69,7 +69,7 @@ rec <- stove::prepForCV(data = data_train,
 
 ### 3. Modeling
 
-```{r}
+``` r
 # User input
 
 mode <- "classification"
