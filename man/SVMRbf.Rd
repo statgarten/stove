@@ -5,7 +5,7 @@
 \title{SVMRbf}
 \usage{
 SVMRbf(
-  algo = "SVM",
+  algo = "SVMRbf",
   engine = "kernlab",
   mode = "classification",
   trainingData = NULL,
@@ -20,9 +20,9 @@ SVMRbf(
 )
 }
 \arguments{
-\item{algo}{A name of the algorithm which can be customized by user (default: "lightGBM").}
+\item{algo}{A name of the algorithm which can be customized by user (default: "SVMRbf").}
 
-\item{engine}{The name of software that should be used to fit the model ("lightgbm" (default)).}
+\item{engine}{The name of software that should be used to fit the model ("kernlab" (default)).}
 
 \item{mode}{The model type. It should be "classification" or "regression" ("classification" (default), "regression").}
 
