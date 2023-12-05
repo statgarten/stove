@@ -727,7 +727,7 @@ lightGbm <- function(algo = "lightGBM",
 #' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dials cost margin
+#' @importFrom dials cost svm_margin
 #' @import parsnip
 #' @import kernlab
 #'
@@ -795,7 +795,7 @@ SVMLinear <- function(algo = "SVMLinear",
 #' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dials cost degree scale_factor margin
+#' @importFrom dials cost degree scale_factor svm_margin
 #' @import parsnip
 #' @import kernlab
 #'
@@ -865,7 +865,7 @@ SVMPoly <- function(algo = "SVMPoly",
 #' @param seed Seed for reproducible results.
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dials cost rbf_sigma margin
+#' @importFrom dials cost rbf_sigma svm_margin
 #' @import parsnip
 #' @import kernlab
 #'

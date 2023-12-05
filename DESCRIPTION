@@ -1,8 +1,9 @@
 Package: stove
 Title: Stove
-Version: 1.1
-Authors@R: 
-    person("Yeonchan", "Seong", , "ycseong07@gmail.com", role = c("aut", "cre"))
+Version: 1.1.1
+Authors@R: c(
+  person("Yeonchan", "Seong", , "ycseong07@gmail.com", role = c("aut", "cre")),
+  person("Jinhwan", "Kim", , email = "hwanistic@gmail.com", role = "ctb"))
 Description: Provides functions for ML modeling with no hyperparameter tuning using tidymodels
 License: MIT + file LICENSE
 Encoding: UTF-8
