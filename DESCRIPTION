@@ -53,7 +53,8 @@ Imports:
     vip (>= 0.3.2),
     workflows (>= 0.2.6.9001),
     xgboost (>= 1.6.0.1),
-    yardstick (>= 1.0.0.9000)
+    yardstick (>= 1.0.0.9000),
+    kernlab (>= 0.9-32)
 Remotes: 
     https://github.com/curso-r/treesnip.git 
 URL: https://github.com/statgarten/stove
