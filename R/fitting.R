@@ -35,6 +35,8 @@ bayesOptCV <- function(rec = NULL,
       hardhat::extract_parameter_set_dials() %>%
       recipes::update(mtry = dials::finalize(mtry(), trainingData))
 
+    print("ERROR with lightgbm pacakge: use 3.3.5 version not 4.2.0 version")
+    print('devtools::install_version("lightgbm", version = "3.3.5", repos = "http://cran.us.r-project.org")')
     set.seed(seed = as.numeric(seed))
     result <-
       tunedWorkflow %>%
